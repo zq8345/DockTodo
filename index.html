@@ -138,6 +138,7 @@
       </section>
 
       <aside class="detail-pane" aria-label="Task details">
+        <button class="detail-close" id="detailClose" type="button" aria-label="Close">×</button>
         <div class="detail-empty" id="detailEmpty">
           <strong data-i18n="detail.empty">Select a task</strong>
           <span data-i18n="detail.emptyHint">View notes, dates, reminders, priority, pomodoro and history.</span>
@@ -235,6 +236,8 @@
         </form>
       </aside>
     </main>
+
+    <div class="detail-scrim" id="detailScrim"></div>
 
     <template id="taskTemplate">
       <button class="task-row" type="button">

@@ -51,6 +51,8 @@ const els = {
   resetFocus: document.querySelector("#resetFocus"),
   completePomo: document.querySelector("#completePomo"),
   detailEmpty: document.querySelector("#detailEmpty"),
+  detailClose: document.querySelector("#detailClose"),
+  detailScrim: document.querySelector("#detailScrim"),
   detailForm: document.querySelector("#detailForm"),
   detailCompleted: document.querySelector("#detailCompleted"),
   detailTitle: document.querySelector("#detailTitle"),
@@ -207,6 +209,12 @@ function addHistory(task, text) {
   task.history.unshift({ at: Date.now(), text });
   task.history = task.history.slice(0, 30);
   task.updatedAt = Date.now();
+}
+
+function closeDetail() {
+  state.selectedTaskId = null;
+  saveState();
+  render();
 }
 
 function setMode(mode) {
@@ -1302,7 +1310,7 @@ function taskRow(task) {
   });
 
   title.textContent = task.title;
-  title.className = `priority-${task.priority}`;
+  row.classList.add(`pri-${task.priority}`);
   meta.textContent = `${list?.name ?? t("meta.listFallback")} · ${priorityLabel(task.priority)}${tagText}${repeatText}${subText}${reminderText}${pomoText}`;
   date.textContent = dateLabel(taskDate(task));
 
@@ -1407,6 +1415,8 @@ function renderDetail() {
   const task = selectedTask();
   els.detailEmpty.classList.toggle("hidden", Boolean(task));
   els.detailForm.classList.toggle("hidden", !task);
+  // Narrow layouts show the detail pane as a slide-over; this class drives it.
+  document.body.classList.toggle("detail-visible", Boolean(task));
   els.detailList.replaceChildren();
   els.subtaskList.replaceChildren();
   els.timeEntryList.replaceChildren();
@@ -1820,8 +1830,13 @@ els.deleteTask.addEventListener("click", () => {
   });
 });
 
+els.detailClose.addEventListener("click", closeDetail);
+els.detailScrim.addEventListener("click", closeDetail);
+
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") closeModal();
+  if (event.key !== "Escape") return;
+  if (document.querySelector("#modalOverlay")) closeModal();
+  else if (document.body.classList.contains("detail-visible")) closeDetail();
 });
 
 window.addEventListener("storage", (event) => {
