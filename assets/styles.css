@@ -1,28 +1,36 @@
+/* Ledger / workbench palette: a single green accent + warm greyscale,
+   distinct from a card/network aesthetic. --blue is kept as the accent
+   variable name to avoid a global rename; --accent aliases it. */
 :root {
-  --bg: #f5f7fb;
+  --bg: #f6f5f1;
   --surface: #ffffff;
-  --surface-soft: #f1f4f9;
-  --line: #e1e7f0;
-  --line-strong: #cfd7e4;
-  --text: #1e2430;
-  --muted: #6d7687;
-  --blue: #4778ff;
-  --blue-dark: #2f5fe6;
-  --green: #25a769;
-  --amber: #e49a2f;
-  --red: #d94d4d;
-  --purple: #7467e8;
-  --shadow: 0 18px 42px rgba(24, 39, 66, 0.12);
+  --surface-soft: #eeece6;
+  --line: #e3e0d7;
+  --line-strong: #cec9bc;
+  --text: #23271f;
+  --muted: #6e6b5e;
+  --blue: #1d6b4f;
+  --blue-dark: #14523c;
+  --accent: #1d6b4f;
+  --green: #2f8a5d;
+  --amber: #b07d2e;
+  --red: #b3402e;
+  --purple: #2a7d5c;
+  --shadow: 0 18px 42px rgba(40, 44, 30, 0.1);
 }
 
 body.theme-dark {
-  --bg: #121722;
-  --surface: #1c2330;
-  --surface-soft: #242c3b;
-  --line: #30394c;
-  --line-strong: #3e485d;
-  --text: #eef3fb;
-  --muted: #9aa6ba;
+  --bg: #171a16;
+  --surface: #1e231d;
+  --surface-soft: #262c24;
+  --line: #343b31;
+  --line-strong: #46503f;
+  --text: #ecefe6;
+  --muted: #9aa392;
+  --blue: #5cb98a;
+  --blue-dark: #7acca0;
+  --accent: #5cb98a;
+  --green: #6fce9b;
   --shadow: none;
 }
 
@@ -254,6 +262,37 @@ h2 {
 .nav-count {
   color: var(--muted);
   font-size: 12px;
+}
+
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  align-self: center;
+  justify-self: center;
+}
+
+.nav-item.nav-sub {
+  padding-left: 20px;
+  font-size: 13px;
+}
+
+#tagSection[open],
+#tagSection {
+  padding: 0;
+}
+
+#tagSection > summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+#tagSection > summary::-webkit-details-marker {
+  display: none;
+}
+
+#tagSection > summary::marker {
+  content: "";
 }
 
 .nav-edit {

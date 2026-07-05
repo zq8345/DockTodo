@@ -8,6 +8,8 @@ const els = {
   body: document.body,
   railButtons: [...document.querySelectorAll(".rail-btn[data-mode]")],
   smartLists: document.querySelector("#smartLists"),
+  clientNav: document.querySelector("#clientNav"),
+  addClientTop: document.querySelector("#addClientTop"),
   projectList: document.querySelector("#projectList"),
   filterList: document.querySelector("#filterList"),
   tagSection: document.querySelector("#tagSection"),
@@ -111,6 +113,8 @@ function countTasks(predicate) {
 
 function getActiveTitle() {
   if (state.activeView.startsWith("tag:")) return `#${state.activeView.slice(4)}`;
+  if (state.activeView.startsWith("project:")) return state.projects.find((p) => p.id === state.activeView.slice(8))?.name ?? t("view.tasks");
+  if (state.activeView.startsWith("client:")) return state.clients.find((c) => c.id === state.activeView.slice(7))?.name ?? t("view.tasks");
   const smart = smartDefinitions().find((item) => item.id === state.activeView);
   if (smart) return smart.title;
   const list = state.lists.find((item) => item.id === state.activeView);
@@ -121,6 +125,8 @@ function getActiveTitle() {
 
 function getViewType(view = state.activeView) {
   if (view.startsWith("tag:")) return "tag";
+  if (view.startsWith("project:")) return "project";
+  if (view.startsWith("client:")) return "client";
   if (state.lists.some((item) => item.id === view)) return "list";
   if (state.filters.some((item) => item.id === view)) return "filter";
   return "smart";
@@ -133,6 +139,8 @@ function visibleTasks() {
     .filter((task) => {
       const date = taskDate(task);
       if (view.startsWith("tag:")) return !task.completed && task.tags.includes(view.slice(4));
+      if (view.startsWith("project:")) return !task.completed && task.projectId === view.slice(8);
+      if (view.startsWith("client:")) return !task.completed && resolveClient(task)?.id === view.slice(7);
       if (view === "today") return date === todayKey && !task.completed;
       if (view === "next7") return isWithinNextSevenDays(date) && !task.completed;
       if (view === "calendar") return Boolean(date) && !task.completed;
@@ -1230,10 +1238,23 @@ function renderHeader() {
 }
 
 function renderNav() {
+  els.clientNav.replaceChildren();
   els.smartLists.replaceChildren();
   els.projectList.replaceChildren();
   els.filterList.replaceChildren();
   els.tagList.replaceChildren();
+  state.clients.forEach((client) => {
+    const count = countTasks((task) => !task.completed && resolveClient(task)?.id === client.id);
+    els.clientNav.append(navButton(`client:${client.id}`, "●", client.name, count, "var(--accent)"));
+    state.projects
+      .filter((project) => project.clientId === client.id)
+      .forEach((project) => {
+        const pcount = countTasks((task) => !task.completed && task.projectId === project.id);
+        const button = navButton(`project:${project.id}`, "○", project.name, pcount);
+        button.classList.add("nav-sub");
+        els.clientNav.append(button);
+      });
+  });
   smartDefinitions().forEach((item) => els.smartLists.append(navButton(item.id, item.icon, item.title, item.count)));
   state.lists.forEach((list) => {
     const count = countTasks((task) => task.listId === list.id && !task.completed);
@@ -1258,8 +1279,14 @@ function navButton(id, icon, title, count, color, onEdit) {
   button.className = "nav-item";
   button.classList.toggle("active", state.activeView === id);
   const iconEl = document.createElement("span");
-  iconEl.style.color = color ?? "currentColor";
-  iconEl.textContent = icon;
+  if (color) {
+    // Lists/clients/projects are shown as an 8px colour dot, not a glyph.
+    iconEl.className = "nav-dot";
+    iconEl.style.background = color;
+  } else {
+    iconEl.style.color = "currentColor";
+    iconEl.textContent = icon;
+  }
   const titleEl = document.createElement("span");
   titleEl.textContent = title;
   const countEl = document.createElement("span");
@@ -1599,6 +1626,7 @@ els.importFile.addEventListener("change", async () => {
   }
 });
 
+els.addClientTop.addEventListener("click", () => openClientModal(null));
 els.addList.addEventListener("click", () => openListModal(null));
 els.addFilter.addEventListener("click", () => openFilterModal(null));
 
