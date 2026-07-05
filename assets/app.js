@@ -9,6 +9,9 @@ const FILTER_TYPES = [
   ["nodate", "无日期"],
   ["overdue", "已逾期"],
 ];
+const PRIORITY_IDS = ["none", "high", "medium", "low"];
+const REPEAT_IDS = ["daily", "weekdays", "weekly", "monthly"];
+const FILTER_TYPE_IDS = FILTER_TYPES.map(([value]) => value);
 
 const defaultState = {
   activeMode: "tasks",
@@ -125,43 +128,115 @@ let focusSeconds = 25 * 60;
 let focusTimer = null;
 
 function loadState() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw == null) return structuredClone(defaultState);
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (saved?.tasks && saved?.lists) {
+    const saved = JSON.parse(raw);
+    if (Array.isArray(saved?.tasks) && Array.isArray(saved?.lists)) {
       return saved;
     }
   } catch {
-    return structuredClone(defaultState);
+    // fall through to backup + defaults
   }
-
+  try {
+    localStorage.setItem(`${STORAGE_KEY}.corrupt`, raw);
+    toast("检测到本地数据损坏，原始内容已备份到浏览器存储，应用已重置");
+  } catch {
+    toast("检测到本地数据损坏且无法备份，应用已重置");
+  }
   return structuredClone(defaultState);
 }
 
+function sanitizeText(value, fallback) {
+  return typeof value === "string" && value.trim() ? value : fallback;
+}
+
+function sanitizeColor(color) {
+  return typeof color === "string" && /^#[0-9a-fA-F]{6}$/.test(color) ? color : "#4778ff";
+}
+
+function sanitizeList(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  return {
+    id: sanitizeText(raw.id, "") || createId(),
+    name: sanitizeText(raw.name, "未命名清单"),
+    color: sanitizeColor(raw.color),
+  };
+}
+
+function sanitizeFilter(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  return {
+    id: sanitizeText(raw.id, "") || createId(),
+    name: sanitizeText(raw.name, "未命名筛选"),
+    type: FILTER_TYPE_IDS.includes(raw.type) ? raw.type : "overdue",
+  };
+}
+
+function sanitizeSubtask(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  return {
+    id: sanitizeText(raw.id, "") || createId(),
+    title: sanitizeText(raw.title, "未命名检查项"),
+    completed: Boolean(raw.completed),
+    reminder: typeof raw.reminder === "string" ? raw.reminder : "",
+  };
+}
+
+function sanitizeTask(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const now = Date.now();
+  return {
+    id: sanitizeText(raw.id, "") || createId(),
+    title: sanitizeText(raw.title, "未命名任务"),
+    listId: sanitizeText(raw.listId, "inbox"),
+    startDate: typeof raw.startDate === "string" ? raw.startDate : "",
+    dueDate: typeof raw.dueDate === "string" ? raw.dueDate : "",
+    priority: PRIORITY_IDS.includes(raw.priority) ? raw.priority : "none",
+    completed: Boolean(raw.completed),
+    reminder: typeof raw.reminder === "string" ? raw.reminder : "",
+    estimatePomos: Math.max(0, Math.round(Number(raw.estimatePomos) || 0)),
+    actualPomos: Math.max(0, Math.round(Number(raw.actualPomos) || 0)),
+    notes: typeof raw.notes === "string" ? raw.notes : "",
+    repeat: REPEAT_IDS.includes(raw.repeat) ? raw.repeat : "",
+    tags: Array.isArray(raw.tags)
+      ? [...new Set(raw.tags.filter((tag) => typeof tag === "string" && tag.trim()).map((tag) => tag.trim()))]
+      : [],
+    subtasks: Array.isArray(raw.subtasks) ? raw.subtasks.map(sanitizeSubtask).filter(Boolean) : [],
+    history: Array.isArray(raw.history)
+      ? raw.history.filter((item) => item && typeof item === "object" && typeof item.text === "string").slice(0, 30)
+      : [],
+    createdAt: Number(raw.createdAt) || now,
+    updatedAt: Number(raw.updatedAt) || now,
+  };
+}
+
 function normalizeState(nextState) {
-  nextState.activeMode ??= "tasks";
-  nextState.activeView ??= "today";
-  nextState.theme ??= "light";
-  nextState.calendarMonth ??= todayKey.slice(0, 7);
-  nextState.notified ??= {};
-  nextState.filters ??= structuredClone(defaultState.filters);
-  nextState.tasks = nextState.tasks.map((task) => ({
-    startDate: "",
-    dueDate: "",
-    reminder: "",
-    estimatePomos: 0,
-    actualPomos: 0,
-    notes: "",
-    repeat: "",
-    tags: [],
-    history: [],
-    subtasks: [],
-    ...task,
-  }));
+  nextState.activeMode = sanitizeText(nextState.activeMode, "tasks");
+  nextState.activeView = sanitizeText(nextState.activeView, "today");
+  nextState.theme = sanitizeText(nextState.theme, "light");
+  nextState.calendarMonth = sanitizeText(nextState.calendarMonth, todayKey.slice(0, 7));
+  nextState.notified =
+    nextState.notified && typeof nextState.notified === "object" && !Array.isArray(nextState.notified)
+      ? nextState.notified
+      : {};
+  nextState.lists = (Array.isArray(nextState.lists) ? nextState.lists : []).map(sanitizeList).filter(Boolean);
+  if (!nextState.lists.some((list) => list.id === "inbox")) {
+    nextState.lists.unshift({ id: "inbox", name: "收集箱", color: "#4778ff" });
+  }
+  nextState.filters = Array.isArray(nextState.filters)
+    ? nextState.filters.map(sanitizeFilter).filter(Boolean)
+    : structuredClone(defaultState.filters);
+  nextState.tasks = (Array.isArray(nextState.tasks) ? nextState.tasks : []).map(sanitizeTask).filter(Boolean);
   return nextState;
 }
 
 function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    toast("保存失败：浏览器存储空间不足，请导出数据后清理");
+  }
 }
 
 function createId() {
@@ -484,17 +559,30 @@ function toast(message) {
 function notify(title, body) {
   toast(body ? `${title}：${body}` : title);
   if (window.Notification?.permission === "granted") {
-    const notice = new Notification(title, { body });
-    notice.addEventListener("click", () => window.focus());
+    try {
+      const notice = new Notification(title, { body });
+      notice.addEventListener("click", () => window.focus());
+    } catch {
+      // Android Chrome 等环境的页面级 Notification 构造器会抛错，页内 toast 已兜底
+    }
   }
 }
 
 function ensureNotifyPermission() {
   if (!window.Notification || Notification.permission !== "default") return;
-  Notification.requestPermission().then((permission) => {
+  let reported = false;
+  const report = (permission) => {
+    if (reported) return;
+    reported = true;
     if (permission === "granted") toast("已开启系统通知，提醒会准时弹出");
     if (permission === "denied") toast("浏览器通知被拒绝，提醒将只在页面内显示");
-  });
+  };
+  try {
+    const result = Notification.requestPermission(report);
+    if (result?.then) result.then(report).catch(() => {});
+  } catch {
+    // Safari ≤15 只接受回调形式，上面的调用已带回调；到这里说明连回调形式都不可用
+  }
 }
 
 function reminderId(itemId, reminder) {
@@ -757,7 +845,14 @@ function openImportModal(raw) {
 }
 
 function mergeImport(raw) {
-  const incoming = normalizeState(raw);
+  let incoming;
+  try {
+    incoming = normalizeState(structuredClone(raw));
+  } catch {
+    closeModal();
+    toast("导入失败：文件内容无法解析为有效数据");
+    return;
+  }
   const listIds = new Set(state.lists.map((item) => item.id));
   incoming.lists.forEach((list) => {
     if (!listIds.has(list.id)) state.lists.push(list);
@@ -775,21 +870,29 @@ function mergeImport(raw) {
     }
   });
   closeModal();
+  muteStaleReminders();
   saveState();
   render();
   toast(`合并完成：新增 ${added} 个任务`);
 }
 
 function replaceImport(raw) {
-  delete raw.version;
-  state = normalizeState(raw);
-  if (!state.lists.some((list) => list.id === "inbox")) {
-    state.lists.unshift({ id: "inbox", name: "收集箱", color: "#4778ff" });
+  let next;
+  try {
+    next = structuredClone(raw);
+    delete next.version;
+    next = normalizeState(next);
+  } catch {
+    closeModal();
+    toast("导入失败：文件内容无法解析为有效数据");
+    return;
   }
-  state.activeMode = "tasks";
-  state.activeView = "today";
-  state.selectedTaskId = null;
+  next.activeMode = "tasks";
+  next.activeView = "today";
+  next.selectedTaskId = null;
+  state = next;
   closeModal();
+  muteStaleReminders();
   saveState();
   render();
   toast(`已导入 ${state.tasks.length} 个任务`);
@@ -1160,6 +1263,14 @@ els.exportData.addEventListener("click", async () => {
   }
 });
 
+function isImportShape(parsed) {
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return false;
+  if (!Array.isArray(parsed.tasks) || !Array.isArray(parsed.lists)) return false;
+  if (parsed.filters !== undefined && !Array.isArray(parsed.filters)) return false;
+  if (parsed.notified !== undefined && (typeof parsed.notified !== "object" || Array.isArray(parsed.notified))) return false;
+  return true;
+}
+
 els.importData.addEventListener("click", () => els.importFile.click());
 els.importFile.addEventListener("change", async () => {
   const file = els.importFile.files[0];
@@ -1167,7 +1278,7 @@ els.importFile.addEventListener("change", async () => {
   if (!file) return;
   try {
     const parsed = JSON.parse(await file.text());
-    if (!Array.isArray(parsed?.tasks) || !Array.isArray(parsed?.lists)) throw new Error("invalid");
+    if (!isImportShape(parsed)) throw new Error("invalid");
     openImportModal(parsed);
   } catch {
     toast("导入失败：不是有效的 DockTodo 数据文件");
@@ -1290,6 +1401,19 @@ els.deleteTask.addEventListener("click", () => {
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") closeModal();
+});
+
+window.addEventListener("storage", (event) => {
+  if (event.key !== STORAGE_KEY || typeof event.newValue !== "string") return;
+  try {
+    const incoming = JSON.parse(event.newValue);
+    if (!Array.isArray(incoming?.tasks) || !Array.isArray(incoming?.lists)) return;
+    state = normalizeState(incoming);
+  } catch {
+    return;
+  }
+  closeModal();
+  render();
 });
 
 Object.entries(REPEAT_LABELS).forEach(([value, label]) => {
