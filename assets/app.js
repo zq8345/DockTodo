@@ -1403,8 +1403,8 @@ function renderCalendar() {
   els.calendarGrid.replaceChildren();
   weekdayNames().forEach((weekday) => {
     const cell = document.createElement("div");
-    cell.className = "calendar-day muted";
-    cell.innerHTML = `<div class="calendar-date">${weekday}</div>`;
+    cell.className = "calendar-head";
+    cell.textContent = weekday;
     els.calendarGrid.append(cell);
   });
 
@@ -1416,35 +1416,38 @@ function renderCalendar() {
     const date = new Date(start);
     date.setDate(start.getDate() + i);
     const key = formatDate(date);
-    const count = countTasks((task) => taskDate(task) === key);
+    const dayTasks = state.tasks.filter((task) => taskDate(task) === key);
     const cell = document.createElement("div");
     cell.className = "calendar-day";
     cell.classList.toggle("muted", date.getMonth() !== month - 1);
     cell.classList.toggle("today", key === todayKey);
     // No bare "0": only show a count badge when the day has tasks.
-    cell.innerHTML = `<div class="calendar-date"><span>${date.getDate()}</span>${count ? `<span class="calendar-count">${count}</span>` : ""}</div>`;
-    state.tasks
-      .filter((task) => taskDate(task) === key)
-      .slice(0, 3)
-      .forEach((task) => {
-        const item = document.createElement("button");
-        item.type = "button";
-        item.className = "calendar-task";
-        const dot = document.createElement("span");
-        dot.className = "calendar-dot";
-        dot.style.background = state.lists.find((list) => list.id === task.listId)?.color ?? "var(--accent)";
-        const label = document.createElement("span");
-        label.textContent = task.title;
-        item.append(dot, label);
-        item.addEventListener("click", () => {
-          state.selectedTaskId = task.id;
-          state.activeMode = "tasks";
-          state.activeView = "all";
-          saveState();
-          render();
-        });
-        cell.append(item);
+    cell.innerHTML = `<div class="calendar-date"><span>${date.getDate()}</span>${dayTasks.length ? `<span class="calendar-count">${dayTasks.length}</span>` : ""}</div>`;
+    dayTasks.slice(0, 3).forEach((task) => {
+      const item = document.createElement("button");
+      item.type = "button";
+      item.className = "calendar-task";
+      const dot = document.createElement("span");
+      dot.className = "calendar-dot";
+      dot.style.background = state.lists.find((list) => list.id === task.listId)?.color ?? "var(--accent)";
+      const label = document.createElement("span");
+      label.textContent = task.title;
+      item.append(dot, label);
+      item.addEventListener("click", () => {
+        state.selectedTaskId = task.id;
+        state.activeMode = "tasks";
+        state.activeView = "all";
+        saveState();
+        render();
       });
+      cell.append(item);
+    });
+    if (dayTasks.length > 3) {
+      const more = document.createElement("div");
+      more.className = "calendar-more";
+      more.textContent = t("calendar.more", { n: dayTasks.length - 3 });
+      cell.append(more);
+    }
     els.calendarGrid.append(cell);
   }
 }

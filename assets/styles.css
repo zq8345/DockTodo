@@ -543,12 +543,24 @@ h2 {
 
 .calendar-grid {
   display: grid;
-  grid-template-columns: repeat(7, minmax(86px, 1fr));
+  /* minmax(0, 1fr): columns share the width evenly and may shrink below the
+     content size — labels ellipsize instead of forcing a horizontal scroll. */
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 1px;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--line);
+}
+
+.calendar-head {
+  padding: 8px 6px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 .calendar-day {
@@ -614,6 +626,17 @@ h2 {
   color: var(--muted);
   font-size: 11px;
   text-align: center;
+}
+
+.calendar-more {
+  margin-top: 2px;
+  padding: 0 4px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.calendar-day.muted .calendar-task {
+  color: var(--muted);
 }
 
 .focus-view,
@@ -1552,5 +1575,24 @@ h2 {
 
   .head-actions {
     flex-wrap: wrap;
+  }
+
+  /* Compact month grid: date + dots only, no event labels. */
+  .calendar-view {
+    padding: 12px;
+  }
+
+  .calendar-day {
+    min-height: 64px;
+    padding: 4px;
+  }
+
+  .calendar-task {
+    padding: 2px 4px;
+  }
+
+  .calendar-task span:last-child,
+  .calendar-more {
+    display: none;
   }
 }

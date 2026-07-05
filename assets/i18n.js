@@ -88,6 +88,7 @@ const STRINGS = {
     "calendar.prev": "Prev",
     "calendar.next": "Next",
     "calendar.title": "{month} {year}",
+    "calendar.more": "+{n} more",
     // focus
     "focus.timer": "Focus timer",
     "focus.start": "Start",
@@ -386,6 +387,7 @@ const STRINGS = {
     "calendar.prev": "上月",
     "calendar.next": "下月",
     "calendar.title": "{year} 年 {month} 月",
+    "calendar.more": "还有 {n} 项",
     "focus.timer": "专注计时",
     "focus.start": "开始",
     "focus.pause": "暂停",
