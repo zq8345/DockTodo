@@ -24,6 +24,7 @@ const els = {
   settingsView: document.querySelector("#settingsView"),
   clientsView: document.querySelector("#clientsView"),
   timesheetView: document.querySelector("#timesheetView"),
+  invoiceView: document.querySelector("#invoiceView"),
   billingStrip: document.querySelector("#billingStrip"),
   taskForm: document.querySelector("#taskForm"),
   taskInput: document.querySelector("#taskInput"),
@@ -79,6 +80,7 @@ let state = normalizeState(loadState());
 let focusSeconds = 25 * 60;
 let focusTimer = null;
 let focusSession = null; // { taskId, startedAt } — set when the timer starts from idle, kept across pauses
+let invoicePreview = null; // invoice currently shown in the preview pane (draft or saved snapshot)
 
 function taskDate(task) {
   return task.dueDate || task.startDate || "";
@@ -840,6 +842,7 @@ function render() {
   renderSettings();
   renderClients();
   renderTimesheet();
+  renderInvoices();
   renderBillingStrip();
   renderDetail();
 }
@@ -858,6 +861,7 @@ function renderModes() {
   els.settingsView.classList.toggle("hidden", state.activeMode !== "settings");
   els.clientsView.classList.toggle("hidden", state.activeMode !== "clients");
   els.timesheetView.classList.toggle("hidden", state.activeMode !== "timesheet");
+  els.invoiceView.classList.toggle("hidden", state.activeMode !== "invoices");
 }
 
 function escapeHtml(value) {
@@ -998,6 +1002,149 @@ function renderBillingStrip() {
     timerChip = `<span class="bs-timer">◉ ${els.focusTime.textContent}${task ? ` · ${escapeHtml(task.title)}` : ""}</span>`;
   }
   els.billingStrip.innerHTML = `<span class="bs-week"><em>${t("billing.thisWeek")}</em> ${escapeHtml(summary)}</span>${timerChip}`;
+}
+
+function renderInvoices() {
+  if (state.activeMode !== "invoices") return;
+  const clientOptions = state.clients.map((client) => `<option value="${client.id}">${escapeHtml(client.name)}</option>`).join("");
+  const defaultNumber = `INV-${String(state.settings.invoiceCounter).padStart(4, "0")}`;
+  const savedRows = state.invoices.length
+    ? state.invoices
+        .slice()
+        .sort((a, b) => b.createdAt - a.createdAt)
+        .map((inv) => {
+          const client = state.clients.find((item) => item.id === inv.clientId);
+          return `<div class="inv-saved-row"><button class="inv-open" type="button" data-open="${inv.id}"><strong>${escapeHtml(inv.number)}</strong><span>${escapeHtml(client?.name ?? "—")} · ${escapeHtml(moneyFormat(inv.totalCents, inv.currency))}</span></button><button class="cp-edit" type="button" data-del-invoice="${inv.id}">×</button></div>`;
+        })
+        .join("")
+    : `<p class="cp-empty">${t("invoice.noSaved")}</p>`;
+  els.invoiceView.innerHTML = `
+    <div class="inv-board">
+      <div class="inv-generator no-print">
+        <h2>${t("invoice.title")}</h2>
+        <div class="inv-form">
+          <label class="modal-field"><span>${t("invoice.client")}</span><select id="invClient">${clientOptions}</select></label>
+          <label class="modal-field"><span>${t("invoice.from")}</span><input id="invFrom" type="date" value="${addDays(todayKey, -30)}" /></label>
+          <label class="modal-field"><span>${t("invoice.to")}</span><input id="invTo" type="date" value="${todayKey}" /></label>
+          <label class="modal-field"><span>${t("invoice.groupBy")}</span><select id="invGroupBy"><option value="project">${t("invoice.byProject")}</option><option value="task">${t("invoice.byTask")}</option></select></label>
+          <label class="modal-field"><span>${t("invoice.tax")}</span><input id="invTax" type="number" min="0" step="0.01" value="${state.settings.taxRateBp / 100}" /></label>
+          <label class="modal-field"><span>${t("invoice.number")}</span><input id="invNumber" type="text" value="${escapeHtml(defaultNumber)}" /></label>
+          <label class="modal-field inv-wide"><span>${t("invoice.sender")}</span><textarea id="invSender" rows="2" placeholder="${escapeHtml(t("invoice.senderPlaceholder"))}">${escapeHtml(state.settings.senderInfo)}</textarea></label>
+          <label class="modal-field inv-wide"><span>${t("invoice.note")}</span><input id="invNote" type="text" /></label>
+        </div>
+        <button class="primary-btn" type="button" id="invGenerate">${t("invoice.generate")}</button>
+      </div>
+      <div class="inv-preview">${invoicePreview ? invoiceDocHtml(invoicePreview) : ""}</div>
+      <div class="inv-saved no-print">
+        <h3>${t("invoice.saved")}</h3>
+        ${savedRows}
+      </div>
+    </div>
+  `;
+  els.invoiceView.querySelector("#invGenerate").addEventListener("click", () => {
+    const view = els.invoiceView;
+    invoicePreview = buildInvoice({
+      clientId: view.querySelector("#invClient").value,
+      dateFrom: view.querySelector("#invFrom").value,
+      dateTo: view.querySelector("#invTo").value,
+      groupBy: view.querySelector("#invGroupBy").value,
+      taxRateBp: Math.round((Number(view.querySelector("#invTax").value) || 0) * 100),
+      number: view.querySelector("#invNumber").value.trim() || defaultNumber,
+      senderInfo: view.querySelector("#invSender").value,
+      note: view.querySelector("#invNote").value,
+    });
+    render();
+  });
+  const preview = els.invoiceView.querySelector(".inv-preview");
+  preview.querySelector("#invIssue")?.addEventListener("click", () => issueInvoice(invoicePreview));
+  preview.querySelector("#invPrint")?.addEventListener("click", printInvoice);
+  preview.querySelector("#invCsv")?.addEventListener("click", () => downloadFile(`${invoicePreview.number}.csv`, "text/csv", invoiceCsv(invoicePreview)));
+  els.invoiceView.querySelectorAll("[data-open]").forEach((el) =>
+    el.addEventListener("click", () => {
+      invoicePreview = state.invoices.find((inv) => inv.id === el.dataset.open);
+      render();
+    })
+  );
+  els.invoiceView.querySelectorAll("[data-del-invoice]").forEach((el) =>
+    el.addEventListener("click", () => {
+      const inv = state.invoices.find((item) => item.id === el.dataset.delInvoice);
+      confirmModal(t("confirm.deleteInvoice", { number: inv.number }), () => {
+        state.invoices = state.invoices.filter((item) => item.id !== inv.id);
+        if (invoicePreview?.id === inv.id) invoicePreview = null;
+        saveState();
+        render();
+        toast(t("toast.invoiceDeleted"));
+      });
+    })
+  );
+}
+
+function invoiceDocHtml(inv) {
+  const client = state.clients.find((item) => item.id === inv.clientId);
+  const isSaved = state.invoices.some((item) => item.id === inv.id);
+  const rows = inv.lines.length
+    ? inv.lines
+        .map(
+          (line) =>
+            `<tr><td>${escapeHtml(line.desc)}</td><td class="ts-num">${formatHours(line.seconds)}</td><td class="ts-num">${
+              line.rateCents != null ? escapeHtml(moneyFormat(line.rateCents, inv.currency)) : t("invoice.mixed")
+            }</td><td class="ts-num">${escapeHtml(moneyFormat(line.amountCents, inv.currency))}</td></tr>`
+        )
+        .join("")
+    : `<tr><td colspan="4" class="cp-empty">${t("invoice.noLines")}</td></tr>`;
+  const excluded = inv.excludedCurrency
+    ? `<p class="ts-warn no-print">${escapeHtml(t("invoice.excluded", { n: inv.excludedCurrency }))}</p>`
+    : "";
+  const taxRow = inv.taxRateBp
+    ? `<tr><td colspan="3" class="ts-num">${t("invoice.taxLine")} ${inv.taxRateBp / 100}%</td><td class="ts-num">${escapeHtml(moneyFormat(inv.taxCents, inv.currency))}</td></tr>`
+    : "";
+  return `
+    ${excluded}
+    <div class="invoice-doc">
+      <div class="inv-doc-head">
+        <h1>${escapeHtml(inv.number)}</h1>
+        <p>${t("invoice.date")}: ${inv.issueDate}<br />${t("invoice.period")}: ${inv.dateFrom} – ${inv.dateTo}</p>
+      </div>
+      <div class="inv-parties">
+        <div><h4>${t("invoice.fromLabel")}</h4><pre>${escapeHtml(inv.senderInfo || "—")}</pre></div>
+        <div><h4>${t("invoice.billTo")}</h4><pre>${escapeHtml(inv.billingInfo || client?.name || "—")}</pre></div>
+      </div>
+      <table class="inv-table">
+        <thead><tr><th>${t("invoice.description")}</th><th class="ts-num">${t("invoice.hours")}</th><th class="ts-num">${t("invoice.rate")}</th><th class="ts-num">${t("invoice.amount")}</th></tr></thead>
+        <tbody>${rows}</tbody>
+        <tfoot>
+          <tr><td colspan="3" class="ts-num">${t("invoice.subtotal")}</td><td class="ts-num">${escapeHtml(moneyFormat(inv.subtotalCents, inv.currency))}</td></tr>
+          ${taxRow}
+          <tr class="inv-total"><td colspan="3" class="ts-num">${t("invoice.total")}</td><td class="ts-num">${escapeHtml(moneyFormat(inv.totalCents, inv.currency))}</td></tr>
+        </tfoot>
+      </table>
+      ${inv.note ? `<p class="inv-note">${escapeHtml(inv.note)}</p>` : ""}
+    </div>
+    <div class="inv-actions no-print">
+      ${isSaved ? "" : `<button class="primary-btn" type="button" id="invIssue">${t("invoice.issue")}</button>`}
+      <button class="soft-btn" type="button" id="invPrint">${t("invoice.print")}</button>
+      <button class="soft-btn" type="button" id="invCsv">${t("invoice.exportCsv")}</button>
+    </div>
+  `;
+}
+
+function issueInvoice(inv) {
+  if (!inv) return;
+  const snapshot = structuredClone(inv);
+  delete snapshot.excludedCurrency;
+  state.invoices.push(snapshot);
+  const match = /^INV-(\d+)$/.exec(snapshot.number);
+  if (match) state.settings.invoiceCounter = Math.max(state.settings.invoiceCounter, Number(match[1]) + 1);
+  invoicePreview = snapshot;
+  saveState();
+  render();
+  toast(t("toast.invoiceSaved", { number: snapshot.number }));
+}
+
+function printInvoice() {
+  document.body.classList.add("print-invoice");
+  window.print();
+  document.body.classList.remove("print-invoice");
 }
 
 function renderSettings() {

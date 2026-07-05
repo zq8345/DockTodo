@@ -99,3 +99,88 @@ function downloadFile(name, mime, text) {
   link.click();
   URL.revokeObjectURL(link.href);
 }
+
+function invoiceEntriesInRange(client, dateFrom, dateTo) {
+  const projectIds = new Set(state.projects.filter((project) => project.clientId === client.id).map((project) => project.id));
+  const inRange = [];
+  let excludedCurrency = 0;
+  state.timeEntries.forEach((entry) => {
+    if (!entry.billable) return;
+    const task = state.tasks.find((item) => item.id === entry.taskId);
+    if (!task || !projectIds.has(task.projectId)) return;
+    const day = formatDate(new Date(entry.start));
+    if (day < dateFrom || day > dateTo) return;
+    if (entry.currency !== client.currency) {
+      excludedCurrency += 1;
+      return;
+    }
+    inRange.push({ entry, task });
+  });
+  return { inRange, excludedCurrency };
+}
+
+// Build a frozen invoice snapshot. Lines sum per-entry cents (never
+// re-multiplied); tax = round(subtotal × basis points / 10000) stays integer.
+function buildInvoice(opts) {
+  const client = state.clients.find((item) => item.id === opts.clientId);
+  if (!client) return null;
+  const { inRange, excludedCurrency } = invoiceEntriesInRange(client, opts.dateFrom, opts.dateTo);
+  const lineMap = new Map();
+  inRange.forEach(({ entry, task }) => {
+    const project = state.projects.find((item) => item.id === task.projectId);
+    const key = opts.groupBy === "task" ? task.id : project?.id ?? "";
+    const desc = opts.groupBy === "task" ? task.title : project?.name ?? "—";
+    if (!lineMap.has(key)) lineMap.set(key, { desc, seconds: 0, amountCents: 0, rates: new Set() });
+    const line = lineMap.get(key);
+    line.seconds += entry.seconds;
+    line.amountCents += entryAmountCents(entry);
+    line.rates.add(entry.rateSnapshotCents);
+  });
+  const lines = [...lineMap.values()].map((line) => ({
+    desc: line.desc,
+    seconds: line.seconds,
+    rateCents: line.rates.size === 1 ? [...line.rates][0] : null,
+    amountCents: line.amountCents,
+  }));
+  const subtotalCents = lines.reduce((sum, line) => sum + line.amountCents, 0);
+  const taxCents = Math.round((subtotalCents * opts.taxRateBp) / 10000);
+  return {
+    id: createId(),
+    number: opts.number,
+    clientId: client.id,
+    dateFrom: opts.dateFrom,
+    dateTo: opts.dateTo,
+    issueDate: opts.issueDate || todayKey,
+    groupBy: opts.groupBy,
+    currency: client.currency,
+    senderInfo: opts.senderInfo,
+    billingInfo: client.billingInfo,
+    note: opts.note,
+    lines,
+    subtotalCents,
+    taxRateBp: opts.taxRateBp,
+    taxCents,
+    totalCents: subtotalCents + taxCents,
+    createdAt: Date.now(),
+    excludedCurrency,
+  };
+}
+
+function invoiceCsv(invoice) {
+  const rows = [["Description", "Hours", "Rate", "Amount", "Currency"]];
+  invoice.lines.forEach((line) =>
+    rows.push([
+      line.desc,
+      formatHours(line.seconds),
+      line.rateCents != null ? centsToMajor(line.rateCents, invoice.currency) : "",
+      centsToMajor(line.amountCents, invoice.currency),
+      invoice.currency,
+    ])
+  );
+  rows.push(["Subtotal", "", "", centsToMajor(invoice.subtotalCents, invoice.currency), invoice.currency]);
+  if (invoice.taxRateBp) {
+    rows.push([`Tax ${invoice.taxRateBp / 100}%`, "", "", centsToMajor(invoice.taxCents, invoice.currency), invoice.currency]);
+  }
+  rows.push(["Total", "", "", centsToMajor(invoice.totalCents, invoice.currency), invoice.currency]);
+  return csvFromRows(rows);
+}
