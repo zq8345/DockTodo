@@ -3,13 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DockNote Local</title>
+    <title>DockTodo Local</title>
     <link rel="stylesheet" href="./assets/styles.css" />
   </head>
   <body>
-    <main class="app" aria-label="DockNote Local">
+    <main class="app" aria-label="DockTodo Local">
       <aside class="rail" aria-label="主导航">
-        <div class="brand" title="DockNote">D</div>
+        <div class="brand" title="DockTodo">D</div>
         <button class="rail-btn active" type="button" data-view="write" title="写作">✎</button>
         <button class="rail-btn" type="button" data-view="library" title="笔记库">☰</button>
         <button class="rail-btn" type="button" data-view="network" title="知识网络">◎</button>
@@ -20,7 +20,7 @@
       <aside class="sidebar" aria-label="笔记库">
         <header class="sidebar-head">
           <div>
-            <p>DockNote Local</p>
+            <p>DockTodo Local</p>
             <h1>本地知识网络</h1>
           </div>
           <button class="icon-btn" id="newNote" type="button" title="新建笔记">+</button>
@@ -65,13 +65,14 @@
       <section class="main-pane" aria-label="编辑区">
         <header class="pane-head">
           <div>
-            <p id="viewMeta">打开就写，系统会帮你连接想法</p>
+            <p id="viewMeta">像 Apple Notes 一样简单，像 Obsidian 一样长期属于你</p>
             <h2 id="viewTitle">写作</h2>
           </div>
           <div class="head-actions">
             <button class="soft-btn" id="insertLink" type="button">插入链接</button>
-            <button class="soft-btn" id="exportNote" type="button">导出 Markdown</button>
-            <button class="primary-btn" id="smartOrganize" type="button">整理当前笔记</button>
+            <button class="soft-btn" id="exportNote" type="button">导出当前</button>
+            <button class="soft-btn" id="exportAll" type="button">导出全部</button>
+            <button class="primary-btn" id="smartOrganize" type="button">自动整理</button>
           </div>
         </header>
 
@@ -122,8 +123,8 @@
       <aside class="insight-pane" aria-label="相关信息">
         <section class="insight-card ownership">
           <span>Local-first</span>
-          <strong>笔记保存在你的浏览器本地</strong>
-          <p>底层按开放文本结构组织，可导出 Markdown。先建立“属于自己”的知识库，再考虑同步和 AI。</p>
+          <strong>你的知识长期属于你</strong>
+          <p>当前笔记保存在浏览器本地，可导出 Markdown。先让积累属于用户，再考虑同步、AI 和发布。</p>
         </section>
 
         <section class="insight-card">
