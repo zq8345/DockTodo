@@ -1230,6 +1230,9 @@ function renderHeader() {
     calendar: t("rail.calendar"),
     focus: t("rail.focus"),
     stats: t("rail.stats"),
+    timesheet: t("rail.timesheet"),
+    invoices: t("rail.invoices"),
+    clients: t("rail.clients"),
     settings: t("rail.settings"),
   }[state.activeMode];
   els.viewTitle.textContent = searchQuery ? t("header.search", { q: searchQuery }) : modeTitle;
@@ -1246,7 +1249,8 @@ function renderNav() {
   els.tagList.replaceChildren();
   state.clients.forEach((client) => {
     const count = countTasks((task) => !task.completed && resolveClient(task)?.id === client.id);
-    els.clientNav.append(navButton(`client:${client.id}`, "●", client.name, count, "var(--accent)"));
+    const rate = t("clients.rate", { rate: moneyFormat(client.hourlyRateCents, client.currency) });
+    els.clientNav.append(navButton(`client:${client.id}`, "●", client.name, count, "var(--accent)", null, rate));
     state.projects
       .filter((project) => project.clientId === client.id)
       .forEach((project) => {
@@ -1257,6 +1261,12 @@ function renderNav() {
       });
   });
   smartDefinitions().forEach((item) => els.smartLists.append(navButton(item.id, item.icon, item.title, item.count)));
+  // Timesheet and invoices are modes rather than task filters, but they are
+  // first-class money views and belong in the sidebar Views group.
+  [
+    { mode: "timesheet", icon: "▤" },
+    { mode: "invoices", icon: "🧾" },
+  ].forEach(({ mode, icon }) => els.smartLists.append(modeNavButton(mode, icon)));
   state.lists.forEach((list) => {
     const count = countTasks((task) => task.listId === list.id && !task.completed);
     const onEdit = list.id === "inbox" ? null : () => openListModal(list);
@@ -1274,11 +1284,14 @@ function renderNav() {
   });
 }
 
-function navButton(id, icon, title, count, color, onEdit) {
+function navButton(id, icon, title, count, color, onEdit, meta) {
   const button = document.createElement("button");
   button.type = "button";
   button.className = "nav-item";
-  button.classList.toggle("active", state.activeView === id);
+  // A view button only reads active while a task view is actually on screen;
+  // in timesheet/invoices/… modes the highlight belongs to the mode entry.
+  const showsTasks = state.activeMode === "tasks" || state.activeMode === "calendar";
+  button.classList.toggle("active", showsTasks && state.activeView === id);
   const iconEl = document.createElement("span");
   if (color) {
     // Lists/clients/projects are shown as an 8px colour dot, not a glyph.
@@ -1293,7 +1306,14 @@ function navButton(id, icon, title, count, color, onEdit) {
   const countEl = document.createElement("span");
   countEl.className = "nav-count";
   countEl.textContent = count;
-  button.append(iconEl, titleEl, countEl);
+  if (meta) {
+    const metaEl = document.createElement("span");
+    metaEl.className = "nav-meta";
+    metaEl.textContent = meta;
+    button.append(iconEl, titleEl, metaEl, countEl);
+  } else {
+    button.append(iconEl, titleEl, countEl);
+  }
   if (onEdit) {
     const edit = document.createElement("span");
     edit.className = "nav-edit";
@@ -1306,6 +1326,20 @@ function navButton(id, icon, title, count, color, onEdit) {
     button.append(edit);
   }
   button.addEventListener("click", () => setView(id));
+  return button;
+}
+
+function modeNavButton(mode, icon) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "nav-item";
+  button.classList.toggle("active", state.activeMode === mode);
+  const iconEl = document.createElement("span");
+  iconEl.textContent = icon;
+  const titleEl = document.createElement("span");
+  titleEl.textContent = t(`rail.${mode}`);
+  button.append(iconEl, titleEl);
+  button.addEventListener("click", () => setMode(mode));
   return button;
 }
 
