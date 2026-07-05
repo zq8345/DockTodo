@@ -540,11 +540,59 @@ h2 {
 }
 
 .focus-view,
-.stats-view {
+.stats-view,
+.settings-view {
   display: grid;
   place-items: center;
   padding: 24px;
   overflow: auto;
+}
+
+.settings-card {
+  display: grid;
+  gap: 16px;
+  width: min(460px, 100%);
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.settings-card h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.settings-field {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.settings-field select {
+  min-height: 38px;
+  padding: 0 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  background: var(--surface);
+  font-weight: 400;
+  outline: none;
+}
+
+.settings-field select:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(71, 120, 255, 0.14);
+}
+
+.settings-hint {
+  margin: -6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .focus-card {

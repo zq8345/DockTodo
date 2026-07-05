@@ -1,6 +1,7 @@
-// 数据层（STORAGE_KEY、常量、defaultState、todayKey、工厂、日期工具、
-// 消毒、loadState / normalizeState / saveState）已移至 assets/data.js，
-// 在本文件之前加载。此处只保留 UI 状态、DOM 与业务逻辑。
+// The data layer (STORAGE_KEY, constants, defaultState, todayKey, factories,
+// sanitizers, load / normalizeState / saveState) lives in assets/data.js,
+// loaded before this file. UI strings live in assets/i18n.js. This file keeps
+// UI state, DOM wiring and business logic.
 let searchQuery = "";
 
 const els = {
@@ -20,7 +21,7 @@ const els = {
   exportData: document.querySelector("#exportData"),
   importData: document.querySelector("#importData"),
   importFile: document.querySelector("#importFile"),
-  themeToggle: document.querySelector("#themeToggle"),
+  settingsView: document.querySelector("#settingsView"),
   taskForm: document.querySelector("#taskForm"),
   taskInput: document.querySelector("#taskInput"),
   taskStart: document.querySelector("#taskStart"),
@@ -80,12 +81,12 @@ function selectedTask() {
 
 function smartDefinitions() {
   return [
-    { id: "today", icon: "☑", title: "今天", count: countTasks((task) => !task.completed && taskDate(task) === todayKey) },
-    { id: "next7", icon: "▣", title: "最近 7 天", count: countTasks((task) => !task.completed && isWithinNextSevenDays(taskDate(task))) },
-    { id: "calendar", icon: "▦", title: "日历", count: countTasks((task) => !task.completed && Boolean(taskDate(task))) },
-    { id: "inbox", icon: "⌂", title: "收集箱", count: countTasks((task) => !task.completed && task.listId === "inbox") },
-    { id: "all", icon: "≡", title: "全部", count: countTasks((task) => !task.completed) },
-    { id: "completed", icon: "✓", title: "已完成", count: countTasks((task) => task.completed) },
+    { id: "today", icon: "☑", title: t("view.today"), count: countTasks((task) => !task.completed && taskDate(task) === todayKey) },
+    { id: "next7", icon: "▣", title: t("view.next7"), count: countTasks((task) => !task.completed && isWithinNextSevenDays(taskDate(task))) },
+    { id: "calendar", icon: "▦", title: t("view.calendar"), count: countTasks((task) => !task.completed && Boolean(taskDate(task))) },
+    { id: "inbox", icon: "⌂", title: t("view.inbox"), count: countTasks((task) => !task.completed && task.listId === "inbox") },
+    { id: "all", icon: "≡", title: t("view.all"), count: countTasks((task) => !task.completed) },
+    { id: "completed", icon: "✓", title: t("view.completed"), count: countTasks((task) => task.completed) },
   ];
 }
 
@@ -93,9 +94,7 @@ function countTasks(predicate) {
   return state.tasks.filter(predicate).length;
 }
 
-function priorityLabel(priority) {
-  return { high: "高优先级", medium: "中优先级", low: "低优先级", none: "无优先级" }[priority] ?? "无优先级";
-}
+// priorityLabel / priorityShort live in assets/i18n.js.
 
 function getActiveTitle() {
   if (state.activeView.startsWith("tag:")) return `#${state.activeView.slice(4)}`;
@@ -104,7 +103,7 @@ function getActiveTitle() {
   const list = state.lists.find((item) => item.id === state.activeView);
   if (list) return list.name;
   const filter = state.filters.find((item) => item.id === state.activeView);
-  return filter?.name ?? "任务";
+  return filter?.name ?? t("view.tasks");
 }
 
 function getViewType(view = state.activeView) {
@@ -176,13 +175,13 @@ function groupedTasks(tasks) {
 }
 
 function groupName(task) {
-  if (task.completed) return "已完成";
+  if (task.completed) return t("group.completed");
   const date = taskDate(task);
-  if (!date) return "无日期";
-  if (date < todayKey) return "已逾期";
-  if (date === todayKey) return "今天";
-  if (date === addDays(todayKey, 1)) return "明天";
-  return "之后";
+  if (!date) return t("group.nodate");
+  if (date < todayKey) return t("group.overdue");
+  if (date === todayKey) return t("group.today");
+  if (date === addDays(todayKey, 1)) return t("group.tomorrow");
+  return t("group.later");
 }
 
 function currentDefaultListId() {
@@ -280,7 +279,7 @@ function setTaskCompleted(task, completed) {
     snapshot.repeat = "";
     snapshot.completed = true;
     snapshot.updatedAt = Date.now();
-    snapshot.history = [{ at: Date.now(), text: "完成循环任务" }, ...snapshot.history].slice(0, 30);
+    snapshot.history = [{ at: Date.now(), text: t("history.repeatDone") }, ...snapshot.history].slice(0, 30);
     state.tasks.push(snapshot);
 
     const base = task.dueDate || task.startDate || todayKey;
@@ -292,11 +291,11 @@ function setTaskCompleted(task, completed) {
       subtask.completed = false;
       subtask.reminder = shiftDateTime(subtask.reminder, days);
     });
-    addHistory(task, `完成一次循环，顺延至 ${dateLabel(taskDate(task))}`);
-    toast(`已记录完成，下次：${dateLabel(taskDate(task))}`);
+    addHistory(task, t("history.repeatAdvanced", { date: dateLabel(taskDate(task)) }));
+    toast(t("toast.repeatNext", { date: dateLabel(taskDate(task)) }));
   } else {
     task.completed = completed;
-    addHistory(task, completed ? "完成任务" : "重新打开任务");
+    addHistory(task, completed ? t("history.completed") : t("history.reopened"));
   }
   saveState();
   render();
@@ -320,7 +319,8 @@ function notify(title, body) {
       const notice = new Notification(title, { body });
       notice.addEventListener("click", () => window.focus());
     } catch {
-      // Android Chrome 等环境的页面级 Notification 构造器会抛错，页内 toast 已兜底
+      // Some environments (e.g. Android Chrome) throw on the page-level
+      // Notification constructor; the in-page toast already covers us.
     }
   }
 }
@@ -331,14 +331,15 @@ function ensureNotifyPermission() {
   const report = (permission) => {
     if (reported) return;
     reported = true;
-    if (permission === "granted") toast("已开启系统通知，提醒会准时弹出");
-    if (permission === "denied") toast("浏览器通知被拒绝，提醒将只在页面内显示");
+    if (permission === "granted") toast(t("notify.granted"));
+    if (permission === "denied") toast(t("notify.denied"));
   };
   try {
     const result = Notification.requestPermission(report);
     if (result?.then) result.then(report).catch(() => {});
   } catch {
-    // Safari ≤15 只接受回调形式，上面的调用已带回调；到这里说明连回调形式都不可用
+    // Safari <=15 only accepts the callback form (already passed above); if we
+    // land here even that is unavailable.
   }
 }
 
@@ -353,11 +354,11 @@ function checkReminders() {
   state.tasks.forEach((task) => {
     if (task.completed) return;
     if (task.reminder && task.reminder <= nowValue) {
-      fired = fireReminder(reminderId(task.id, task.reminder), "任务提醒", task.title) || fired;
+      fired = fireReminder(reminderId(task.id, task.reminder), t("reminder.task"), task.title) || fired;
     }
     task.subtasks.forEach((subtask) => {
       if (!subtask.completed && subtask.reminder && subtask.reminder <= nowValue) {
-        fired = fireReminder(reminderId(subtask.id, subtask.reminder), "检查项提醒", `${task.title} · ${subtask.title}`) || fired;
+        fired = fireReminder(reminderId(subtask.id, subtask.reminder), t("reminder.subtask"), `${task.title} · ${subtask.title}`) || fired;
       }
     });
   });
@@ -463,12 +464,12 @@ function modalText(message) {
 }
 
 function confirmModal(message, onConfirm) {
-  openModal("确认操作", (modal) => {
+  openModal(t("modal.confirm"), (modal) => {
     modal.append(
       modalText(message),
       modalActions(
-        modalButton("取消", "soft-btn", closeModal),
-        modalButton("确定", "primary-btn", () => {
+        modalButton(t("action.cancel"), "soft-btn", closeModal),
+        modalButton(t("action.ok"), "primary-btn", () => {
           closeModal();
           onConfirm();
         })
@@ -478,21 +479,21 @@ function confirmModal(message, onConfirm) {
 }
 
 function openListModal(list) {
-  openModal(list ? "编辑清单" : "新建清单", (modal) => {
+  openModal(list ? t("list.edit") : t("list.new"), (modal) => {
     const nameInput = document.createElement("input");
     nameInput.type = "text";
     nameInput.maxLength = 30;
-    nameInput.placeholder = "清单名称";
+    nameInput.placeholder = t("list.namePlaceholder");
     nameInput.value = list?.name ?? "";
     const colorInput = document.createElement("input");
     colorInput.type = "color";
     colorInput.value = list?.color ?? "#4778ff";
-    modal.append(modalField("名称", nameInput), modalField("颜色", colorInput));
+    modal.append(modalField(t("field.name"), nameInput), modalField(t("field.color"), colorInput));
 
     if (list && list.id !== "inbox") {
       modal.append(
-        modalButton("删除清单（任务移回收集箱）", "danger-btn", () => {
-          confirmModal(`删除清单「${list.name}」？其中的任务会移回收集箱。`, () => {
+        modalButton(t("list.deleteBtn"), "danger-btn", () => {
+          confirmModal(t("confirm.deleteList", { name: list.name }), () => {
             state.tasks.forEach((task) => {
               if (task.listId === list.id) task.listId = "inbox";
             });
@@ -500,7 +501,7 @@ function openListModal(list) {
             if (state.activeView === list.id) state.activeView = "today";
             saveState();
             render();
-            toast(`已删除清单「${list.name}」`);
+            toast(t("toast.listDeleted", { name: list.name }));
           });
         })
       );
@@ -508,8 +509,8 @@ function openListModal(list) {
 
     modal.append(
       modalActions(
-        modalButton("取消", "soft-btn", closeModal),
-        modalButton("保存", "primary-btn", () => {
+        modalButton(t("action.cancel"), "soft-btn", closeModal),
+        modalButton(t("form.save"), "primary-btn", () => {
           const name = nameInput.value.trim();
           if (!name) {
             nameInput.focus();
@@ -533,39 +534,39 @@ function openListModal(list) {
 }
 
 function openFilterModal(filter) {
-  openModal(filter ? "编辑筛选器" : "新建筛选器", (modal) => {
+  openModal(filter ? t("filter.edit") : t("filter.new"), (modal) => {
     const nameInput = document.createElement("input");
     nameInput.type = "text";
     nameInput.maxLength = 30;
-    nameInput.placeholder = "筛选器名称";
+    nameInput.placeholder = t("filter.namePlaceholder");
     nameInput.value = filter?.name ?? "";
     const typeSelect = document.createElement("select");
-    FILTER_TYPES.forEach(([value, label]) => {
+    FILTER_TYPE_IDS.forEach((value) => {
       const option = document.createElement("option");
       option.value = value;
-      option.textContent = label;
+      option.textContent = filterTypeLabel(value);
       typeSelect.append(option);
     });
     typeSelect.value = filter?.type ?? "overdue";
-    modal.append(modalField("名称", nameInput), modalField("条件", typeSelect));
+    modal.append(modalField(t("field.name"), nameInput), modalField(t("field.condition"), typeSelect));
 
     if (filter) {
       modal.append(
-        modalButton("删除筛选器", "danger-btn", () => {
+        modalButton(t("filter.deleteBtn"), "danger-btn", () => {
           state.filters = state.filters.filter((item) => item.id !== filter.id);
           if (state.activeView === filter.id) state.activeView = "today";
           closeModal();
           saveState();
           render();
-          toast(`已删除筛选器「${filter.name}」`);
+          toast(t("toast.filterDeleted", { name: filter.name }));
         })
       );
     }
 
     modal.append(
       modalActions(
-        modalButton("取消", "soft-btn", closeModal),
-        modalButton("保存", "primary-btn", () => {
+        modalButton(t("action.cancel"), "soft-btn", closeModal),
+        modalButton(t("form.save"), "primary-btn", () => {
           const name = nameInput.value.trim();
           if (!name) {
             nameInput.focus();
@@ -587,15 +588,15 @@ function openFilterModal(filter) {
 }
 
 function openImportModal(raw) {
-  openModal("导入数据", (modal) => {
+  openModal(t("import.title"), (modal) => {
     modal.append(
-      modalText(`文件包含 ${raw.tasks.length} 个任务、${raw.lists.length} 个清单。选择导入方式：`),
+      modalText(t("import.summary", { tasks: raw.tasks.length, lists: raw.lists.length })),
       modalActions(
-        modalButton("取消", "soft-btn", closeModal),
-        modalButton("替换全部", "danger-btn", () => {
-          confirmModal("替换会覆盖当前所有数据，确定继续？", () => replaceImport(raw));
+        modalButton(t("action.cancel"), "soft-btn", closeModal),
+        modalButton(t("import.replaceAll"), "danger-btn", () => {
+          confirmModal(t("confirm.replaceAll"), () => replaceImport(raw));
         }),
-        modalButton("合并导入", "primary-btn", () => mergeImport(raw))
+        modalButton(t("import.merge"), "primary-btn", () => mergeImport(raw))
       )
     );
   });
@@ -607,7 +608,7 @@ function mergeImport(raw) {
     incoming = normalizeState(structuredClone(raw));
   } catch {
     closeModal();
-    toast("导入失败：文件内容无法解析为有效数据");
+    toast(t("toast.importInvalid"));
     return;
   }
   const listIds = new Set(state.lists.map((item) => item.id));
@@ -630,7 +631,7 @@ function mergeImport(raw) {
   muteStaleReminders();
   saveState();
   render();
-  toast(`合并完成：新增 ${added} 个任务`);
+  toast(t("toast.merged", { n: added }));
 }
 
 function replaceImport(raw) {
@@ -641,7 +642,7 @@ function replaceImport(raw) {
     next = normalizeState(next);
   } catch {
     closeModal();
-    toast("导入失败：文件内容无法解析为有效数据");
+    toast(t("toast.importInvalid"));
     return;
   }
   next.activeMode = "tasks";
@@ -652,7 +653,7 @@ function replaceImport(raw) {
   muteStaleReminders();
   saveState();
   render();
-  toast(`已导入 ${state.tasks.length} 个任务`);
+  toast(t("toast.imported", { n: state.tasks.length }));
 }
 
 function render() {
@@ -664,6 +665,7 @@ function render() {
   renderCalendar();
   renderFocus();
   renderStats();
+  renderSettings();
   renderDetail();
 }
 
@@ -678,15 +680,69 @@ function renderModes() {
   els.calendarView.classList.toggle("hidden", state.activeMode !== "calendar");
   els.focusView.classList.toggle("hidden", state.activeMode !== "focus");
   els.statsView.classList.toggle("hidden", state.activeMode !== "stats");
+  els.settingsView.classList.toggle("hidden", state.activeMode !== "settings");
+}
+
+function renderSettings() {
+  if (state.activeMode !== "settings") return;
+  const languageOptions = Object.keys(STRINGS)
+    .map((code) => `<option value="${code}"${code === currentLang() ? " selected" : ""}>${t(`lang.${code}`)}</option>`)
+    .join("");
+  const themeOptions = ["light", "dark"]
+    .map((th) => `<option value="${th}"${th === state.theme ? " selected" : ""}>${t(`theme.${th}`)}</option>`)
+    .join("");
+  els.settingsView.innerHTML = `
+    <div class="settings-card">
+      <h3>${t("settings.title")}</h3>
+      <label class="settings-field">
+        <span>${t("settings.language")}</span>
+        <select id="settingsLanguage">${languageOptions}</select>
+      </label>
+      <p class="settings-hint">${t("settings.languageHint")}</p>
+      <label class="settings-field">
+        <span>${t("settings.theme")}</span>
+        <select id="settingsTheme">${themeOptions}</select>
+      </label>
+    </div>
+  `;
+  els.settingsView.querySelector("#settingsLanguage").addEventListener("change", (event) => {
+    state.settings.language = event.target.value;
+    setLanguage(event.target.value);
+    saveState();
+    applyStaticI18n();
+    buildRepeatOptions();
+    render();
+  });
+  els.settingsView.querySelector("#settingsTheme").addEventListener("change", (event) => {
+    state.theme = event.target.value;
+    saveState();
+    render();
+  });
+}
+
+function buildRepeatOptions() {
+  els.detailRepeat.replaceChildren();
+  ["", ...REPEAT_IDS].forEach((value) => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = repeatLabel(value);
+    els.detailRepeat.append(option);
+  });
 }
 
 function renderHeader() {
   const open = countTasks((task) => !task.completed);
   const todayOpen = countTasks((task) => !task.completed && taskDate(task) === todayKey);
   const reminders = countTasks((task) => !task.completed && Boolean(task.reminder));
-  const modeTitle = { tasks: getActiveTitle(), calendar: "日历", focus: "专注", stats: "统计" }[state.activeMode];
-  els.viewTitle.textContent = searchQuery ? `搜索“${searchQuery}”` : modeTitle;
-  els.viewMeta.textContent = `${todayOpen} 个今天待办 · ${open} 个未完成 · ${reminders} 个提醒`;
+  const modeTitle = {
+    tasks: getActiveTitle(),
+    calendar: t("rail.calendar"),
+    focus: t("rail.focus"),
+    stats: t("rail.stats"),
+    settings: t("rail.settings"),
+  }[state.activeMode];
+  els.viewTitle.textContent = searchQuery ? t("header.search", { q: searchQuery }) : modeTitle;
+  els.viewMeta.textContent = t("header.meta", { todayOpen, open, reminders });
   els.taskStart.value = currentDefaultDate();
   els.taskDue.value = currentDefaultDate();
 }
@@ -732,7 +788,7 @@ function navButton(id, icon, title, count, color, onEdit) {
     const edit = document.createElement("span");
     edit.className = "nav-edit";
     edit.textContent = "✎";
-    edit.title = "编辑";
+    edit.title = t("title.edit");
     edit.addEventListener("click", (event) => {
       event.stopPropagation();
       onEdit();
@@ -748,7 +804,7 @@ function renderTasks() {
   const done = countTasks((task) => task.completed);
   const estimate = state.tasks.reduce((total, task) => total + Number(task.estimatePomos || 0), 0);
   const actual = state.tasks.reduce((total, task) => total + Number(task.actualPomos || 0), 0);
-  els.statsLine.textContent = `${tasks.length} 个当前任务 · ${done} 个已完成 · 番茄 ${actual}/${estimate}`;
+  els.statsLine.textContent = t("stats.line", { n: tasks.length, done, actual, estimate });
   els.taskList.replaceChildren();
   els.emptyState.classList.toggle("visible", tasks.length === 0);
   Object.entries(groupedTasks(tasks)).forEach(([title, items]) => {
@@ -767,10 +823,10 @@ function taskRow(task) {
   const date = row.querySelector(".task-date");
   const list = state.lists.find((item) => item.id === task.listId);
   const subDone = task.subtasks.filter((item) => item.completed).length;
-  const subText = task.subtasks.length ? ` · 检查项 ${subDone}/${task.subtasks.length}` : "";
-  const reminderText = task.reminder ? ` · 提醒 ${dateTimeLabel(task.reminder)}` : "";
-  const pomoText = task.estimatePomos ? ` · 番茄 ${task.actualPomos}/${task.estimatePomos}` : "";
-  const repeatText = task.repeat ? ` · ↻ ${REPEAT_LABELS[task.repeat] ?? "重复"}` : "";
+  const subText = task.subtasks.length ? ` · ${t("meta.checklist", { done: subDone, total: task.subtasks.length })}` : "";
+  const reminderText = task.reminder ? ` · ${t("meta.reminder", { time: dateTimeLabel(task.reminder) })}` : "";
+  const pomoText = task.estimatePomos ? ` · ${t("meta.pomo", { actual: task.actualPomos, estimate: task.estimatePomos })}` : "";
+  const repeatText = task.repeat ? ` · ↻ ${repeatLabel(task.repeat)}` : "";
   const tagText = task.tags.length ? ` · ${task.tags.map((tag) => `#${tag}`).join(" ")}` : "";
 
   row.classList.toggle("selected", state.selectedTaskId === task.id);
@@ -783,7 +839,7 @@ function taskRow(task) {
 
   title.textContent = task.title;
   title.className = `priority-${task.priority}`;
-  meta.textContent = `${list?.name ?? "清单"} · ${priorityLabel(task.priority)}${tagText}${repeatText}${subText}${reminderText}${pomoText}`;
+  meta.textContent = `${list?.name ?? t("meta.listFallback")} · ${priorityLabel(task.priority)}${tagText}${repeatText}${subText}${reminderText}${pomoText}`;
   date.textContent = dateLabel(taskDate(task));
 
   row.querySelector(".task-check").addEventListener("click", (event) => {
@@ -799,9 +855,9 @@ function renderCalendar() {
   const first = new Date(year, month - 1, 1);
   const start = new Date(first);
   start.setDate(start.getDate() - start.getDay());
-  els.calendarTitle.textContent = `${year} 年 ${month} 月`;
+  els.calendarTitle.textContent = monthTitle(year, month);
   els.calendarGrid.replaceChildren();
-  ["日", "一", "二", "三", "四", "五", "六"].forEach((weekday) => {
+  weekdayNames().forEach((weekday) => {
     const cell = document.createElement("div");
     cell.className = "calendar-day muted";
     cell.innerHTML = `<div class="calendar-date">${weekday}</div>`;
@@ -864,10 +920,10 @@ function renderStats() {
   const rate = total ? Math.round((done / total) * 100) : 0;
   els.statsView.innerHTML = `
     <div class="stats-board">
-      ${statCard("完成率", `${rate}%`, rate)}
-      ${statCard("未完成", `${open}`, Math.min(open * 12, 100))}
-      ${statCard("已逾期", `${overdue}`, Math.min(overdue * 20, 100))}
-      ${statCard("番茄进度", `${actual}/${estimate}`, estimate ? Math.round((actual / estimate) * 100) : 0)}
+      ${statCard(t("stats.rate"), `${rate}%`, rate)}
+      ${statCard(t("stats.open"), `${open}`, Math.min(open * 12, 100))}
+      ${statCard(t("stats.overdue"), `${overdue}`, Math.min(overdue * 20, 100))}
+      ${statCard(t("stats.pomo"), `${actual}/${estimate}`, estimate ? Math.round((actual / estimate) * 100) : 0)}
     </div>
   `;
 }
@@ -914,7 +970,7 @@ function renderDetail() {
   task.history.slice(0, 8).forEach((item) => {
     const row = document.createElement("div");
     row.className = "history-item";
-    row.textContent = `${new Date(item.at).toLocaleString("zh-CN")} · ${item.text}`;
+    row.textContent = `${fmtDateTime(item.at)} · ${item.text}`;
     els.historyList.append(row);
   });
 }
@@ -930,26 +986,26 @@ function subtaskRow(task, subtask) {
   reminder.value = subtask.reminder;
   done.addEventListener("change", () => {
     subtask.completed = done.checked;
-    addHistory(task, done.checked ? `完成检查项：${subtask.title}` : `重新打开检查项：${subtask.title}`);
+    addHistory(task, done.checked ? t("history.subDone", { title: subtask.title }) : t("history.subReopen", { title: subtask.title }));
     saveState();
     render();
   });
   title.addEventListener("change", () => {
     subtask.title = title.value.trim() || subtask.title;
-    addHistory(task, "更新检查项");
+    addHistory(task, t("history.subUpdate"));
     saveState();
     render();
   });
   reminder.addEventListener("change", () => {
     subtask.reminder = reminder.value;
-    addHistory(task, "设置检查项提醒");
+    addHistory(task, t("history.subReminder"));
     if (reminder.value) ensureNotifyPermission();
     saveState();
     render();
   });
   remove.addEventListener("click", () => {
     task.subtasks = task.subtasks.filter((item) => item.id !== subtask.id);
-    addHistory(task, `删除检查项：${subtask.title}`);
+    addHistory(task, t("history.subDelete", { title: subtask.title }));
     saveState();
     render();
   });
@@ -992,15 +1048,15 @@ els.searchInput.addEventListener("keydown", (event) => {
 els.clearDone.addEventListener("click", () => {
   const done = countTasks((task) => task.completed);
   if (!done) {
-    toast("没有已完成任务需要清理");
+    toast(t("toast.clearNone"));
     return;
   }
-  confirmModal(`清理 ${done} 个已完成任务？该操作不可撤销。`, () => {
+  confirmModal(t("confirm.clearDone", { done }), () => {
     state.tasks = state.tasks.filter((task) => !task.completed);
     state.selectedTaskId = visibleTasks()[0]?.id ?? null;
     saveState();
     render();
-    toast(`已清理 ${done} 个已完成任务`);
+    toast(t("toast.cleared", { done }));
   });
 });
 
@@ -1014,9 +1070,9 @@ els.exportData.addEventListener("click", async () => {
   URL.revokeObjectURL(link.href);
   try {
     await navigator.clipboard.writeText(data);
-    toast("已导出 JSON 文件，并复制到剪贴板");
+    toast(t("toast.exportedBoth"));
   } catch {
-    toast("已导出 JSON 文件");
+    toast(t("toast.exported"));
   }
 });
 
@@ -1038,19 +1094,12 @@ els.importFile.addEventListener("change", async () => {
     if (!isImportShape(parsed)) throw new Error("invalid");
     openImportModal(parsed);
   } catch {
-    toast("导入失败：不是有效的 DockTodo 数据文件");
+    toast(t("toast.importBadFile"));
   }
 });
 
 els.addList.addEventListener("click", () => openListModal(null));
 els.addFilter.addEventListener("click", () => openFilterModal(null));
-
-els.themeToggle.addEventListener("click", () => {
-  const themes = ["light", "dark", "mint", "sunrise"];
-  state.theme = themes[(themes.indexOf(state.theme) + 1) % themes.length];
-  saveState();
-  render();
-});
 
 els.prevMonth.addEventListener("click", () => {
   const [year, month] = state.calendarMonth.split("-").map(Number);
@@ -1070,10 +1119,10 @@ els.startFocus.addEventListener("click", () => {
   if (focusTimer) {
     clearInterval(focusTimer);
     focusTimer = null;
-    els.startFocus.textContent = "继续";
+    els.startFocus.textContent = t("focus.resume");
     return;
   }
-  els.startFocus.textContent = "暂停";
+  els.startFocus.textContent = t("focus.pause");
   focusTimer = setInterval(() => {
     focusSeconds -= 1;
     renderFocusTime();
@@ -1081,9 +1130,9 @@ els.startFocus.addEventListener("click", () => {
       clearInterval(focusTimer);
       focusTimer = null;
       focusSeconds = 25 * 60;
-      els.startFocus.textContent = "开始";
+      els.startFocus.textContent = t("focus.start");
       recordPomo();
-      notify("🍅 番茄完成", "已自动记录 1 个番茄");
+      notify(t("focus.doneTitle"), t("focus.doneBody"));
     }
   }, 1000);
 });
@@ -1092,7 +1141,7 @@ els.resetFocus.addEventListener("click", () => {
   clearInterval(focusTimer);
   focusTimer = null;
   focusSeconds = 25 * 60;
-  els.startFocus.textContent = "开始";
+  els.startFocus.textContent = t("focus.start");
   renderFocusTime();
 });
 
@@ -1108,7 +1157,7 @@ function recordPomo() {
   const task = state.tasks.find((item) => item.id === id);
   if (!task) return;
   task.actualPomos = Number(task.actualPomos || 0) + 1;
-  addHistory(task, "完成 1 个番茄");
+  addHistory(task, t("history.pomoDone"));
   state.selectedTaskId = task.id;
   saveState();
   render();
@@ -1117,29 +1166,29 @@ function recordPomo() {
 els.detailCompleted.addEventListener("change", () => setTaskCompleted(selectedTask(), els.detailCompleted.checked));
 els.detailTitle.addEventListener("change", () => {
   const title = els.detailTitle.value.trim();
-  if (title) updateTask(state.selectedTaskId, { title }, "更新标题");
+  if (title) updateTask(state.selectedTaskId, { title }, t("history.titleUpdate"));
 });
-els.detailList.addEventListener("change", () => updateTask(state.selectedTaskId, { listId: els.detailList.value }, "移动到其他清单"));
-els.detailStart.addEventListener("change", () => updateTask(state.selectedTaskId, { startDate: els.detailStart.value }, "更新开始日期"));
-els.detailDue.addEventListener("change", () => updateTask(state.selectedTaskId, { dueDate: els.detailDue.value }, "更新截止日期"));
+els.detailList.addEventListener("change", () => updateTask(state.selectedTaskId, { listId: els.detailList.value }, t("history.listMove")));
+els.detailStart.addEventListener("change", () => updateTask(state.selectedTaskId, { startDate: els.detailStart.value }, t("history.startUpdate")));
+els.detailDue.addEventListener("change", () => updateTask(state.selectedTaskId, { dueDate: els.detailDue.value }, t("history.dueUpdate")));
 els.detailReminder.addEventListener("change", () => {
   if (els.detailReminder.value) ensureNotifyPermission();
-  updateTask(state.selectedTaskId, { reminder: els.detailReminder.value }, "设置任务提醒");
+  updateTask(state.selectedTaskId, { reminder: els.detailReminder.value }, t("history.reminderSet"));
 });
-els.detailPriority.addEventListener("change", () => updateTask(state.selectedTaskId, { priority: els.detailPriority.value }, "更新优先级"));
-els.detailRepeat.addEventListener("change", () => updateTask(state.selectedTaskId, { repeat: els.detailRepeat.value }, "更新重复规则"));
-els.detailEstimate.addEventListener("change", () => updateTask(state.selectedTaskId, { estimatePomos: Number(els.detailEstimate.value || 0) }, "更新预计番茄"));
+els.detailPriority.addEventListener("change", () => updateTask(state.selectedTaskId, { priority: els.detailPriority.value }, t("history.priorityUpdate")));
+els.detailRepeat.addEventListener("change", () => updateTask(state.selectedTaskId, { repeat: els.detailRepeat.value }, t("history.repeatUpdate")));
+els.detailEstimate.addEventListener("change", () => updateTask(state.selectedTaskId, { estimatePomos: Number(els.detailEstimate.value || 0) }, t("history.estimateUpdate")));
 els.detailTags.addEventListener("change", () => {
   const tags = [...new Set(els.detailTags.value.split(/[\s,，#]+/).map((tag) => tag.trim()).filter(Boolean))];
-  updateTask(state.selectedTaskId, { tags }, "更新标签");
+  updateTask(state.selectedTaskId, { tags }, t("history.tagsUpdate"));
 });
-els.detailNotes.addEventListener("change", () => updateTask(state.selectedTaskId, { notes: els.detailNotes.value }, "更新备注"));
+els.detailNotes.addEventListener("change", () => updateTask(state.selectedTaskId, { notes: els.detailNotes.value }, t("history.notesUpdate")));
 
 els.addSubtask.addEventListener("click", () => {
   const task = selectedTask();
   if (!task) return;
-  task.subtasks.push(makeSubtask("新检查项", false, ""));
-  addHistory(task, "添加检查项");
+  task.subtasks.push(makeSubtask(t("subtask.new"), false, ""));
+  addHistory(task, t("history.subAdd"));
   saveState();
   render();
 });
@@ -1147,12 +1196,12 @@ els.addSubtask.addEventListener("click", () => {
 els.deleteTask.addEventListener("click", () => {
   const task = selectedTask();
   if (!task) return;
-  confirmModal(`删除任务「${task.title}」？该操作不可撤销。`, () => {
+  confirmModal(t("confirm.deleteTask", { title: task.title }), () => {
     state.tasks = state.tasks.filter((item) => item.id !== task.id);
     state.selectedTaskId = visibleTasks()[0]?.id ?? null;
     saveState();
     render();
-    toast("任务已删除");
+    toast(t("toast.taskDeleted"));
   });
 });
 
@@ -1173,12 +1222,10 @@ window.addEventListener("storage", (event) => {
   render();
 });
 
-Object.entries(REPEAT_LABELS).forEach(([value, label]) => {
-  const option = document.createElement("option");
-  option.value = value;
-  option.textContent = label;
-  els.detailRepeat.append(option);
-});
+setLanguage(state.settings.language);
+checkStringParity();
+buildRepeatOptions();
+applyStaticI18n();
 
 pruneNotified();
 muteStaleReminders();

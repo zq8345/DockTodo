@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DockTodo Pro</title>
-    <meta name="description" content="DockTodo Pro — a local-first task manager with lists, calendar, reminders, repeat tasks, tags, pomodoro focus and stats. Works offline; your data never leaves your browser." />
-    <meta property="og:title" content="DockTodo Pro" />
-    <meta property="og:description" content="Local-first task manager: lists, calendar, reminders, repeat tasks, tags, pomodoro and stats. Works offline; your data stays yours." />
+    <title>DockTodo — Local-first time tracking &amp; invoicing for freelancers</title>
+    <meta name="description" content="DockTodo is a local-first workbench for freelancers: turn tasks into tracked time, weekly timesheets and invoices. Works offline; your data never leaves your browser." />
+    <meta property="og:title" content="DockTodo — Local-first time tracking &amp; invoicing for freelancers" />
+    <meta property="og:description" content="Turn tasks into tracked time, weekly timesheets and invoices. Local-first and offline; your client data stays yours." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://docktodo.com/" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%234778ff'/%3E%3Cstop offset='1' stop-color='%237467e8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='45' font-family='Arial,sans-serif' font-size='38' font-weight='800' fill='%23fff' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E" />
@@ -14,191 +14,193 @@
   </head>
   <body>
     <main class="app" aria-label="DockTodo Pro">
-      <aside class="rail" aria-label="主导航">
+      <aside class="rail" aria-label="Main navigation">
         <div class="brand" title="DockTodo">D</div>
-        <button class="rail-btn active" type="button" data-mode="tasks" title="任务">✓</button>
-        <button class="rail-btn" type="button" data-mode="calendar" title="日历">▦</button>
-        <button class="rail-btn" type="button" data-mode="focus" title="专注">◎</button>
-        <button class="rail-btn" type="button" data-mode="stats" title="统计">▥</button>
-        <button class="rail-btn bottom" type="button" id="themeToggle" title="切换主题">◐</button>
+        <button class="rail-btn active" type="button" data-mode="tasks" data-i18n-title="rail.tasks">✓</button>
+        <button class="rail-btn" type="button" data-mode="calendar" data-i18n-title="rail.calendar">▦</button>
+        <button class="rail-btn" type="button" data-mode="focus" data-i18n-title="rail.focus">◎</button>
+        <button class="rail-btn" type="button" data-mode="stats" data-i18n-title="rail.stats">▥</button>
+        <button class="rail-btn bottom" type="button" data-mode="settings" data-i18n-title="rail.settings">⚙</button>
       </aside>
 
-      <aside class="sidebar" aria-label="清单和筛选">
+      <aside class="sidebar" aria-label="Lists and filters">
         <header class="sidebar-head">
           <div>
-            <p>DockTodo Pro</p>
-            <h1>高级任务中心</h1>
+            <p data-i18n="sidebar.kicker">DockTodo Pro</p>
+            <h1 data-i18n="sidebar.title">Task workbench</h1>
           </div>
-          <button class="icon-btn" id="quickAddTop" type="button" title="添加任务">+</button>
+          <button class="icon-btn" id="quickAddTop" type="button" data-i18n-title="title.addTask">+</button>
         </header>
 
         <div class="search-box">
-          <input id="searchInput" type="search" placeholder="搜索任务、备注或标签" autocomplete="off" />
+          <input id="searchInput" type="search" data-i18n-placeholder="search.placeholder" placeholder="Search tasks, notes or tags" autocomplete="off" />
         </div>
 
-        <nav class="nav-list" id="smartLists" aria-label="智能清单"></nav>
+        <nav class="nav-list" id="smartLists" aria-label="Smart lists"></nav>
 
         <section class="side-section">
           <div class="section-title">
-            <span>清单</span>
-            <button class="plain-btn" id="addList" type="button">新建</button>
+            <span data-i18n="section.lists">Lists</span>
+            <button class="plain-btn" id="addList" type="button" data-i18n="action.new">New</button>
           </div>
           <div class="nav-list" id="projectList"></div>
         </section>
 
         <section class="side-section">
           <div class="section-title">
-            <span>自定义筛选</span>
-            <button class="plain-btn" id="addFilter" type="button">新建</button>
+            <span data-i18n="section.filters">Custom filters</span>
+            <button class="plain-btn" id="addFilter" type="button" data-i18n="action.new">New</button>
           </div>
           <div class="nav-list" id="filterList"></div>
         </section>
 
         <section class="side-section hidden" id="tagSection">
           <div class="section-title">
-            <span>标签</span>
+            <span data-i18n="section.tags">Tags</span>
           </div>
           <div class="nav-list" id="tagList"></div>
         </section>
       </aside>
 
-      <section class="main-pane" aria-label="主工作区">
+      <section class="main-pane" aria-label="Workspace">
         <header class="pane-head">
           <div>
-            <p id="viewMeta">今天</p>
-            <h2 id="viewTitle">今天</h2>
+            <p id="viewMeta"></p>
+            <h2 id="viewTitle"></h2>
           </div>
           <div class="head-actions">
-            <button class="soft-btn" id="importData" type="button">导入</button>
+            <button class="soft-btn" id="importData" type="button" data-i18n="action.import">Import</button>
             <input id="importFile" type="file" accept=".json,application/json" hidden />
-            <button class="soft-btn" id="exportData" type="button">导出</button>
-            <button class="soft-btn" id="clearDone" type="button">清理完成</button>
-            <button class="primary-btn" id="quickAdd" type="button">添加任务</button>
+            <button class="soft-btn" id="exportData" type="button" data-i18n="action.export">Export</button>
+            <button class="soft-btn" id="clearDone" type="button" data-i18n="action.clearDone">Clear completed</button>
+            <button class="primary-btn" id="quickAdd" type="button" data-i18n="action.addTask">Add task</button>
           </div>
         </header>
 
         <section class="task-view" id="taskView">
           <form class="quick-form" id="taskForm">
-            <input id="taskInput" type="text" maxlength="140" autocomplete="off" placeholder="添加任务，按 Enter 保存" />
-            <input id="taskStart" type="date" title="开始日期" />
-            <input id="taskDue" type="date" title="截止日期" />
-            <select id="taskPriority" title="优先级">
-              <option value="none">无优先级</option>
-              <option value="high">高优先级</option>
-              <option value="medium">中优先级</option>
-              <option value="low">低优先级</option>
+            <input id="taskInput" type="text" maxlength="140" autocomplete="off" data-i18n-placeholder="form.placeholder" placeholder="Add a task, press Enter to save" />
+            <input id="taskStart" type="date" data-i18n-title="form.startDate" />
+            <input id="taskDue" type="date" data-i18n-title="form.dueDate" />
+            <select id="taskPriority" data-i18n-title="form.priority">
+              <option value="none" data-i18n="priority.none">No priority</option>
+              <option value="high" data-i18n="priority.high">High priority</option>
+              <option value="medium" data-i18n="priority.medium">Medium priority</option>
+              <option value="low" data-i18n="priority.low">Low priority</option>
             </select>
-            <button type="submit">保存</button>
+            <button type="submit" data-i18n="form.save">Save</button>
           </form>
 
           <div class="stats-line" id="statsLine"></div>
-          <div class="task-list" id="taskList" aria-label="任务"></div>
+          <div class="task-list" id="taskList" aria-label="Tasks"></div>
           <section class="empty" id="emptyState">
-            <strong>这里没有任务</strong>
-            <span>添加一件要推进的事，DockTodo 会帮你留住它。</span>
+            <strong data-i18n="empty.title">No tasks here</strong>
+            <span data-i18n="empty.hint">Add something to move forward — DockTodo will hold on to it.</span>
           </section>
         </section>
 
         <section class="calendar-view hidden" id="calendarView">
           <div class="calendar-toolbar">
-            <button class="soft-btn" id="prevMonth" type="button">上月</button>
+            <button class="soft-btn" id="prevMonth" type="button" data-i18n="calendar.prev">Prev</button>
             <strong id="calendarTitle"></strong>
-            <button class="soft-btn" id="nextMonth" type="button">下月</button>
+            <button class="soft-btn" id="nextMonth" type="button" data-i18n="calendar.next">Next</button>
           </div>
           <div class="calendar-grid" id="calendarGrid"></div>
         </section>
 
         <section class="focus-view hidden" id="focusView">
           <div class="focus-card">
-            <p>专注计时</p>
+            <p data-i18n="focus.timer">Focus timer</p>
             <strong id="focusTime">25:00</strong>
             <select id="focusTask"></select>
             <div class="focus-actions">
-              <button class="primary-btn" id="startFocus" type="button">开始</button>
-              <button class="soft-btn" id="resetFocus" type="button">重置</button>
-              <button class="soft-btn" id="completePomo" type="button">记 1 个番茄</button>
+              <button class="primary-btn" id="startFocus" type="button" data-i18n="focus.start">Start</button>
+              <button class="soft-btn" id="resetFocus" type="button" data-i18n="focus.reset">Reset</button>
+              <button class="soft-btn" id="completePomo" type="button" data-i18n="focus.logPomo">Log 1 pomodoro</button>
             </div>
           </div>
         </section>
 
         <section class="stats-view hidden" id="statsView"></section>
+
+        <section class="settings-view hidden" id="settingsView"></section>
       </section>
 
-      <aside class="detail-pane" aria-label="任务详情">
+      <aside class="detail-pane" aria-label="Task details">
         <div class="detail-empty" id="detailEmpty">
-          <strong>选择一个任务</strong>
-          <span>查看备注、日期、提醒、优先级、番茄和历史记录。</span>
+          <strong data-i18n="detail.empty">Select a task</strong>
+          <span data-i18n="detail.emptyHint">View notes, dates, reminders, priority, pomodoro and history.</span>
         </div>
 
         <form class="detail-form hidden" id="detailForm">
           <label class="detail-check">
             <input id="detailCompleted" type="checkbox" />
-            <span>完成任务</span>
+            <span data-i18n="detail.complete">Complete task</span>
           </label>
 
-          <textarea id="detailTitle" rows="2" maxlength="180" aria-label="任务标题"></textarea>
+          <textarea id="detailTitle" rows="2" maxlength="180" aria-label="Task title"></textarea>
 
           <div class="field-grid">
             <label>
-              <span>清单</span>
+              <span data-i18n="detail.list">List</span>
               <select id="detailList"></select>
             </label>
             <label>
-              <span>开始日期</span>
+              <span data-i18n="detail.start">Start date</span>
               <input id="detailStart" type="date" />
             </label>
             <label>
-              <span>截止日期</span>
+              <span data-i18n="detail.due">Due date</span>
               <input id="detailDue" type="date" />
             </label>
             <label>
-              <span>提醒</span>
+              <span data-i18n="detail.reminder">Reminder</span>
               <input id="detailReminder" type="datetime-local" />
             </label>
             <label>
-              <span>优先级</span>
+              <span data-i18n="detail.priority">Priority</span>
               <select id="detailPriority">
-                <option value="none">无</option>
-                <option value="high">高</option>
-                <option value="medium">中</option>
-                <option value="low">低</option>
+                <option value="none" data-i18n="priority.short.none">None</option>
+                <option value="high" data-i18n="priority.short.high">High</option>
+                <option value="medium" data-i18n="priority.short.medium">Medium</option>
+                <option value="low" data-i18n="priority.short.low">Low</option>
               </select>
             </label>
             <label>
-              <span>预计番茄</span>
+              <span data-i18n="detail.estimate">Estimated pomodoro</span>
               <input id="detailEstimate" type="number" min="0" max="20" />
             </label>
             <label>
-              <span>重复</span>
+              <span data-i18n="detail.repeat">Repeat</span>
               <select id="detailRepeat"></select>
             </label>
             <label>
-              <span>标签</span>
-              <input id="detailTags" type="text" maxlength="120" placeholder="用空格分隔" />
+              <span data-i18n="detail.tags">Tags</span>
+              <input id="detailTags" type="text" maxlength="120" data-i18n-placeholder="detail.tagsPlaceholder" placeholder="Separate with spaces" />
             </label>
           </div>
 
           <label class="notes">
-            <span>备注</span>
-            <textarea id="detailNotes" rows="5" placeholder="记录背景、链接或下一步"></textarea>
+            <span data-i18n="detail.notes">Notes</span>
+            <textarea id="detailNotes" rows="5" data-i18n-placeholder="detail.notesPlaceholder" placeholder="Jot down context, links or next steps"></textarea>
           </label>
 
           <section class="subtasks">
             <div class="section-title flat">
-              <span>检查项提醒</span>
-              <button class="plain-btn" id="addSubtask" type="button">添加</button>
+              <span data-i18n="detail.subtasks">Checklist</span>
+              <button class="plain-btn" id="addSubtask" type="button" data-i18n="detail.add">Add</button>
             </div>
             <div id="subtaskList"></div>
           </section>
 
           <section class="history">
             <div class="section-title flat">
-              <span>历史记录</span>
+              <span data-i18n="detail.history">History</span>
             </div>
             <div id="historyList"></div>
           </section>
 
-          <button class="danger-btn" id="deleteTask" type="button">删除任务</button>
+          <button class="danger-btn" id="deleteTask" type="button" data-i18n="detail.delete">Delete task</button>
         </form>
       </aside>
     </main>
@@ -218,13 +220,14 @@
       <label class="subtask-row">
         <input class="subtask-done" type="checkbox" />
         <input class="subtask-title" type="text" maxlength="120" />
-        <input class="subtask-reminder" type="datetime-local" title="检查项提醒" />
-        <button class="subtask-delete" type="button" title="删除检查项">×</button>
+        <input class="subtask-reminder" type="datetime-local" data-i18n-title="detail.subtaskReminder" />
+        <button class="subtask-delete" type="button" data-i18n-title="detail.subtaskDelete">×</button>
       </label>
     </template>
 
     <div class="toast-stack" id="toastStack" aria-live="polite"></div>
 
+    <script src="./assets/i18n.js"></script>
     <script src="./assets/data.js"></script>
     <script src="./assets/app.js"></script>
   </body>
