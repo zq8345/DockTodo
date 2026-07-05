@@ -20,6 +20,7 @@
         <button class="rail-btn" type="button" data-mode="calendar" data-i18n-title="rail.calendar">▦</button>
         <button class="rail-btn" type="button" data-mode="focus" data-i18n-title="rail.focus">◎</button>
         <button class="rail-btn" type="button" data-mode="stats" data-i18n-title="rail.stats">▥</button>
+        <button class="rail-btn" type="button" data-mode="timesheet" data-i18n-title="rail.timesheet">▤</button>
         <button class="rail-btn" type="button" data-mode="clients" data-i18n-title="rail.clients">👥</button>
         <button class="rail-btn bottom" type="button" data-mode="settings" data-i18n-title="rail.settings">⚙</button>
       </aside>
@@ -78,6 +79,8 @@
           </div>
         </header>
 
+        <div class="billing-strip" id="billingStrip"></div>
+
         <section class="task-view" id="taskView">
           <form class="quick-form" id="taskForm">
             <input id="taskInput" type="text" maxlength="140" autocomplete="off" data-i18n-placeholder="form.placeholder" placeholder="Add a task, press Enter to save" />
@@ -125,6 +128,8 @@
         <section class="stats-view hidden" id="statsView"></section>
 
         <section class="settings-view hidden" id="settingsView"></section>
+
+        <section class="timesheet-view hidden" id="timesheetView"></section>
 
         <section class="clients-view hidden" id="clientsView"></section>
       </section>
@@ -253,6 +258,7 @@
     <script src="./assets/i18n.js"></script>
     <script src="./assets/money.js"></script>
     <script src="./assets/data.js"></script>
+    <script src="./assets/billing.js"></script>
     <script src="./assets/app.js"></script>
   </body>
 </html>

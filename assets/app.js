@@ -23,6 +23,8 @@ const els = {
   importFile: document.querySelector("#importFile"),
   settingsView: document.querySelector("#settingsView"),
   clientsView: document.querySelector("#clientsView"),
+  timesheetView: document.querySelector("#timesheetView"),
+  billingStrip: document.querySelector("#billingStrip"),
   taskForm: document.querySelector("#taskForm"),
   taskInput: document.querySelector("#taskInput"),
   taskStart: document.querySelector("#taskStart"),
@@ -837,6 +839,8 @@ function render() {
   renderStats();
   renderSettings();
   renderClients();
+  renderTimesheet();
+  renderBillingStrip();
   renderDetail();
 }
 
@@ -853,6 +857,7 @@ function renderModes() {
   els.statsView.classList.toggle("hidden", state.activeMode !== "stats");
   els.settingsView.classList.toggle("hidden", state.activeMode !== "settings");
   els.clientsView.classList.toggle("hidden", state.activeMode !== "clients");
+  els.timesheetView.classList.toggle("hidden", state.activeMode !== "timesheet");
 }
 
 function escapeHtml(value) {
@@ -915,6 +920,84 @@ function renderClients() {
   els.clientsView.querySelectorAll("[data-edit-project]").forEach((el) =>
     el.addEventListener("click", () => openProjectModal(state.projects.find((project) => project.id === el.dataset.editProject)))
   );
+}
+
+function renderTimesheet() {
+  if (state.activeMode !== "timesheet") return;
+  const weekStart = state.timesheetWeek;
+  const weekEnd = addDays(weekStart, 6);
+  const data = timesheetData(weekStart);
+  const dayHeaders = data.days
+    .map(
+      (day) =>
+        `<th class="ts-num"><span class="ts-dow">${weekdayNames()[new Date(`${day}T00:00:00`).getDay()]}</span><span class="ts-dom">${day.slice(8)}</span></th>`
+    )
+    .join("");
+  const rows = data.groups
+    .map((group) => {
+      const cells = group.perDaySecs
+        .map((secs) => `<td class="ts-num">${secs ? formatHours(secs) : '<span class="ts-zero">·</span>'}</td>`)
+        .join("");
+      return `<tr>
+        <td class="ts-label"><strong>${escapeHtml(group.clientName)}</strong><span>${escapeHtml(group.projectName)}</span></td>
+        ${cells}
+        <td class="ts-num ts-total">${formatHours(group.totalSecs)}</td>
+        <td class="ts-num ts-amount">${escapeHtml(moneyFormat(group.amountCents, group.currency))}</td>
+      </tr>`;
+    })
+    .join("");
+  const totalRows = Object.entries(data.totalsByCurrency)
+    .map(
+      ([currency, totals]) =>
+        `<tr class="ts-totalrow"><td class="ts-label">${t("timesheet.weekTotal")}</td><td class="ts-num" colspan="7"></td><td class="ts-num ts-total">${formatHours(
+          totals.secs
+        )}</td><td class="ts-num ts-amount">${escapeHtml(moneyFormat(totals.cents, currency))}</td></tr>`
+    )
+    .join("");
+  const hasData = data.groups.length > 0;
+  const unrated = data.unratedBillable ? `<p class="ts-warn">${escapeHtml(t("timesheet.unrated", { n: data.unratedBillable }))}</p>` : "";
+  els.timesheetView.innerHTML = `
+    <div class="ts-board">
+      <div class="ts-toolbar">
+        <button class="soft-btn" type="button" id="tsPrev">‹</button>
+        <strong class="ts-range">${weekStart.slice(5)} – ${weekEnd.slice(5)}</strong>
+        <button class="soft-btn" type="button" id="tsNext">›</button>
+        <button class="soft-btn" type="button" id="tsToday">${t("timesheet.thisWeek")}</button>
+        <button class="soft-btn" type="button" id="tsCsv">${t("timesheet.exportCsv")}</button>
+      </div>
+      ${unrated}
+      ${
+        hasData
+          ? `<div class="ts-scroll"><table class="ts-table">
+              <thead><tr><th class="ts-label"></th>${dayHeaders}<th class="ts-num">${t("timesheet.total")}</th><th class="ts-num">${t("timesheet.amount")}</th></tr></thead>
+              <tbody>${rows}${totalRows}</tbody></table></div>`
+          : `<p class="ts-empty">${t("timesheet.empty")}</p>`
+      }
+    </div>
+  `;
+  const setWeek = (key) => {
+    state.timesheetWeek = key;
+    saveState();
+    render();
+  };
+  els.timesheetView.querySelector("#tsPrev").addEventListener("click", () => setWeek(addDays(weekStart, -7)));
+  els.timesheetView.querySelector("#tsNext").addEventListener("click", () => setWeek(addDays(weekStart, 7)));
+  els.timesheetView.querySelector("#tsToday").addEventListener("click", () => setWeek(weekStartKey(todayKey, state.settings.weekStart)));
+  els.timesheetView.querySelector("#tsCsv").addEventListener("click", () => downloadFile(`timesheet-${weekStart}.csv`, "text/csv", timesheetCsv(weekStart)));
+}
+
+function renderBillingStrip() {
+  const data = timesheetData(weekStartKey(todayKey, state.settings.weekStart));
+  const parts = Object.entries(data.totalsByCurrency).map(
+    ([currency, totals]) => `${formatHours(totals.secs)}h · ${moneyFormat(totals.cents, currency)}`
+  );
+  const summary = parts.length ? parts.join("   ·   ") : t("billing.none");
+  let timerChip = "";
+  if (focusTimer && focusSession) {
+    const task = state.tasks.find((item) => item.id === focusSession.taskId);
+    timerChip = `<span class="bs-timer">◉ ${els.focusTime.textContent}${task ? ` · ${escapeHtml(task.title)}` : ""}</span>`;
+  }
+  els.billingStrip.innerHTML = `<span class="bs-week"><em>${t("billing.thisWeek")}</em> ${escapeHtml(summary)}</span>${timerChip}`;
 }
 
 function renderSettings() {
@@ -1380,6 +1463,7 @@ els.startFocus.addEventListener("click", () => {
   focusTimer = setInterval(() => {
     focusSeconds -= 1;
     renderFocusTime();
+    renderBillingStrip();
     if (focusSeconds <= 0) {
       clearInterval(focusTimer);
       focusTimer = null;

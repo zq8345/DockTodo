@@ -738,6 +738,147 @@ h2 {
   padding: 4px 2px;
 }
 
+.timesheet-view {
+  padding: 24px;
+  overflow: auto;
+}
+
+.ts-board {
+  width: min(1100px, 100%);
+  margin: 0 auto;
+}
+
+.ts-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.ts-range {
+  min-width: 120px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.ts-toolbar #tsCsv {
+  margin-left: auto;
+}
+
+.ts-scroll {
+  overflow-x: auto;
+}
+
+.ts-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.ts-table th,
+.ts-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.ts-table thead th {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.ts-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ts-dow {
+  display: block;
+}
+
+.ts-dom {
+  display: block;
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 11px;
+}
+
+.ts-label {
+  text-align: left;
+  min-width: 160px;
+}
+
+.ts-label strong {
+  display: block;
+}
+
+.ts-label span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.ts-zero {
+  color: var(--line-strong);
+}
+
+.ts-total,
+.ts-amount {
+  font-weight: 700;
+}
+
+.ts-totalrow td {
+  border-top: 2px solid var(--line-strong);
+  border-bottom: 0;
+  font-weight: 800;
+}
+
+.ts-totalrow .ts-label {
+  color: var(--muted);
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.ts-empty,
+.ts-warn {
+  color: var(--muted);
+  font-size: 13px;
+  padding: 8px 2px;
+}
+
+.ts-warn {
+  color: var(--amber);
+}
+
+.billing-strip {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 20px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.bs-week em {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--text);
+  margin-right: 6px;
+}
+
+.bs-timer {
+  margin-left: auto;
+  color: var(--green);
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 45%;
+}
+
 .focus-card {
   display: grid;
   gap: 18px;
