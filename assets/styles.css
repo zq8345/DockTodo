@@ -595,6 +595,109 @@ h2 {
   line-height: 1.5;
 }
 
+.clients-view {
+  padding: 24px;
+  overflow: auto;
+}
+
+.clients-board {
+  width: min(760px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 16px;
+}
+
+.clients-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.clients-head h2 {
+  font-size: 20px;
+}
+
+.cp-card {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.cp-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.cp-head strong {
+  display: block;
+  font-size: 16px;
+}
+
+.cp-head small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.cp-projects {
+  display: grid;
+  gap: 6px;
+}
+
+.cp-project {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: var(--surface-soft);
+  font-size: 13px;
+}
+
+.cp-edit {
+  border: 0;
+  color: var(--muted);
+  background: transparent;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.cp-edit:hover {
+  color: var(--blue);
+}
+
+.cp-empty {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.detail-inline-check {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 8px;
+}
+
+.detail-inline-check input {
+  width: 16px;
+  height: 16px;
+}
+
+.modal-field textarea {
+  min-height: 64px;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  background: var(--surface);
+  font-weight: 400;
+  outline: none;
+  resize: vertical;
+}
+
 .focus-card {
   display: grid;
   gap: 18px;

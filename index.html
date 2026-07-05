@@ -20,6 +20,7 @@
         <button class="rail-btn" type="button" data-mode="calendar" data-i18n-title="rail.calendar">▦</button>
         <button class="rail-btn" type="button" data-mode="focus" data-i18n-title="rail.focus">◎</button>
         <button class="rail-btn" type="button" data-mode="stats" data-i18n-title="rail.stats">▥</button>
+        <button class="rail-btn" type="button" data-mode="clients" data-i18n-title="rail.clients">👥</button>
         <button class="rail-btn bottom" type="button" data-mode="settings" data-i18n-title="rail.settings">⚙</button>
       </aside>
 
@@ -124,6 +125,8 @@
         <section class="stats-view hidden" id="statsView"></section>
 
         <section class="settings-view hidden" id="settingsView"></section>
+
+        <section class="clients-view hidden" id="clientsView"></section>
       </section>
 
       <aside class="detail-pane" aria-label="Task details">
@@ -178,6 +181,18 @@
               <span data-i18n="detail.tags">Tags</span>
               <input id="detailTags" type="text" maxlength="120" data-i18n-placeholder="detail.tagsPlaceholder" placeholder="Separate with spaces" />
             </label>
+            <label>
+              <span data-i18n="detail.project">Project</span>
+              <select id="detailProject"></select>
+            </label>
+            <label>
+              <span data-i18n="detail.rateOverride">Rate override</span>
+              <input id="detailRate" type="number" min="0" step="0.01" data-i18n-placeholder="detail.ratePlaceholder" placeholder="Inherit" />
+            </label>
+            <label class="detail-inline-check">
+              <input id="detailBillable" type="checkbox" />
+              <span data-i18n="detail.billable">Billable</span>
+            </label>
           </div>
 
           <label class="notes">
@@ -228,6 +243,7 @@
     <div class="toast-stack" id="toastStack" aria-live="polite"></div>
 
     <script src="./assets/i18n.js"></script>
+    <script src="./assets/money.js"></script>
     <script src="./assets/data.js"></script>
     <script src="./assets/app.js"></script>
   </body>

@@ -22,6 +22,7 @@ const els = {
   importData: document.querySelector("#importData"),
   importFile: document.querySelector("#importFile"),
   settingsView: document.querySelector("#settingsView"),
+  clientsView: document.querySelector("#clientsView"),
   taskForm: document.querySelector("#taskForm"),
   taskInput: document.querySelector("#taskInput"),
   taskStart: document.querySelector("#taskStart"),
@@ -58,6 +59,9 @@ const els = {
   detailRepeat: document.querySelector("#detailRepeat"),
   detailEstimate: document.querySelector("#detailEstimate"),
   detailTags: document.querySelector("#detailTags"),
+  detailProject: document.querySelector("#detailProject"),
+  detailBillable: document.querySelector("#detailBillable"),
+  detailRate: document.querySelector("#detailRate"),
   detailNotes: document.querySelector("#detailNotes"),
   addSubtask: document.querySelector("#addSubtask"),
   subtaskList: document.querySelector("#subtaskList"),
@@ -218,10 +222,12 @@ function setView(view) {
 
 function parseTags(rawTitle) {
   const tags = [];
+  // Only treat "#tag" as a tag at a word boundary, so a URL fragment like
+  // example.com/page#section is left untouched.
   const title = rawTitle
-    .replace(/#([^\s#，,]+)/g, (_, tag) => {
+    .replace(/(^|\s)#([^\s#，,]+)/g, (_, pre, tag) => {
       tags.push(tag);
-      return "";
+      return pre;
     })
     .replace(/\s{2,}/g, " ")
     .trim();
@@ -250,7 +256,7 @@ function updateTask(id, patch, historyText) {
   render();
 }
 
-function nextOccurrence(dateKey, repeat) {
+function nextOccurrence(dateKey, repeat, anchorDay = 0) {
   if (repeat === "daily") return addDays(dateKey, 1);
   if (repeat === "weekly") return addDays(dateKey, 7);
   if (repeat === "weekdays") {
@@ -259,7 +265,10 @@ function nextOccurrence(dateKey, repeat) {
     return next;
   }
   if (repeat === "monthly") {
-    const [year, month, day] = dateKey.split("-").map(Number);
+    const [year, month] = dateKey.split("-").map(Number);
+    // Anchor to the original day-of-month so a short month (e.g. Feb) never
+    // permanently pulls the series back to the 28th.
+    const day = anchorDay || Number(dateKey.slice(8, 10));
     const lastDay = new Date(year, month + 1, 0).getDate();
     return formatDate(new Date(year, month, Math.min(day, lastDay)));
   }
@@ -282,8 +291,12 @@ function setTaskCompleted(task, completed) {
     snapshot.history = [{ at: Date.now(), text: t("history.repeatDone") }, ...snapshot.history].slice(0, 30);
     state.tasks.push(snapshot);
 
-    const base = task.dueDate || task.startDate || todayKey;
-    const days = diffDays(base, nextOccurrence(base, task.repeat));
+    // Advance from today when the task is already overdue, so completing a
+    // stale recurring task schedules the next occurrence into the future
+    // rather than one cycle past the missed date.
+    const anchor = task.dueDate || task.startDate || todayKey;
+    const from = anchor < todayKey ? todayKey : anchor;
+    const days = diffDays(anchor, nextOccurrence(from, task.repeat, task.repeatAnchorDay));
     if (task.startDate) task.startDate = addDays(task.startDate, days);
     if (task.dueDate) task.dueDate = addDays(task.dueDate, days);
     task.reminder = shiftDateTime(task.reminder, days);
@@ -602,6 +615,149 @@ function openImportModal(raw) {
   });
 }
 
+function openClientModal(client) {
+  openModal(client ? t("client.edit") : t("client.new"), (modal) => {
+    const nameInput = inputEl("text", client?.name ?? "", t("client.namePlaceholder"));
+    nameInput.maxLength = 60;
+    const currencySelect = document.createElement("select");
+    COMMON_CURRENCIES.forEach((cur) => {
+      const option = document.createElement("option");
+      option.value = cur;
+      option.textContent = cur;
+      currencySelect.append(option);
+    });
+    currencySelect.value = client?.currency ?? "USD";
+    const rateInput = inputEl("number", client ? centsToMajor(client.hourlyRateCents, client.currency) : "", "0.00");
+    rateInput.min = "0";
+    rateInput.step = "0.01";
+    const billingInput = document.createElement("textarea");
+    billingInput.rows = 3;
+    billingInput.value = client?.billingInfo ?? "";
+    billingInput.placeholder = t("client.billingPlaceholder");
+    modal.append(
+      modalField(t("field.name"), nameInput),
+      modalField(t("client.currency"), currencySelect),
+      modalField(t("client.hourlyRate"), rateInput),
+      modalField(t("client.billingInfo"), billingInput)
+    );
+
+    if (client) {
+      modal.append(
+        modalButton(t("client.deleteBtn"), "danger-btn", () => {
+          confirmModal(t("confirm.deleteClient", { name: client.name }), () => {
+            const projectIds = new Set(state.projects.filter((project) => project.clientId === client.id).map((project) => project.id));
+            state.tasks.forEach((task) => {
+              if (projectIds.has(task.projectId)) {
+                task.projectId = null;
+                task.billable = false;
+              }
+            });
+            state.projects = state.projects.filter((project) => project.clientId !== client.id);
+            state.clients = state.clients.filter((item) => item.id !== client.id);
+            closeModal();
+            saveState();
+            render();
+            toast(t("toast.clientDeleted", { name: client.name }));
+          });
+        })
+      );
+    }
+
+    modal.append(
+      modalActions(
+        modalButton(t("action.cancel"), "soft-btn", closeModal),
+        modalButton(t("form.save"), "primary-btn", () => {
+          const name = nameInput.value.trim();
+          if (!name) {
+            nameInput.focus();
+            return;
+          }
+          const currency = currencySelect.value;
+          const hourlyRateCents = centsFromMajor(rateInput.value, currency);
+          if (client) {
+            Object.assign(client, { name, currency, hourlyRateCents, billingInfo: billingInput.value });
+          } else {
+            state.clients.push({ id: createId(), name, currency, hourlyRateCents, billingInfo: billingInput.value, note: "" });
+          }
+          closeModal();
+          saveState();
+          render();
+        })
+      )
+    );
+  });
+}
+
+function openProjectModal(project, presetClientId) {
+  if (!project && !state.clients.length) return;
+  openModal(project ? t("project.edit") : t("project.new"), (modal) => {
+    const nameInput = inputEl("text", project?.name ?? "", t("project.namePlaceholder"));
+    nameInput.maxLength = 60;
+    const clientSelect = document.createElement("select");
+    state.clients.forEach((client) => {
+      const option = document.createElement("option");
+      option.value = client.id;
+      option.textContent = client.name;
+      clientSelect.append(option);
+    });
+    clientSelect.value = project?.clientId ?? presetClientId ?? state.clients[0]?.id ?? "";
+    const rateInput = inputEl(
+      "number",
+      project?.rateOverrideCents != null ? centsToMajor(project.rateOverrideCents) : "",
+      t("project.ratePlaceholder")
+    );
+    rateInput.min = "0";
+    rateInput.step = "0.01";
+    modal.append(
+      modalField(t("field.name"), nameInput),
+      modalField(t("project.client"), clientSelect),
+      modalField(t("project.rateOverride"), rateInput)
+    );
+
+    if (project) {
+      modal.append(
+        modalButton(t("project.deleteBtn"), "danger-btn", () => {
+          confirmModal(t("confirm.deleteProject", { name: project.name }), () => {
+            state.tasks.forEach((task) => {
+              if (task.projectId === project.id) {
+                task.projectId = null;
+                task.billable = false;
+              }
+            });
+            state.projects = state.projects.filter((item) => item.id !== project.id);
+            closeModal();
+            saveState();
+            render();
+            toast(t("toast.projectDeleted", { name: project.name }));
+          });
+        })
+      );
+    }
+
+    modal.append(
+      modalActions(
+        modalButton(t("action.cancel"), "soft-btn", closeModal),
+        modalButton(t("form.save"), "primary-btn", () => {
+          const name = nameInput.value.trim();
+          if (!name) {
+            nameInput.focus();
+            return;
+          }
+          const rateOverrideCents = rateInput.value.trim() === "" ? null : centsFromMajor(rateInput.value);
+          if (project) {
+            Object.assign(project, { name, clientId: clientSelect.value, rateOverrideCents });
+          } else {
+            state.projects.push({ id: createId(), name, clientId: clientSelect.value, rateOverrideCents });
+          }
+          closeModal();
+          saveState();
+          render();
+        })
+      )
+    );
+  });
+}
+
 function mergeImport(raw) {
   let incoming;
   try {
@@ -627,6 +783,13 @@ function mergeImport(raw) {
       added += 1;
     }
   });
+  ["clients", "projects", "timeEntries", "invoices"].forEach((key) => {
+    const existing = new Set(state[key].map((item) => item.id));
+    incoming[key].forEach((item) => {
+      if (!existing.has(item.id)) state[key].push(item);
+    });
+  });
+  state.settings.invoiceCounter = Math.max(state.settings.invoiceCounter, incoming.settings.invoiceCounter);
   closeModal();
   muteStaleReminders();
   saveState();
@@ -639,6 +802,7 @@ function replaceImport(raw) {
   try {
     next = structuredClone(raw);
     delete next.version;
+    delete next.exportedAt;
     next = normalizeState(next);
   } catch {
     closeModal();
@@ -666,6 +830,7 @@ function render() {
   renderFocus();
   renderStats();
   renderSettings();
+  renderClients();
   renderDetail();
 }
 
@@ -681,6 +846,69 @@ function renderModes() {
   els.focusView.classList.toggle("hidden", state.activeMode !== "focus");
   els.statsView.classList.toggle("hidden", state.activeMode !== "stats");
   els.settingsView.classList.toggle("hidden", state.activeMode !== "settings");
+  els.clientsView.classList.toggle("hidden", state.activeMode !== "clients");
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+}
+
+function inputEl(type, value, placeholder) {
+  const el = document.createElement("input");
+  el.type = type;
+  el.value = value;
+  if (placeholder) el.placeholder = placeholder;
+  return el;
+}
+
+function renderClients() {
+  if (state.activeMode !== "clients") return;
+  const cards = state.clients
+    .map((client) => {
+      const projects = state.projects.filter((project) => project.clientId === client.id);
+      const projectRows = projects.length
+        ? projects
+            .map(
+              (project) =>
+                `<div class="cp-project"><span>${escapeHtml(project.name)}${
+                  project.rateOverrideCents != null ? ` · ${escapeHtml(moneyFormat(project.rateOverrideCents, client.currency))}` : ""
+                }</span><button class="cp-edit" type="button" data-edit-project="${project.id}">✎</button></div>`
+            )
+            .join("")
+        : `<div class="cp-empty">${t("clients.noProjects")}</div>`;
+      return `
+        <div class="cp-card">
+          <div class="cp-head">
+            <div>
+              <strong>${escapeHtml(client.name)}</strong>
+              <small>${escapeHtml(t("clients.rate", { rate: moneyFormat(client.hourlyRateCents, client.currency) }))} · ${client.currency}</small>
+            </div>
+            <button class="cp-edit" type="button" data-edit-client="${client.id}">✎</button>
+          </div>
+          <div class="cp-projects">${projectRows}</div>
+          <button class="plain-btn" type="button" data-add-project="${client.id}">+ ${t("clients.addProject")}</button>
+        </div>`;
+    })
+    .join("");
+  els.clientsView.innerHTML = `
+    <div class="clients-board">
+      <div class="clients-head">
+        <h2>${t("clients.title")}</h2>
+        <button class="primary-btn" type="button" id="addClientBtn">${t("clients.addClient")}</button>
+      </div>
+      ${state.clients.length ? cards : `<p class="cp-empty">${t("clients.empty")}</p>`}
+    </div>
+  `;
+  els.clientsView.querySelector("#addClientBtn").addEventListener("click", () => openClientModal(null));
+  els.clientsView.querySelectorAll("[data-edit-client]").forEach((el) =>
+    el.addEventListener("click", () => openClientModal(state.clients.find((client) => client.id === el.dataset.editClient)))
+  );
+  els.clientsView.querySelectorAll("[data-add-project]").forEach((el) =>
+    el.addEventListener("click", () => openProjectModal(null, el.dataset.addProject))
+  );
+  els.clientsView.querySelectorAll("[data-edit-project]").forEach((el) =>
+    el.addEventListener("click", () => openProjectModal(state.projects.find((project) => project.id === el.dataset.editProject)))
+  );
 }
 
 function renderSettings() {
@@ -966,6 +1194,21 @@ function renderDetail() {
   els.detailEstimate.value = task.estimatePomos;
   els.detailTags.value = task.tags.join(" ");
   els.detailNotes.value = task.notes;
+  els.detailProject.replaceChildren();
+  const noProjectOption = document.createElement("option");
+  noProjectOption.value = "";
+  noProjectOption.textContent = t("detail.noProject");
+  els.detailProject.append(noProjectOption);
+  state.projects.forEach((project) => {
+    const client = state.clients.find((item) => item.id === project.clientId);
+    const option = document.createElement("option");
+    option.value = project.id;
+    option.textContent = client ? `${client.name} / ${project.name}` : project.name;
+    els.detailProject.append(option);
+  });
+  els.detailProject.value = task.projectId ?? "";
+  els.detailBillable.checked = task.billable;
+  els.detailRate.value = task.rateOverrideCents != null ? centsToMajor(task.rateOverrideCents, resolveCurrency(task)) : "";
   task.subtasks.forEach((subtask) => els.subtaskList.append(subtaskRow(task, subtask)));
   task.history.slice(0, 8).forEach((item) => {
     const row = document.createElement("div");
@@ -1061,7 +1304,7 @@ els.clearDone.addEventListener("click", () => {
 });
 
 els.exportData.addEventListener("click", async () => {
-  const data = JSON.stringify({ version: 1, ...state }, null, 2);
+  const data = JSON.stringify({ version: 2, exportedAt: new Date().toISOString(), ...state }, null, 2);
   const blob = new Blob([data], { type: "application/json" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
@@ -1183,6 +1426,16 @@ els.detailTags.addEventListener("change", () => {
   updateTask(state.selectedTaskId, { tags }, t("history.tagsUpdate"));
 });
 els.detailNotes.addEventListener("change", () => updateTask(state.selectedTaskId, { notes: els.detailNotes.value }, t("history.notesUpdate")));
+els.detailProject.addEventListener("change", () => {
+  const projectId = els.detailProject.value || null;
+  updateTask(state.selectedTaskId, { projectId, billable: Boolean(projectId) }, t("history.projectUpdate"));
+});
+els.detailBillable.addEventListener("change", () => updateTask(state.selectedTaskId, { billable: els.detailBillable.checked }, t("history.billableUpdate")));
+els.detailRate.addEventListener("change", () => {
+  const raw = els.detailRate.value.trim();
+  const task = selectedTask();
+  updateTask(state.selectedTaskId, { rateOverrideCents: raw === "" ? null : centsFromMajor(raw, resolveCurrency(task)) }, t("history.rateUpdate"));
+});
 
 els.addSubtask.addEventListener("click", () => {
   const task = selectedTask();
