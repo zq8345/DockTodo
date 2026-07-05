@@ -1494,21 +1494,20 @@ function renderStats() {
   const rate = total ? Math.round((done / total) * 100) : 0;
   els.statsView.innerHTML = `
     <div class="stats-board">
-      ${statCard(t("stats.rate"), `${rate}%`, rate)}
-      ${statCard(t("stats.open"), `${open}`, Math.min(open * 12, 100))}
-      ${statCard(t("stats.overdue"), `${overdue}`, Math.min(overdue * 20, 100))}
-      ${statCard(t("stats.pomo"), `${actual}/${estimate}`, estimate ? Math.round((actual / estimate) * 100) : 0)}
+      ${statCard(t("stats.rate"), `${rate}%`)}
+      ${statCard(t("stats.open"), `${open}`)}
+      ${statCard(t("stats.overdue"), `${overdue}`)}
+      ${statCard(t("stats.pomo"), `${actual}/${estimate}`)}
     </div>
   `;
 }
 
-function statCard(label, value, percent) {
-  const width = Math.max(0, Math.min(100, percent));
+// Stripe-style metric card: small grey label on top, big number below.
+function statCard(label, value) {
   return `
     <div class="stat-card">
       <span>${label}</span>
       <strong>${value}</strong>
-      <div class="bar"><i style="width:${width}%"></i></div>
     </div>
   `;
 }

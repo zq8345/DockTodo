@@ -1233,32 +1233,16 @@ h2 {
 
 .stat-card span {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 .stat-card strong {
   display: block;
   margin-top: 8px;
   font-size: 34px;
-}
-
-.bar-list {
-  display: grid;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.bar {
-  height: 8px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: var(--surface-soft);
-}
-
-.bar i {
-  display: block;
-  height: 100%;
-  background: var(--blue);
+  font-variant-numeric: tabular-nums;
 }
 
 .detail-pane {
