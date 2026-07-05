@@ -49,6 +49,7 @@ const els = {
   nextMonth: document.querySelector("#nextMonth"),
   focusTime: document.querySelector("#focusTime"),
   focusTask: document.querySelector("#focusTask"),
+  focusToday: document.querySelector("#focusToday"),
   startFocus: document.querySelector("#startFocus"),
   resetFocus: document.querySelector("#resetFocus"),
   completePomo: document.querySelector("#completePomo"),
@@ -1373,29 +1374,43 @@ function renderCalendar() {
     els.calendarGrid.append(cell);
   });
 
-  for (let i = 0; i < 42; i += 1) {
+  // Render only the weeks this month actually spans — no trailing blank week.
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const cellCount = Math.ceil((first.getDay() + daysInMonth) / 7) * 7;
+
+  for (let i = 0; i < cellCount; i += 1) {
     const date = new Date(start);
     date.setDate(start.getDate() + i);
     const key = formatDate(date);
+    const count = countTasks((task) => taskDate(task) === key);
     const cell = document.createElement("div");
     cell.className = "calendar-day";
     cell.classList.toggle("muted", date.getMonth() !== month - 1);
     cell.classList.toggle("today", key === todayKey);
-    cell.innerHTML = `<div class="calendar-date"><span>${date.getDate()}</span><span>${countTasks((task) => taskDate(task) === key)}</span></div>`;
-    state.tasks.filter((task) => taskDate(task) === key).slice(0, 3).forEach((task) => {
-      const item = document.createElement("div");
-      item.className = "calendar-task";
-      item.textContent = task.title;
-      item.style.background = state.lists.find((list) => list.id === task.listId)?.color ?? "var(--blue)";
-      item.addEventListener("click", () => {
-        state.selectedTaskId = task.id;
-        state.activeMode = "tasks";
-        state.activeView = "all";
-        saveState();
-        render();
+    // No bare "0": only show a count badge when the day has tasks.
+    cell.innerHTML = `<div class="calendar-date"><span>${date.getDate()}</span>${count ? `<span class="calendar-count">${count}</span>` : ""}</div>`;
+    state.tasks
+      .filter((task) => taskDate(task) === key)
+      .slice(0, 3)
+      .forEach((task) => {
+        const item = document.createElement("button");
+        item.type = "button";
+        item.className = "calendar-task";
+        const dot = document.createElement("span");
+        dot.className = "calendar-dot";
+        dot.style.background = state.lists.find((list) => list.id === task.listId)?.color ?? "var(--accent)";
+        const label = document.createElement("span");
+        label.textContent = task.title;
+        item.append(dot, label);
+        item.addEventListener("click", () => {
+          state.selectedTaskId = task.id;
+          state.activeMode = "tasks";
+          state.activeView = "all";
+          saveState();
+          render();
+        });
+        cell.append(item);
       });
-      cell.append(item);
-    });
     els.calendarGrid.append(cell);
   }
 }
@@ -1411,6 +1426,19 @@ function renderFocus() {
   });
   if (state.selectedTaskId) els.focusTask.value = state.selectedTaskId;
   renderFocusTime();
+  const todayEntries = state.timeEntries
+    .filter((entry) => formatDate(new Date(entry.start)) === todayKey)
+    .sort((a, b) => b.start - a.start);
+  const totalSecs = todayEntries.reduce((sum, entry) => sum + entry.seconds, 0);
+  const rows = todayEntries
+    .map((entry) => {
+      const task = state.tasks.find((item) => item.id === entry.taskId);
+      return `<div class="ft-row"><span>${escapeHtml(task?.title ?? "—")}</span><span>${Math.round(entry.seconds / 60)}m</span></div>`;
+    })
+    .join("");
+  els.focusToday.innerHTML = `<div class="ft-head"><span>${t("focus.todayLogged")}</span><strong>${formatHours(totalSecs)}h</strong></div>${
+    todayEntries.length ? rows : `<div class="ft-empty">${t("focus.todayNone")}</div>`
+  }`;
 }
 
 function renderFocusTime() {

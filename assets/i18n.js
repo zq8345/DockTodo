@@ -94,6 +94,8 @@ const STRINGS = {
     "focus.resume": "Resume",
     "focus.reset": "Reset",
     "focus.logPomo": "Log 1 pomodoro",
+    "focus.todayLogged": "Logged today",
+    "focus.todayNone": "No time logged today yet",
     "focus.doneTitle": "🍅 Pomodoro done",
     "focus.doneBody": "Logged 1 pomodoro automatically",
     // detail pane
@@ -388,6 +390,8 @@ const STRINGS = {
     "focus.resume": "继续",
     "focus.reset": "重置",
     "focus.logPomo": "记 1 个番茄",
+    "focus.todayLogged": "今日已计时",
+    "focus.todayNone": "今天还没有计时",
     "focus.doneTitle": "🍅 番茄完成",
     "focus.doneBody": "已自动记录 1 个番茄",
     "detail.empty": "选择一个任务",
