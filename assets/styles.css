@@ -525,6 +525,11 @@ h2 {
   font-size: 18px;
 }
 
+.empty .soft-btn {
+  justify-self: center;
+  margin-top: 4px;
+}
+
 .calendar-view {
   padding: 18px 20px;
   overflow: auto;
@@ -639,12 +644,25 @@ h2 {
   color: var(--muted);
 }
 
-.focus-view,
 .settings-view {
   display: grid;
   place-items: center;
   padding: 24px;
   overflow: auto;
+}
+
+/* One workspace, top of the content flow: timer + task context + today's
+   logged entries. Not a lone card floating in empty space. */
+.focus-view {
+  padding: 24px;
+  overflow: auto;
+}
+
+.focus-workspace {
+  display: grid;
+  gap: 16px;
+  width: min(560px, 100%);
+  margin: 0 auto;
 }
 
 /* Metric cards sit at the top of the content flow, not floating centered. */
@@ -1149,7 +1167,7 @@ h2 {
 .focus-card {
   display: grid;
   gap: 18px;
-  width: min(460px, 100%);
+  width: 100%;
   padding: 30px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -1162,9 +1180,28 @@ h2 {
   color: var(--muted);
 }
 
+.focus-context {
+  display: grid;
+  gap: 2px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.focus-context strong {
+  font-size: 15px;
+}
+
+.focus-context small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.focus-context:empty {
+  display: none;
+}
+
 .focus-today {
-  width: min(460px, 100%);
-  margin: 16px auto 0;
+  width: 100%;
 }
 
 .ft-head {
@@ -1210,10 +1247,14 @@ h2 {
   font-size: 13px;
 }
 
-.focus-card strong {
+.focus-card > strong {
   font-size: 76px;
   line-height: 1;
   letter-spacing: 0;
+}
+
+.focus-actions {
+  justify-content: center;
 }
 
 .stats-board {

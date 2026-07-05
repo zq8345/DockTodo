@@ -50,6 +50,10 @@ const els = {
   focusTime: document.querySelector("#focusTime"),
   focusTask: document.querySelector("#focusTask"),
   focusToday: document.querySelector("#focusToday"),
+  focusWorkspace: document.querySelector("#focusWorkspace"),
+  focusContext: document.querySelector("#focusContext"),
+  focusEmpty: document.querySelector("#focusEmpty"),
+  focusEmptyCta: document.querySelector("#focusEmptyCta"),
   startFocus: document.querySelector("#startFocus"),
   resetFocus: document.querySelector("#resetFocus"),
   completePomo: document.querySelector("#completePomo"),
@@ -1462,6 +1466,9 @@ function renderFocus() {
     els.focusTask.append(option);
   });
   if (state.selectedTaskId) els.focusTask.value = state.selectedTaskId;
+  els.focusWorkspace.classList.toggle("hidden", openTasks.length === 0);
+  els.focusEmpty.classList.toggle("visible", openTasks.length === 0);
+  renderFocusContext();
   renderFocusTime();
   const todayEntries = state.timeEntries
     .filter((entry) => formatDate(new Date(entry.start)) === todayKey)
@@ -1476,6 +1483,30 @@ function renderFocus() {
   els.focusToday.innerHTML = `<div class="ft-head"><span>${t("focus.todayLogged")}</span><strong>${formatHours(totalSecs)}h</strong></div>${
     todayEntries.length ? rows : `<div class="ft-empty">${t("focus.todayNone")}</div>`
   }`;
+}
+
+// The focus page is one workspace: the timer plus the context of the task it
+// bills to — title, list, project/client and what this task logged today.
+function renderFocusContext() {
+  const task = state.tasks.find((item) => item.id === els.focusTask.value) ?? null;
+  if (!task) {
+    els.focusContext.innerHTML = "";
+    return;
+  }
+  const list = state.lists.find((item) => item.id === task.listId);
+  const project = resolveProject(task);
+  const client = resolveClient(task);
+  const meta = [list?.name ?? t("meta.listFallback")];
+  if (project) meta.push(client ? `${client.name} / ${project.name}` : project.name);
+  const taskToday = state.timeEntries.filter(
+    (entry) => entry.taskId === task.id && formatDate(new Date(entry.start)) === todayKey
+  );
+  const minutes = Math.round(taskToday.reduce((sum, entry) => sum + entry.seconds, 0) / 60);
+  els.focusContext.innerHTML = `
+    <strong>${escapeHtml(task.title)}</strong>
+    <small>${escapeHtml(meta.join(" · "))}</small>
+    <small>${escapeHtml(t("focus.todayCount", { n: taskToday.length, min: minutes }))}</small>
+  `;
 }
 
 function renderFocusTime() {
@@ -1763,6 +1794,7 @@ els.focusTask.addEventListener("change", () => {
   saveState();
   render();
 });
+els.focusEmptyCta.addEventListener("click", () => els.quickAdd.click());
 
 // seconds defaults to a nominal pomodoro (manual "log 1 pomodoro" — the user
 // asserts 25 min, editable later); the countdown path passes measured seconds.

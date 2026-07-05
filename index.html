@@ -127,17 +127,25 @@
         </section>
 
         <section class="focus-view hidden" id="focusView">
-          <div class="focus-card">
-            <p data-i18n="focus.timer">Focus timer</p>
-            <strong id="focusTime">25:00</strong>
-            <select id="focusTask"></select>
-            <div class="focus-actions">
-              <button class="primary-btn" id="startFocus" type="button" data-i18n="focus.start">Start</button>
-              <button class="soft-btn" id="resetFocus" type="button" data-i18n="focus.reset">Reset</button>
-              <button class="soft-btn" id="completePomo" type="button" data-i18n="focus.logPomo">Log 1 pomodoro</button>
+          <div class="focus-workspace" id="focusWorkspace">
+            <div class="focus-card">
+              <p data-i18n="focus.timer">Focus timer</p>
+              <strong id="focusTime">25:00</strong>
+              <select id="focusTask" data-i18n-aria="focus.taskSelect" aria-label="Focus task"></select>
+              <div class="focus-context" id="focusContext"></div>
+              <div class="focus-actions">
+                <button class="primary-btn" id="startFocus" type="button" data-i18n="focus.start">Start</button>
+                <button class="soft-btn" id="resetFocus" type="button" data-i18n="focus.reset">Reset</button>
+                <button class="soft-btn" id="completePomo" type="button" data-i18n="focus.logPomo">Log 1 pomodoro</button>
+              </div>
             </div>
+            <div class="focus-today" id="focusToday"></div>
           </div>
-          <div class="focus-today" id="focusToday"></div>
+          <section class="empty" id="focusEmpty">
+            <strong data-i18n="focus.emptyTitle">Nothing to focus on</strong>
+            <span data-i18n="focus.emptyHint">Add a task first — focus sessions become billable time.</span>
+            <button class="soft-btn" id="focusEmptyCta" type="button" data-i18n="action.addTask">Add task</button>
+          </section>
         </section>
 
         <section class="stats-view hidden" id="statsView"></section>
