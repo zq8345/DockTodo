@@ -67,6 +67,8 @@ const els = {
   subtaskList: document.querySelector("#subtaskList"),
   subtaskTemplate: document.querySelector("#subtaskTemplate"),
   historyList: document.querySelector("#historyList"),
+  addTimeEntry: document.querySelector("#addTimeEntry"),
+  timeEntryList: document.querySelector("#timeEntryList"),
   deleteTask: document.querySelector("#deleteTask"),
   toastStack: document.querySelector("#toastStack"),
 };
@@ -74,6 +76,7 @@ const els = {
 let state = normalizeState(loadState());
 let focusSeconds = 25 * 60;
 let focusTimer = null;
+let focusSession = null; // { taskId, startedAt } — set when the timer starts from idle, kept across pauses
 
 function taskDate(task) {
   return task.dueDate || task.startDate || "";
@@ -1173,6 +1176,7 @@ function renderDetail() {
   els.detailForm.classList.toggle("hidden", !task);
   els.detailList.replaceChildren();
   els.subtaskList.replaceChildren();
+  els.timeEntryList.replaceChildren();
   els.historyList.replaceChildren();
   if (!task) return;
 
@@ -1210,6 +1214,7 @@ function renderDetail() {
   els.detailBillable.checked = task.billable;
   els.detailRate.value = task.rateOverrideCents != null ? centsToMajor(task.rateOverrideCents, resolveCurrency(task)) : "";
   task.subtasks.forEach((subtask) => els.subtaskList.append(subtaskRow(task, subtask)));
+  renderTimeEntries(task);
   task.history.slice(0, 8).forEach((item) => {
     const row = document.createElement("div");
     row.className = "history-item";
@@ -1365,6 +1370,9 @@ els.startFocus.addEventListener("click", () => {
     els.startFocus.textContent = t("focus.resume");
     return;
   }
+  if (!focusSession) {
+    focusSession = { taskId: els.focusTask.value || state.selectedTaskId, startedAt: Date.now() };
+  }
   els.startFocus.textContent = t("focus.pause");
   focusTimer = setInterval(() => {
     focusSeconds -= 1;
@@ -1383,12 +1391,17 @@ els.startFocus.addEventListener("click", () => {
 els.resetFocus.addEventListener("click", () => {
   clearInterval(focusTimer);
   focusTimer = null;
+  focusSession = null; // abandon: no time entry recorded
   focusSeconds = 25 * 60;
   els.startFocus.textContent = t("focus.start");
   renderFocusTime();
 });
 
 els.completePomo.addEventListener("click", recordPomo);
+els.addTimeEntry.addEventListener("click", () => {
+  const task = selectedTask();
+  if (task) openTimeEntryModal(null, task);
+});
 els.focusTask.addEventListener("change", () => {
   state.selectedTaskId = els.focusTask.value;
   saveState();
@@ -1400,10 +1413,125 @@ function recordPomo() {
   const task = state.tasks.find((item) => item.id === id);
   if (!task) return;
   task.actualPomos = Number(task.actualPomos || 0) + 1;
+  createPomoEntry(task, 25 * 60);
   addHistory(task, t("history.pomoDone"));
   state.selectedTaskId = task.id;
   saveState();
   render();
+}
+
+// A completed pomodoro (timer or manual "log 1 pomodoro") becomes a billable
+// TimeEntry — the pomodoro clock is the source of billable time. `seconds` is
+// authoritative for billing; start/end are wall-clock and may span pauses.
+function createPomoEntry(task, seconds) {
+  const end = Date.now();
+  const start = focusSession && focusSession.taskId === task.id ? focusSession.startedAt : end - seconds * 1000;
+  state.timeEntries.push({
+    id: createId(),
+    taskId: task.id,
+    start,
+    end,
+    seconds,
+    billable: task.billable === true,
+    rateSnapshotCents: resolveRateCents(task),
+    currency: resolveCurrency(task),
+    note: "",
+  });
+  focusSession = null;
+}
+
+function renderTimeEntries(task) {
+  const entries = state.timeEntries.filter((entry) => entry.taskId === task.id).sort((a, b) => b.start - a.start);
+  if (!entries.length) {
+    const empty = document.createElement("div");
+    empty.className = "te-empty";
+    empty.textContent = t("entry.none");
+    els.timeEntryList.append(empty);
+    return;
+  }
+  entries.forEach((entry) => els.timeEntryList.append(timeEntryRow(task, entry)));
+}
+
+function timeEntryRow(task, entry) {
+  const row = document.createElement("button");
+  row.type = "button";
+  row.className = "te-row";
+  const mins = Math.round(entry.seconds / 60);
+  const label = document.createElement("span");
+  label.textContent = `${dateLabel(formatDate(new Date(entry.start)))} · ${mins}m`;
+  const amount = document.createElement("span");
+  amount.className = "te-amount";
+  amount.textContent = entry.billable ? moneyFormat(entryAmountCents(entry), entry.currency) : "—";
+  row.append(label, amount);
+  row.addEventListener("click", () => openTimeEntryModal(entry, task));
+  return row;
+}
+
+function openTimeEntryModal(entry, task) {
+  openModal(entry ? t("entry.edit") : t("entry.new"), (modal) => {
+    const currency = entry ? entry.currency : resolveCurrency(task);
+    const dateInput = inputEl("date", entry ? formatDate(new Date(entry.start)) : todayKey);
+    const timeInput = inputEl("time", entry ? new Date(entry.start).toTimeString().slice(0, 5) : "09:00");
+    const durInput = inputEl("number", entry ? String(Math.round(entry.seconds / 60)) : "25");
+    durInput.min = "0";
+    const billableCheck = document.createElement("input");
+    billableCheck.type = "checkbox";
+    billableCheck.checked = entry ? entry.billable : task.billable;
+    const rateInput = inputEl("number", centsToMajor(entry ? entry.rateSnapshotCents : resolveRateCents(task), currency));
+    rateInput.min = "0";
+    rateInput.step = "0.01";
+    const noteInput = inputEl("text", entry?.note ?? "");
+    modal.append(
+      modalField(t("entry.date"), dateInput),
+      modalField(t("entry.start"), timeInput),
+      modalField(t("entry.duration"), durInput),
+      modalField(t("entry.rate"), rateInput),
+      modalField(t("entry.billable"), billableCheck),
+      modalField(t("entry.note"), noteInput)
+    );
+
+    if (entry) {
+      modal.append(
+        modalButton(t("entry.delete"), "danger-btn", () => {
+          state.timeEntries = state.timeEntries.filter((item) => item.id !== entry.id);
+          addHistory(task, t("history.entryDelete"));
+          closeModal();
+          saveState();
+          render();
+          toast(t("toast.entryDeleted"));
+        })
+      );
+    }
+
+    modal.append(
+      modalActions(
+        modalButton(t("action.cancel"), "soft-btn", closeModal),
+        modalButton(t("form.save"), "primary-btn", () => {
+          const start = new Date(`${dateInput.value || todayKey}T${timeInput.value || "00:00"}`).getTime();
+          const seconds = Math.max(0, Math.round((Number(durInput.value) || 0) * 60));
+          const patch = {
+            start,
+            end: start + seconds * 1000,
+            seconds,
+            billable: billableCheck.checked,
+            rateSnapshotCents: centsFromMajor(rateInput.value, currency),
+            currency,
+            note: noteInput.value,
+          };
+          if (entry) {
+            Object.assign(entry, patch);
+            addHistory(task, t("history.entryEdit"));
+          } else {
+            state.timeEntries.push({ id: createId(), taskId: task.id, ...patch });
+            addHistory(task, t("history.entryAdd"));
+          }
+          closeModal();
+          saveState();
+          render();
+        })
+      )
+    );
+  });
 }
 
 els.detailCompleted.addEventListener("change", () => setTaskCompleted(selectedTask(), els.detailCompleted.checked));

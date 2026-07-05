@@ -698,6 +698,46 @@ h2 {
   resize: vertical;
 }
 
+.modal-field input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  justify-self: start;
+}
+
+#timeEntryList {
+  display: grid;
+  gap: 6px;
+}
+
+.te-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  background: var(--surface);
+  font-size: 13px;
+  text-align: left;
+}
+
+.te-row:hover {
+  background: var(--surface-soft);
+}
+
+.te-amount {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.te-empty {
+  color: var(--muted);
+  font-size: 13px;
+  padding: 4px 2px;
+}
+
 .focus-card {
   display: grid;
   gap: 18px;
