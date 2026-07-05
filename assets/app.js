@@ -1610,11 +1610,15 @@ els.startFocus.addEventListener("click", () => {
   if (focusTimer) {
     clearInterval(focusTimer);
     focusTimer = null;
+    if (focusSession) focusSession.pauseStart = Date.now();
     els.startFocus.textContent = t("focus.resume");
     return;
   }
   if (!focusSession) {
-    focusSession = { taskId: els.focusTask.value || state.selectedTaskId, startedAt: Date.now() };
+    focusSession = { taskId: els.focusTask.value || state.selectedTaskId, startedAt: Date.now(), pausedMs: 0, pauseStart: null };
+  } else if (focusSession.pauseStart) {
+    focusSession.pausedMs += Date.now() - focusSession.pauseStart;
+    focusSession.pauseStart = null;
   }
   els.startFocus.textContent = t("focus.pause");
   focusTimer = setInterval(() => {
@@ -1626,7 +1630,13 @@ els.startFocus.addEventListener("click", () => {
       focusTimer = null;
       focusSeconds = 25 * 60;
       els.startFocus.textContent = t("focus.start");
-      recordPomo();
+      // Wall-clock elapsed minus paused time is authoritative: background
+      // throttling can stretch a "25 min" countdown well past 1500s, and we
+      // must bill the real focused time, not the nominal count.
+      const workedSeconds = focusSession
+        ? Math.max(1, Math.round((Date.now() - focusSession.startedAt - focusSession.pausedMs) / 1000))
+        : 25 * 60;
+      recordPomo(workedSeconds);
       notify(t("focus.doneTitle"), t("focus.doneBody"));
     }
   }, 1000);
@@ -1641,7 +1651,7 @@ els.resetFocus.addEventListener("click", () => {
   renderFocusTime();
 });
 
-els.completePomo.addEventListener("click", recordPomo);
+els.completePomo.addEventListener("click", () => recordPomo());
 els.addTimeEntry.addEventListener("click", () => {
   const task = selectedTask();
   if (task) openTimeEntryModal(null, task);
@@ -1652,12 +1662,14 @@ els.focusTask.addEventListener("change", () => {
   render();
 });
 
-function recordPomo() {
+// seconds defaults to a nominal pomodoro (manual "log 1 pomodoro" — the user
+// asserts 25 min, editable later); the countdown path passes measured seconds.
+function recordPomo(seconds = 25 * 60) {
   const id = els.focusTask.value || state.selectedTaskId;
   const task = state.tasks.find((item) => item.id === id);
   if (!task) return;
   task.actualPomos = Number(task.actualPomos || 0) + 1;
-  createPomoEntry(task, 25 * 60);
+  createPomoEntry(task, seconds);
   addHistory(task, t("history.pomoDone"));
   state.selectedTaskId = task.id;
   saveState();
@@ -1669,11 +1681,12 @@ function recordPomo() {
 // authoritative for billing; start/end are wall-clock and may span pauses.
 function createPomoEntry(task, seconds) {
   const end = Date.now();
-  const start = focusSession && focusSession.taskId === task.id ? focusSession.startedAt : end - seconds * 1000;
+  // start/end/seconds stay self-consistent: end - start === seconds * 1000.
+  // seconds is the authority (measured wall-clock or nominal); start is derived.
   state.timeEntries.push({
     id: createId(),
     taskId: task.id,
-    start,
+    start: end - seconds * 1000,
     end,
     seconds,
     billable: task.billable === true,
