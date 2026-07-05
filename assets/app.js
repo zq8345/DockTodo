@@ -208,6 +208,9 @@ function addHistory(task, text) {
 function setMode(mode) {
   state.activeMode = mode;
   if (mode === "calendar") state.activeView = "calendar";
+  // Leaving calendar via the rail must drop the calendar-only view, otherwise
+  // the header title ("Calendar") and the task list content desync.
+  else if (state.activeView === "calendar") state.activeView = "today";
   saveState();
   render();
 }
