@@ -781,6 +781,7 @@ function mergeImport(raw) {
 }
 
 function replaceImport(raw) {
+  delete raw.version;
   state = normalizeState(raw);
   if (!state.lists.some((list) => list.id === "inbox")) {
     state.lists.unshift({ id: "inbox", name: "收集箱", color: "#4778ff" });
@@ -1144,18 +1145,18 @@ els.clearDone.addEventListener("click", () => {
 });
 
 els.exportData.addEventListener("click", async () => {
-  const data = JSON.stringify(state, null, 2);
+  const data = JSON.stringify({ version: 1, ...state }, null, 2);
+  const blob = new Blob([data], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `docktodo-${todayKey}.json`;
+  link.click();
+  URL.revokeObjectURL(link.href);
   try {
     await navigator.clipboard.writeText(data);
-    toast("数据已复制到剪贴板");
+    toast("已导出 JSON 文件，并复制到剪贴板");
   } catch {
-    const blob = new Blob([data], { type: "application/json" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = `docktodo-${todayKey}.json`;
-    link.click();
-    URL.revokeObjectURL(link.href);
-    toast("已下载数据文件");
+    toast("已导出 JSON 文件");
   }
 });
 
