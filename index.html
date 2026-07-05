@@ -26,6 +26,10 @@
           <button class="icon-btn" id="quickAddTop" type="button" title="添加任务">+</button>
         </header>
 
+        <div class="search-box">
+          <input id="searchInput" type="search" placeholder="搜索任务、备注或标签" autocomplete="off" />
+        </div>
+
         <nav class="nav-list" id="smartLists" aria-label="智能清单"></nav>
 
         <section class="side-section">
@@ -43,6 +47,13 @@
           </div>
           <div class="nav-list" id="filterList"></div>
         </section>
+
+        <section class="side-section hidden" id="tagSection">
+          <div class="section-title">
+            <span>标签</span>
+          </div>
+          <div class="nav-list" id="tagList"></div>
+        </section>
       </aside>
 
       <section class="main-pane" aria-label="主工作区">
@@ -52,6 +63,8 @@
             <h2 id="viewTitle">今天</h2>
           </div>
           <div class="head-actions">
+            <button class="soft-btn" id="importData" type="button">导入</button>
+            <input id="importFile" type="file" accept=".json,application/json" hidden />
             <button class="soft-btn" id="exportData" type="button">导出</button>
             <button class="soft-btn" id="clearDone" type="button">清理完成</button>
             <button class="primary-btn" id="quickAdd" type="button">添加任务</button>
@@ -149,6 +162,14 @@
               <span>预计番茄</span>
               <input id="detailEstimate" type="number" min="0" max="20" />
             </label>
+            <label>
+              <span>重复</span>
+              <select id="detailRepeat"></select>
+            </label>
+            <label>
+              <span>标签</span>
+              <input id="detailTags" type="text" maxlength="120" placeholder="用空格分隔" />
+            </label>
           </div>
 
           <label class="notes">
@@ -195,6 +216,8 @@
         <button class="subtask-delete" type="button" title="删除检查项">×</button>
       </label>
     </template>
+
+    <div class="toast-stack" id="toastStack" aria-live="polite"></div>
 
     <script src="./assets/app.js"></script>
   </body>

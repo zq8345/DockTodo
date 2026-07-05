@@ -193,9 +193,29 @@ h2 {
   font-weight: 800;
 }
 
+.search-box {
+  padding: 12px 12px 0;
+}
+
+.search-box input {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  background: var(--surface);
+  outline: none;
+}
+
+.search-box input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(71, 120, 255, 0.14);
+}
+
 .nav-item {
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) auto;
+  grid-template-columns: 24px minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 8px;
   width: 100%;
@@ -227,6 +247,20 @@ h2 {
 .nav-count {
   color: var(--muted);
   font-size: 12px;
+}
+
+.nav-edit {
+  display: none;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.nav-item:hover .nav-edit {
+  display: inline;
+}
+
+.nav-edit:hover {
+  color: var(--blue);
 }
 
 .main-pane {
@@ -704,6 +738,109 @@ h2 {
   color: var(--muted);
   background: var(--surface-soft);
   font-size: 12px;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(18, 23, 34, 0.45);
+  z-index: 50;
+}
+
+.modal {
+  display: grid;
+  gap: 14px;
+  width: min(400px, calc(100vw - 40px));
+  padding: 22px;
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.modal h3 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.modal-field {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.modal-field input,
+.modal-field select {
+  min-height: 38px;
+  padding: 0 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  background: var(--surface);
+  font-weight: 400;
+  outline: none;
+}
+
+.modal-field input:focus,
+.modal-field select:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(71, 120, 255, 0.14);
+}
+
+.modal-field input[type="color"] {
+  height: 38px;
+  padding: 4px;
+}
+
+.modal-text {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-actions .danger-btn {
+  width: auto;
+}
+
+.toast-stack {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  display: grid;
+  gap: 8px;
+  z-index: 60;
+}
+
+.toast {
+  max-width: 340px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  color: var(--bg);
+  background: var(--text);
+  font-size: 13px;
+  box-shadow: var(--shadow);
+  animation: toast-in 0.25s ease;
+}
+
+.toast.leaving {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+@keyframes toast-in {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
 }
 
 @media (max-width: 1180px) {
