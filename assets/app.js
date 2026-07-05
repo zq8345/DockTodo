@@ -40,6 +40,9 @@ const els = {
   taskList: document.querySelector("#taskList"),
   taskTemplate: document.querySelector("#taskTemplate"),
   emptyState: document.querySelector("#emptyState"),
+  emptyCta: document.querySelector("#emptyCta"),
+  calendarEmpty: document.querySelector("#calendarEmpty"),
+  calendarEmptyCta: document.querySelector("#calendarEmptyCta"),
   statsLine: document.querySelector("#statsLine"),
   viewTitle: document.querySelector("#viewTitle"),
   viewMeta: document.querySelector("#viewMeta"),
@@ -932,10 +935,19 @@ function renderClients() {
         <h2>${t("clients.title")}</h2>
         <button class="primary-btn" type="button" id="addClientBtn">${t("clients.addClient")}</button>
       </div>
-      ${state.clients.length ? cards : `<p class="cp-empty">${t("clients.empty")}</p>`}
+      ${
+        state.clients.length
+          ? cards
+          : `<section class="empty visible">
+              <strong>${t("clients.emptyTitle")}</strong>
+              <span>${t("clients.empty")}</span>
+              <button class="soft-btn" type="button" id="clientsEmptyCta">${t("clients.addClient")}</button>
+            </section>`
+      }
     </div>
   `;
   els.clientsView.querySelector("#addClientBtn").addEventListener("click", () => openClientModal(null));
+  els.clientsView.querySelector("#clientsEmptyCta")?.addEventListener("click", () => openClientModal(null));
   els.clientsView.querySelectorAll("[data-edit-client]").forEach((el) =>
     el.addEventListener("click", () => openClientModal(state.clients.find((client) => client.id === el.dataset.editClient)))
   );
@@ -996,7 +1008,11 @@ function renderTimesheet() {
           ? `<div class="ts-scroll"><table class="ts-table">
               <thead><tr><th class="ts-label"></th>${dayHeaders}<th class="ts-num">${t("timesheet.total")}</th><th class="ts-num">${t("timesheet.amount")}</th></tr></thead>
               <tbody>${rows}${totalRows}</tbody></table></div>`
-          : `<p class="ts-empty">${t("timesheet.empty")}</p>`
+          : `<section class="empty visible">
+              <strong>${t("timesheet.empty")}</strong>
+              <span>${t("timesheet.emptyHint")}</span>
+              <button class="soft-btn" type="button" id="tsEmptyCta">${t("timesheet.emptyCta")}</button>
+            </section>`
       }
     </div>
   `;
@@ -1009,6 +1025,7 @@ function renderTimesheet() {
   els.timesheetView.querySelector("#tsNext").addEventListener("click", () => setWeek(addDays(weekStart, 7)));
   els.timesheetView.querySelector("#tsToday").addEventListener("click", () => setWeek(weekStartKey(todayKey, state.settings.weekStart)));
   els.timesheetView.querySelector("#tsCsv").addEventListener("click", () => downloadFile(`timesheet-${weekStart}.csv`, "text/csv", timesheetCsv(weekStart)));
+  els.timesheetView.querySelector("#tsEmptyCta")?.addEventListener("click", () => setMode("focus"));
 }
 
 function renderBillingStrip() {
@@ -1027,6 +1044,17 @@ function renderBillingStrip() {
 
 function renderInvoices() {
   if (state.activeMode !== "invoices") return;
+  if (!state.clients.length) {
+    els.invoiceView.innerHTML = `
+      <section class="empty visible">
+        <strong>${t("invoice.noClientsTitle")}</strong>
+        <span>${t("invoice.noClientsHint")}</span>
+        <button class="soft-btn" type="button" id="invEmptyCta">${t("clients.addClient")}</button>
+      </section>
+    `;
+    els.invoiceView.querySelector("#invEmptyCta").addEventListener("click", () => setMode("clients"));
+    return;
+  }
   const clientOptions = state.clients.map((client) => `<option value="${client.id}">${escapeHtml(client.name)}</option>`).join("");
   const defaultNumber = `INV-${String(state.settings.invoiceCounter).padStart(4, "0")}`;
   const savedRows = state.invoices.length
@@ -1454,6 +1482,8 @@ function renderCalendar() {
     }
     els.calendarGrid.append(cell);
   }
+  const monthHasTasks = state.tasks.some((task) => taskDate(task).slice(0, 7) === state.calendarMonth);
+  els.calendarEmpty.classList.toggle("visible", !monthHasTasks);
 }
 
 function renderFocus() {
@@ -1795,6 +1825,8 @@ els.focusTask.addEventListener("change", () => {
   render();
 });
 els.focusEmptyCta.addEventListener("click", () => els.quickAdd.click());
+els.emptyCta.addEventListener("click", () => els.taskInput.focus());
+els.calendarEmptyCta.addEventListener("click", () => els.quickAdd.click());
 
 // seconds defaults to a nominal pomodoro (manual "log 1 pomodoro" — the user
 // asserts 25 min, editable later); the countdown path passes measured seconds.

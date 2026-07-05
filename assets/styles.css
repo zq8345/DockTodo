@@ -530,6 +530,15 @@ h2 {
   margin-top: 4px;
 }
 
+/* In-flow empty states (below a toolbar or grid) need less headroom than
+   the full-pane task empty state. */
+.calendar-view .empty.visible,
+.timesheet-view .empty.visible,
+.invoice-view .empty.visible,
+.clients-board .empty.visible {
+  padding-top: 32px;
+}
+
 .calendar-view {
   padding: 18px 20px;
   overflow: auto;
@@ -963,15 +972,10 @@ h2 {
   font-size: 11px;
 }
 
-.ts-empty,
-.ts-warn {
-  color: var(--muted);
-  font-size: 13px;
-  padding: 8px 2px;
-}
-
 .ts-warn {
   color: var(--amber);
+  font-size: 13px;
+  padding: 8px 2px;
 }
 
 .billing-strip {

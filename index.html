@@ -114,6 +114,7 @@
           <section class="empty" id="emptyState">
             <strong data-i18n="empty.title">No tasks here</strong>
             <span data-i18n="empty.hint">Add something to move forward — DockTodo will hold on to it.</span>
+            <button class="soft-btn" id="emptyCta" type="button" data-i18n="empty.cta">Add your first task</button>
           </section>
         </section>
 
@@ -124,6 +125,11 @@
             <button class="soft-btn" id="nextMonth" type="button" data-i18n="calendar.next">Next</button>
           </div>
           <div class="calendar-grid" id="calendarGrid"></div>
+          <section class="empty" id="calendarEmpty">
+            <strong data-i18n="calendar.emptyTitle">Nothing scheduled this month</strong>
+            <span data-i18n="calendar.emptyHint">Tasks with a start or due date appear on this calendar.</span>
+            <button class="soft-btn" id="calendarEmptyCta" type="button" data-i18n="action.addTask">Add task</button>
+          </section>
         </section>
 
         <section class="focus-view hidden" id="focusView">
