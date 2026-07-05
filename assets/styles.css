@@ -456,8 +456,11 @@ h2 {
   font-size: 12px;
 }
 
+/* Priority is also cued without colour (colour-blind safe): high = thick
+   ring, medium = default ring, low = dashed ring. */
 .task-row.pri-high:not(.done) .task-check {
   border-color: var(--red);
+  border-width: 3px;
 }
 
 .task-row.pri-medium:not(.done) .task-check {
@@ -466,6 +469,7 @@ h2 {
 
 .task-row.pri-low:not(.done) .task-check {
   border-color: var(--green);
+  border-style: dashed;
 }
 
 .empty {

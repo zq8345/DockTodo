@@ -1175,6 +1175,11 @@ function renderSettings() {
         <span>${t("settings.theme")}</span>
         <select id="settingsTheme">${themeOptions}</select>
       </label>
+      <label class="settings-field">
+        <span>${t("settings.invoiceStart")}</span>
+        <input id="settingsInvoiceStart" type="number" min="1" value="${state.settings.invoiceCounter}" />
+      </label>
+      <p class="settings-hint">${t("settings.invoiceHint")}</p>
     </div>
   `;
   els.settingsView.querySelector("#settingsLanguage").addEventListener("change", (event) => {
@@ -1187,6 +1192,11 @@ function renderSettings() {
   });
   els.settingsView.querySelector("#settingsTheme").addEventListener("change", (event) => {
     state.theme = event.target.value;
+    saveState();
+    render();
+  });
+  els.settingsView.querySelector("#settingsInvoiceStart").addEventListener("change", (event) => {
+    state.settings.invoiceCounter = Math.max(1, Math.round(Number(event.target.value) || 1));
     saveState();
     render();
   });
@@ -1876,3 +1886,13 @@ saveState();
 render();
 checkReminders();
 setInterval(checkReminders, 20000);
+
+// Ask the browser to keep local data from being evicted under storage pressure.
+if (navigator.storage?.persist) {
+  navigator.storage
+    .persisted()
+    .then((persisted) => {
+      if (!persisted) navigator.storage.persist();
+    })
+    .catch(() => {});
+}
