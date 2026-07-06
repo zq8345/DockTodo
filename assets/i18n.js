@@ -427,7 +427,7 @@ const STRINGS = {
     "stats.pomo": "番茄进度",
     "calendar.prev": "上月",
     "calendar.next": "下月",
-    "calendar.title": "{year} 年 {month} 月",
+    "calendar.title": "{year} 年 {month}",
     "calendar.more": "还有 {n} 项",
     "calendar.emptyTitle": "本月没有安排",
     "calendar.emptyHint": "带开始或截止日期的任务会出现在这里。",

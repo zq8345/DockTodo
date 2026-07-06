@@ -1675,8 +1675,26 @@ h2 {
     font-size: var(--text-page);
   }
 
+  /* Compact quick-add: title on its own row, then dates/priority/save in a
+     row — not a full vertical stack. */
   .quick-form {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .quick-form input[type="text"] {
+    grid-column: 1 / -1;
+  }
+
+  /* Save drops to a secondary style: the page's one primary button is the
+     header "Add task" (S2-6 single-primary rule). */
+  .quick-form button {
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+
+  .quick-form button:hover {
+    background: var(--surface-soft);
   }
 
   .head-actions {

@@ -1046,7 +1046,9 @@ function renderBillingStrip() {
     timerChip = `<span class="bs-timer">${icon("focus")} ${els.focusTime.textContent}${task ? ` · ${escapeHtml(task.title)}` : ""}</span>`;
   }
   const backupChip = typeof backupChipHtml === "function" ? backupChipHtml() : "";
-  els.billingStrip.innerHTML = `<span class="bs-week"><em>${t("billing.thisWeek")}</em> ${escapeHtml(summary)}</span>${timerChip}${backupChip}`;
+  // Empty state already reads "…this week", so drop the label to avoid "This week No billable time this week".
+  const weekHtml = parts.length ? `<em>${t("billing.thisWeek")}</em> ${escapeHtml(summary)}` : escapeHtml(summary);
+  els.billingStrip.innerHTML = `<span class="bs-week">${weekHtml}</span>${timerChip}${backupChip}`;
 }
 
 function renderInvoices() {
