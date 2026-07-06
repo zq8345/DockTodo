@@ -655,6 +655,62 @@ function openImportModal(raw) {
   });
 }
 
+// Generic CSV: the user maps each DockTodo field to a column, then the mapped
+// result flows through the same preview/confirm path as the known tools.
+function openGenericMapModal(text, headers) {
+  const FIELDS = [
+    { key: "task", label: t("map.task"), required: true },
+    { key: "client", label: t("map.client") },
+    { key: "project", label: t("map.project") },
+    { key: "duration", label: t("map.duration") },
+    { key: "durationDecimal", label: t("map.durationDecimal") },
+    { key: "start", label: t("map.date") },
+    { key: "billable", label: t("map.billable") },
+    { key: "rate", label: t("map.rate") },
+    { key: "amount", label: t("map.amount") },
+    { key: "tags", label: t("map.tags") },
+  ];
+  openModal(t("map.title"), (modal) => {
+    modal.append(modalText(t("map.hint")));
+    const selects = {};
+    FIELDS.forEach((field) => {
+      const row = document.createElement("label");
+      row.className = "modal-field";
+      const caption = document.createElement("span");
+      caption.textContent = field.required ? `${field.label} *` : field.label;
+      const select = document.createElement("select");
+      select.innerHTML =
+        `<option value="">—</option>` +
+        headers.map((h) => `<option value="${escapeHtml(h)}">${escapeHtml(h)}</option>`).join("");
+      // Pre-select a column whose header looks like the field name.
+      const needle = field.key.replace("Decimal", "").toLowerCase();
+      const guess = headers.find((h) => h.toLowerCase().includes(needle));
+      if (guess) select.value = guess;
+      selects[field.key] = select;
+      row.append(caption, select);
+      modal.append(row);
+    });
+    modal.append(
+      modalActions(
+        modalButton(t("action.cancel"), "soft-btn", closeModal),
+        modalButton(t("import.confirm"), "primary-btn", () => {
+          const mapping = {};
+          Object.entries(selects).forEach(([key, select]) => {
+            if (select.value) mapping[key] = select.value;
+          });
+          if (!mapping.task) return toast(t("map.needTask"));
+          if (!mapping.duration && !mapping.durationDecimal) return toast(t("map.needDuration"));
+          if (!mapping.start) return toast(t("map.needDate"));
+          const result = parseImport(text, mapping);
+          if (!result.records.length) return toast(t("import.csvEmpty"));
+          closeModal();
+          openCsvImportModal(result);
+        })
+      )
+    );
+  });
+}
+
 function openCsvImportModal(result) {
   const stats = importStats(result);
   const locale = currentLang() === "zh" ? "zh-CN" : "en-US";
@@ -1851,6 +1907,11 @@ els.importFile.addEventListener("change", async () => {
   }
   try {
     const result = parseImport(text);
+    // Unrecognized tool → let the user map columns by hand, then preview.
+    if (result.format === "generic") {
+      openGenericMapModal(text, result.headers);
+      return;
+    }
     if (!result.records.length) {
       toast(t("import.csvEmpty"));
       return;
