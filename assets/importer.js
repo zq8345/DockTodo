@@ -105,3 +105,275 @@ function parseEpochMs(value) {
   const ms = Date.parse(text);
   return Number.isFinite(ms) ? ms : 0;
 }
+
+// ---- Per-tool column mapping ----
+// Header names are matched case-insensitively; each field lists candidate
+// column names to tolerate minor version differences. `signature` is the set
+// of columns whose presence identifies the tool.
+const IMPORT_FORMATS = {
+  clockify: {
+    label: "Clockify",
+    signature: ["duration (decimal)"],
+    fields: {
+      client: ["client"],
+      project: ["project"],
+      task: ["description", "task"],
+      billable: ["billable"],
+      duration: ["duration (h)", "duration"],
+      durationDecimal: ["duration (decimal)"],
+      start: ["start date"],
+      startTime: ["start time"],
+      rate: ["billable rate (usd)", "billable rate"],
+      amount: ["billable amount (usd)", "billable amount", "amount (usd)"],
+      tags: ["tags"],
+      currency: ["currency"],
+    },
+  },
+  harvest: {
+    label: "Harvest",
+    signature: ["hours", "billable?"],
+    fields: {
+      client: ["client"],
+      project: ["project"],
+      task: ["task", "notes"],
+      billable: ["billable?", "billable"],
+      durationDecimal: ["hours"],
+      start: ["date"],
+      rate: ["billable rate", "rate"],
+      amount: ["billable amount", "amount"],
+      tags: [],
+      currency: ["currency"],
+    },
+  },
+  toggl: {
+    label: "Toggl Track",
+    signature: ["start date", "start time", "duration"],
+    fields: {
+      client: ["client"],
+      project: ["project"],
+      task: ["description", "task"],
+      billable: ["billable"],
+      duration: ["duration"],
+      start: ["start date"],
+      startTime: ["start time"],
+      rate: ["billable rate", "rate"],
+      amount: ["amount", "amount (usd)", "amount ()"],
+      tags: ["tags"],
+      currency: ["currency"],
+    },
+  },
+};
+
+function detectFormat(headers) {
+  const present = new Set(headers.map((h) => h.trim().toLowerCase()));
+  for (const [id, fmt] of Object.entries(IMPORT_FORMATS)) {
+    if (fmt.signature.every((col) => present.has(col))) return id;
+  }
+  return "generic";
+}
+
+function pickField(obj, candidates) {
+  for (const key of candidates || []) {
+    if (obj[key] != null && obj[key] !== "") return obj[key];
+  }
+  return "";
+}
+
+const BILLABLE_TRUE = new Set(["yes", "true", "1", "billable", "y"]);
+
+// One CSV row (as a keyed object) → a normalized intermediate record.
+function mapRecord(obj, fields) {
+  const durationText = pickField(obj, fields.duration);
+  const decimalText = pickField(obj, fields.durationDecimal);
+  let seconds = 0;
+  if (durationText && durationText.includes(":")) seconds = parseDurationSeconds(durationText);
+  else if (decimalText) seconds = Math.round((Number(String(decimalText).replace(/[^0-9.]/g, "")) || 0) * 3600);
+  else if (durationText) seconds = parseDurationSeconds(durationText);
+
+  const startDate = pickField(obj, fields.start);
+  const startTime = pickField(obj, fields.startTime);
+  const startMs = parseEpochMs(startTime ? `${startDate} ${startTime}` : startDate);
+  const tagsText = pickField(obj, fields.tags);
+  const tags = tagsText ? tagsText.split(/[,;|]/).map((s) => s.trim()).filter(Boolean) : [];
+
+  return {
+    client: String(pickField(obj, fields.client)).trim(),
+    project: String(pickField(obj, fields.project)).trim(),
+    task: String(pickField(obj, fields.task)).trim() || "Imported time",
+    billable: BILLABLE_TRUE.has(String(pickField(obj, fields.billable)).trim().toLowerCase()),
+    seconds,
+    rateCents: parseMoneyCents(pickField(obj, fields.rate)),
+    amountCents: parseMoneyCents(pickField(obj, fields.amount)),
+    currency: String(pickField(obj, fields.currency)).trim().toUpperCase() || "USD",
+    tags,
+    startMs,
+  };
+}
+
+// Parse a CSV file into normalized records. `genericMapping` (optional) is a
+// {field: headerName} map for the generic/manual path.
+function parseImport(text, genericMapping) {
+  const rows = parseCsv(text);
+  if (rows.length < 2) return { format: "generic", label: "CSV", records: [], headers: rows[0] || [] };
+  const headers = rows[0].map((h) => h.trim());
+  const objects = rowsToObjects(rows);
+  const format = genericMapping ? "generic" : detectFormat(headers);
+  const fields =
+    format === "generic"
+      ? Object.fromEntries(Object.entries(genericMapping || {}).map(([k, v]) => [k, [String(v).trim().toLowerCase()]]))
+      : IMPORT_FORMATS[format].fields;
+  const records = objects.map((obj) => mapRecord(obj, fields)).filter((r) => r.seconds > 0 || r.amountCents > 0);
+  return {
+    format,
+    label: format === "generic" ? "CSV" : IMPORT_FORMATS[format].label,
+    headers,
+    records,
+  };
+}
+
+// When a rate column is missing, suggest each client's default rate as the mode
+// of per-entry Amount ÷ hours (rounded to whole cents/hour).
+function suggestRates(records) {
+  const byClient = new Map();
+  records.forEach((r) => {
+    if (r.rateCents || !r.amountCents || !r.seconds) return;
+    const perHour = Math.round(r.amountCents / (r.seconds / 3600));
+    if (!byClient.has(r.client)) byClient.set(r.client, []);
+    byClient.get(r.client).push(perHour);
+  });
+  const out = {};
+  byClient.forEach((rates, client) => {
+    const m = modeOf(rates);
+    if (m) out[client] = m;
+  });
+  return out;
+}
+
+// Summary stats for the preview page.
+function importStats(parsed) {
+  const { records } = parsed;
+  const clients = new Set();
+  const projects = new Set();
+  const currencies = new Set();
+  let dateFrom = Infinity;
+  let dateTo = -Infinity;
+  records.forEach((r) => {
+    if (r.client) clients.add(r.client);
+    if (r.project) projects.add(`${r.client}/${r.project}`);
+    currencies.add(r.currency);
+    if (r.startMs) {
+      dateFrom = Math.min(dateFrom, r.startMs);
+      dateTo = Math.max(dateTo, r.startMs);
+    }
+  });
+  return {
+    clientCount: clients.size,
+    projectCount: projects.size,
+    entryCount: records.length,
+    currencies: [...currencies],
+    dateFrom: Number.isFinite(dateFrom) ? dateFrom : 0,
+    dateTo: Number.isFinite(dateTo) ? dateTo : 0,
+    rateSuggestions: suggestRates(records),
+    sample: records.slice(0, 10),
+  };
+}
+
+function findByName(list, name) {
+  const lower = String(name).toLowerCase();
+  return list.find((x) => String(x.name).toLowerCase() === lower);
+}
+
+// Turn records into a v2 increment: new clients/projects/tasks (deduped against
+// existing state by name) plus one TimeEntry per record. Pure — builds arrays,
+// mutates nothing, so the preview can show counts before the user commits.
+function buildImportPlan(parsed, rates) {
+  const acceptedRates = rates || {};
+  const newClients = [];
+  const newProjects = [];
+  const newTasks = [];
+  const newEntries = [];
+  const clients = [...state.clients];
+  const projects = [...state.projects];
+  const tasks = [...state.tasks];
+
+  parsed.records.forEach((r) => {
+    let client = r.client ? findByName(clients, r.client) : null;
+    if (r.client && !client) {
+      client = {
+        id: createId(),
+        name: r.client,
+        currency: r.currency || "USD",
+        hourlyRateCents: acceptedRates[r.client] || 0,
+        billingInfo: "",
+        note: "",
+      };
+      clients.push(client);
+      newClients.push(client);
+    }
+
+    let project = null;
+    if (r.project && client) {
+      project = projects.find((p) => String(p.name).toLowerCase() === r.project.toLowerCase() && p.clientId === client.id);
+      if (!project) {
+        project = { id: createId(), name: r.project, clientId: client.id, rateOverrideCents: null };
+        projects.push(project);
+        newProjects.push(project);
+      }
+    }
+
+    let task = tasks.find(
+      (t) => String(t.title).toLowerCase() === r.task.toLowerCase() && (project ? t.projectId === project.id : true)
+    );
+    if (!task) {
+      task = makeTask(r.task, "inbox", "", "", "none", { projectId: project?.id ?? null, billable: r.billable, tags: r.tags });
+      tasks.push(task);
+      newTasks.push(task);
+    }
+
+    const rateCents = r.rateCents || (client ? acceptedRates[client.name] || client.hourlyRateCents : 0) || 0;
+    const start = r.startMs || Date.now();
+    newEntries.push({
+      id: createId(),
+      taskId: task.id,
+      start,
+      end: start + r.seconds * 1000,
+      seconds: r.seconds,
+      billable: r.billable,
+      rateSnapshotCents: rateCents,
+      currency: r.currency || "USD",
+      note: "",
+    });
+  });
+
+  return { newClients, newProjects, newTasks, newEntries };
+}
+
+// Commit a plan, snapshotting the whole state to a .pre-import key first so the
+// import can be undone in one click.
+function applyImportPlan(plan) {
+  try {
+    localStorage.setItem(`${STORAGE_KEY}.pre-import`, JSON.stringify(state));
+  } catch {
+    /* best-effort backup */
+  }
+  state.clients.push(...plan.newClients);
+  state.projects.push(...plan.newProjects);
+  state.tasks.push(...plan.newTasks);
+  state.timeEntries.push(...plan.newEntries);
+  saveState();
+  render();
+}
+
+function rollbackImport() {
+  const raw = localStorage.getItem(`${STORAGE_KEY}.pre-import`);
+  if (!raw) return false;
+  try {
+    state = normalizeState(JSON.parse(raw));
+  } catch {
+    return false;
+  }
+  localStorage.removeItem(`${STORAGE_KEY}.pre-import`);
+  saveState();
+  render();
+  return true;
+}
