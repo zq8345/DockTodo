@@ -21,6 +21,7 @@ const els = {
   quickAddTop: document.querySelector("#quickAddTop"),
   clearDone: document.querySelector("#clearDone"),
   exportData: document.querySelector("#exportData"),
+  copyData: document.querySelector("#copyData"),
   importData: document.querySelector("#importData"),
   importFile: document.querySelector("#importFile"),
   settingsView: document.querySelector("#settingsView"),
@@ -1722,7 +1723,10 @@ els.clearDone.addEventListener("click", () => {
   });
 });
 
-els.exportData.addEventListener("click", async () => {
+// Export downloads a file only. The data now includes client billing info,
+// so we no longer write it to the clipboard by default (P2); a copy is an
+// explicit opt-in via the separate button below.
+els.exportData.addEventListener("click", () => {
   const data = JSON.stringify({ version: 2, exportedAt: new Date().toISOString(), ...state }, null, 2);
   const blob = new Blob([data], { type: "application/json" });
   const link = document.createElement("a");
@@ -1731,11 +1735,16 @@ els.exportData.addEventListener("click", async () => {
   link.click();
   URL.revokeObjectURL(link.href);
   if (typeof markExported === "function") markExported();
+  toast(t("toast.exported"));
+});
+
+els.copyData?.addEventListener("click", async () => {
+  const data = JSON.stringify({ version: 2, exportedAt: new Date().toISOString(), ...state }, null, 2);
   try {
     await navigator.clipboard.writeText(data);
-    toast(t("toast.exportedBoth"));
+    toast(t("toast.copied"));
   } catch {
-    toast(t("toast.exported"));
+    toast(t("toast.copyFailed"));
   }
 });
 

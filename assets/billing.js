@@ -54,8 +54,14 @@ function timesheetData(weekStart) {
   return { days, groups: [...groups.values()], totalsByCurrency, unratedBillable };
 }
 
+// Every CSV write path (timesheet, invoice, and future importers' re-exports)
+// goes through here, so the formula-injection guard lives in one place.
 function csvCell(value) {
-  const text = String(value ?? "");
+  let text = String(value ?? "");
+  // A cell starting with = + - @ tab or CR can execute as a formula in
+  // Excel/Sheets. Invoice/timesheet CSVs are sent to clients & accountants,
+  // so neutralise it with a leading apostrophe before quoting.
+  if (/^[=+\-@\t\r]/.test(text)) text = `'${text}`;
   return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 }
 
