@@ -395,4 +395,6 @@ function saveState() {
   } catch {
     toast(t("toast.storageFull"));
   }
+  // S3-0 data safety belt: throttle a copy out to the user's backup file.
+  if (typeof scheduleBackup === "function") scheduleBackup();
 }

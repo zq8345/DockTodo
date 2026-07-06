@@ -1039,7 +1039,8 @@ function renderBillingStrip() {
     const task = state.tasks.find((item) => item.id === focusSession.taskId);
     timerChip = `<span class="bs-timer">◉ ${els.focusTime.textContent}${task ? ` · ${escapeHtml(task.title)}` : ""}</span>`;
   }
-  els.billingStrip.innerHTML = `<span class="bs-week"><em>${t("billing.thisWeek")}</em> ${escapeHtml(summary)}</span>${timerChip}`;
+  const backupChip = typeof backupChipHtml === "function" ? backupChipHtml() : "";
+  els.billingStrip.innerHTML = `<span class="bs-week"><em>${t("billing.thisWeek")}</em> ${escapeHtml(summary)}</span>${timerChip}${backupChip}`;
 }
 
 function renderInvoices() {
@@ -1221,6 +1222,7 @@ function renderSettings() {
         <input id="settingsInvoiceStart" type="number" min="1" value="${state.settings.invoiceCounter}" />
       </label>
       <p class="settings-hint">${t("settings.invoiceHint")}</p>
+      ${typeof backupSettingsHtml === "function" ? backupSettingsHtml() : ""}
     </div>
   `;
   els.settingsView.querySelector("#settingsLanguage").addEventListener("change", (event) => {
@@ -1241,6 +1243,7 @@ function renderSettings() {
     saveState();
     render();
   });
+  if (typeof wireBackupSettings === "function") wireBackupSettings(els.settingsView);
 }
 
 function buildRepeatOptions() {
@@ -1721,6 +1724,7 @@ els.exportData.addEventListener("click", async () => {
   link.download = `docktodo-${todayKey}.json`;
   link.click();
   URL.revokeObjectURL(link.href);
+  if (typeof markExported === "function") markExported();
   try {
     await navigator.clipboard.writeText(data);
     toast(t("toast.exportedBoth"));
@@ -2036,12 +2040,25 @@ checkStringParity();
 buildRepeatOptions();
 applyStaticI18n();
 
+const hadStoredState = localStorage.getItem(STORAGE_KEY) != null;
 pruneNotified();
 muteStaleReminders();
 saveState();
 render();
 checkReminders();
 setInterval(checkReminders, 20000);
+
+// S3-0 data safety belt: reattach the backup file handle, and if local state
+// was wiped but a backup is attached, offer a one-click restore.
+els.billingStrip.addEventListener("click", (event) => {
+  const btn = event.target.closest("[data-backup-action]");
+  if (btn) handleBackupAction(btn.dataset.backupAction);
+});
+if (typeof initBackup === "function") {
+  initBackup()
+    .then(() => offerRestoreIfEmpty(hadStoredState))
+    .catch(() => {});
+}
 
 // Ask the browser to keep local data from being evicted under storage pressure.
 if (navigator.storage?.persist) {

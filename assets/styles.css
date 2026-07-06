@@ -1006,6 +1006,48 @@ h2 {
   max-width: 45%;
 }
 
+.bs-backup {
+  margin-left: auto;
+  padding: 2px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.bs-timer + .bs-backup {
+  margin-left: 8px;
+}
+
+.bs-backup.ok {
+  color: var(--accent);
+  border-color: var(--accent-soft);
+}
+
+.bs-backup.warn {
+  color: var(--amber);
+  border-color: rgba(176, 125, 46, 0.35);
+}
+
+.backup-status {
+  margin-top: 4px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--surface-soft);
+  font-size: 13px;
+}
+
+.backup-status.ok {
+  color: var(--accent);
+}
+
+.backup-status.warn {
+  color: var(--amber);
+}
+
 .invoice-view {
   padding: 24px;
   overflow: auto;
