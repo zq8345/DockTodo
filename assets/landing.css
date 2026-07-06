@@ -19,11 +19,94 @@
   --lp-pad-y: 64px; /* landing section vertical rhythm (desktop) */
 }
 
+/* ── S5 dual-mode tokens (bold). Scoped to the landing page only — the four
+   /switch pages (.switch-page) keep the app's Linear light tokens untouched.
+   Base = dark (bold). @media(prefers-color-scheme: light) follows the system
+   when no explicit data-theme; the nav toggle sets data-theme + localStorage.
+   Reuses the existing var(--accent/--bg/--text…) references so all landing
+   styles switch automatically; --on-accent is the button label colour and is
+   written straight into .btn-primary so no link rule can override it. ─────── */
+.landing:not(.switch-page) {
+  --bg: #081310;
+  --surface: rgba(255, 255, 255, 0.04);
+  --surface-soft: rgba(255, 255, 255, 0.06);
+  --line: rgba(255, 255, 255, 0.13);
+  --text: #f4f8f6;
+  --muted: #9fb0a8;
+  --text-3: #7d8c85;
+  --accent: #2fd08a;
+  --blue-dark: #26b477;
+  --accent-soft: rgba(34, 198, 127, 0.14);
+  --on-accent: #04140d;
+  --chip: rgba(255, 255, 255, 0.06);
+  --track: rgba(255, 255, 255, 0.1);
+  --glow: 0 0 26px rgba(47, 208, 138, 0.5);
+  --btn-glow: 0 0 28px rgba(34, 198, 127, 0.4);
+  --shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  --eb-bg: rgba(34, 198, 127, 0.14);
+  --eb-fg: #5fe3a6;
+  --eb-bd: rgba(34, 198, 127, 0.3);
+  --blob1: radial-gradient(circle, rgba(34, 198, 127, 0.28), rgba(34, 198, 127, 0) 70%);
+  --blob2: radial-gradient(circle, rgba(29, 158, 117, 0.16), rgba(29, 158, 117, 0) 70%);
+}
+
+/* Light values, shared by an explicit data-theme="light" and the system pref. */
+.landing:not(.switch-page)[data-theme="light"] {
+  --bg: #f3f7f5;
+  --surface: #ffffff;
+  --surface-soft: #eef3f0;
+  --line: rgba(13, 21, 18, 0.1);
+  --text: #0d1512;
+  --muted: #48564f;
+  --text-3: #7c8a83;
+  --accent: #0b8659;
+  --blue-dark: #097a52;
+  --accent-soft: #dff3ea;
+  --on-accent: #ffffff;
+  --chip: #ffffff;
+  --track: #e6ebe8;
+  --glow: none;
+  --btn-glow: 0 6px 18px rgba(11, 148, 99, 0.28);
+  --shadow: 0 16px 40px rgba(20, 40, 32, 0.12);
+  --eb-bg: #dff3ea;
+  --eb-fg: #0b7a52;
+  --eb-bd: rgba(11, 148, 99, 0.22);
+  --blob1: radial-gradient(circle, rgba(11, 148, 99, 0.14), rgba(11, 148, 99, 0) 70%);
+  --blob2: radial-gradient(circle, rgba(47, 180, 120, 0.1), rgba(47, 180, 120, 0) 70%);
+}
+
+@media (prefers-color-scheme: light) {
+  .landing:not(.switch-page):not([data-theme="dark"]) {
+    --bg: #f3f7f5;
+    --surface: #ffffff;
+    --surface-soft: #eef3f0;
+    --line: rgba(13, 21, 18, 0.1);
+    --text: #0d1512;
+    --muted: #48564f;
+    --text-3: #7c8a83;
+    --accent: #0b8659;
+    --blue-dark: #097a52;
+    --accent-soft: #dff3ea;
+    --on-accent: #ffffff;
+    --chip: #ffffff;
+    --track: #e6ebe8;
+    --glow: none;
+    --btn-glow: 0 6px 18px rgba(11, 148, 99, 0.28);
+    --shadow: 0 16px 40px rgba(20, 40, 32, 0.12);
+    --eb-bg: #dff3ea;
+    --eb-fg: #0b7a52;
+    --eb-bd: rgba(11, 148, 99, 0.22);
+    --blob1: radial-gradient(circle, rgba(11, 148, 99, 0.14), rgba(11, 148, 99, 0) 70%);
+    --blob2: radial-gradient(circle, rgba(47, 180, 120, 0.1), rgba(47, 180, 120, 0) 70%);
+  }
+}
+
 body.landing {
   height: auto;
   overflow: auto;
   background: var(--bg);
   color: var(--text);
+  transition: background 0.4s, color 0.4s;
 }
 
 /* Link colour applies to text links only — NOT to .btn-primary, whose white
@@ -75,6 +158,24 @@ body.landing {
   font-size: var(--text-body);
 }
 
+.lp-theme-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--chip);
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.lp-theme-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 /* ── Buttons (shared) ────────────────────────────────────────────── */
 .btn-primary,
 .btn-soft {
@@ -90,7 +191,10 @@ body.landing {
 .btn-primary {
   border: 0;
   background: var(--accent);
-  color: #fff;
+  /* Label colour is written straight from the token (dark: near-black on
+     bright green; light: white on green) — never overridden by a link rule. */
+  color: var(--on-accent, #fff);
+  box-shadow: var(--btn-glow, none);
 }
 
 .btn-primary:hover {

@@ -2,6 +2,43 @@
 // form with the right hidden source, and submit the Netlify form over AJAX so
 // the visitor gets an inline success message instead of a redirect.
 
+// S5 dual-mode theme: follow prefers-color-scheme, remember a manual choice.
+(function () {
+  const root = document.querySelector(".landing");
+  const toggle = document.getElementById("themeToggle");
+  if (!root || !toggle) return;
+  const KEY = "docktodo.theme";
+  const SUN =
+    '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>';
+  const MOON =
+    '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>';
+  let saved = null;
+  try {
+    saved = localStorage.getItem(KEY);
+  } catch (e) {
+    /* storage blocked */
+  }
+  if (saved === "light" || saved === "dark") root.setAttribute("data-theme", saved);
+  const isDark = () => {
+    const dt = root.getAttribute("data-theme");
+    return dt === "dark" || (!dt && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  };
+  const paint = () => {
+    toggle.innerHTML = isDark() ? SUN : MOON;
+  };
+  paint();
+  toggle.addEventListener("click", () => {
+    const next = isDark() ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try {
+      localStorage.setItem(KEY, next);
+    } catch (e) {
+      /* storage blocked */
+    }
+    paint();
+  });
+})();
+
 document.querySelectorAll("[data-waitlist]").forEach((btn) => {
   btn.addEventListener("click", () => {
     const sourceField = document.querySelector("#waitlistFormTop [name=source]");
