@@ -1,5 +1,23 @@
-/* Landing page (S3-2a). Reuses the Linear token layer + Inter from styles.css;
-   this file only adds marketing-page layout. Same design language as the app. */
+/* Landing page + /switch migration pages. Reuses the Linear token layer + Inter from styles.css.
+
+   IMPORTANT — shared with switch/*.html:
+   The base classes below (.lp-nav, .lp-section, .lp-footer, .lp-final, .lp-trust,
+   .btn-*, .compare-table, .lp-steps, .lp-bullets, .lp-microline, .lp-lead, .switch-hero…)
+   are reused verbatim by the four /switch/*.html pages, which put content DIRECTLY inside
+   .lp-nav / .lp-section / .lp-footer (no inner wrapper). Their definitions are kept exactly
+   as before so those pages are unaffected.
+
+   The S4-1 landing redesign (two-tier width, full-bleed bands, embedded screenshots) is
+   layered on top and scoped to `.landing:not(.switch-page)` so it NEVER touches switch pages.
+   Width unification is achieved with NEW container classes .lp-wrap (820) / .lp-wrap-wide (1080),
+   not by changing the shared base classes. */
+
+:root {
+  --lp-max: 820px; /* reading tier */
+  --lp-max-wide: 1080px; /* wide tier */
+  --lp-gutter: 24px; /* left/right gutter, all sections */
+  --lp-pad-y: 64px; /* landing section vertical rhythm (desktop) */
+}
 
 body.landing {
   height: auto;
@@ -12,7 +30,7 @@ body.landing {
   color: var(--accent);
 }
 
-/* Nav */
+/* ── Nav (base — switch pages put content directly in .lp-nav) ────── */
 .lp-nav {
   display: flex;
   justify-content: space-between;
@@ -55,7 +73,7 @@ body.landing {
   font-size: var(--text-body);
 }
 
-/* Buttons */
+/* ── Buttons (shared) ────────────────────────────────────────────── */
 .btn-primary,
 .btn-soft {
   display: inline-block;
@@ -92,9 +110,10 @@ body.landing {
   padding: 7px 14px;
 }
 
-/* Hero */
+/* ── Hero (landing only; content width comes from the inner .lp-wrap-wide,
+   and .landing:not(.switch-page) overrides this to full-bleed) ─────── */
 .lp-hero {
-  max-width: 760px;
+  max-width: none;
   margin: 0 auto;
   padding: 64px 24px 40px;
   text-align: center;
@@ -126,9 +145,10 @@ body.landing {
   color: var(--text-3);
 }
 
-/* Positioning strip */
+/* ── Positioning strip (base; unified to the wide tier, inner .lp-wrap
+   holds the reading-width text) ──────────────────────────────────── */
 .lp-strip {
-  max-width: 900px;
+  max-width: var(--lp-max-wide);
   margin: 0 auto;
   padding: 22px 24px;
   border-top: 1px solid var(--line);
@@ -138,7 +158,7 @@ body.landing {
   color: var(--muted);
 }
 
-/* Sections */
+/* ── Sections (base — switch pages put content directly here) ────── */
 .lp-section {
   max-width: 820px;
   margin: 0 auto;
@@ -183,7 +203,7 @@ body.landing {
   background: var(--accent);
 }
 
-/* How it works */
+/* How it works (shared) */
 .lp-steps {
   list-style: none;
   counter-reset: step;
@@ -219,7 +239,7 @@ body.landing {
   font-size: var(--text-title);
 }
 
-/* Feature blocks */
+/* Feature blocks (landing) */
 .lp-features {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -237,7 +257,7 @@ body.landing {
   color: var(--muted);
 }
 
-/* Pricing */
+/* Pricing (landing) */
 .lp-pricing {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -294,7 +314,7 @@ body.landing {
 }
 
 .lp-reassure {
-  max-width: 640px;
+  max-width: 680px;
   margin: 0 auto 40px;
   font-size: var(--text-body);
   line-height: 1.6;
@@ -302,7 +322,7 @@ body.landing {
   text-align: center;
 }
 
-/* Waitlist */
+/* Waitlist (landing) */
 .lp-waitlist {
   max-width: 480px;
   margin: 0 auto;
@@ -363,7 +383,7 @@ body.landing {
   text-align: center;
 }
 
-/* FAQ */
+/* FAQ (landing) */
 .lp-faq {
   display: grid;
   gap: 8px;
@@ -394,6 +414,7 @@ body.landing {
   font-size: var(--text-body);
 }
 
+/* Final CTA (shared: switch pages use .lp-final) */
 .lp-final {
   text-align: center;
 }
@@ -403,7 +424,7 @@ body.landing {
   text-align: left;
 }
 
-/* Footer */
+/* Footer (base — switch pages put content directly in .lp-footer) */
 .lp-footer {
   max-width: 1080px;
   margin: 0 auto;
@@ -416,7 +437,7 @@ body.landing {
   font-size: var(--text-small);
 }
 
-/* /switch migration pages */
+/* ── /switch migration pages (base) ──────────────────────────────── */
 .switch-hero {
   max-width: 760px;
   margin: 0 auto;
@@ -449,6 +470,7 @@ body.landing {
   padding: 12px 14px;
   border-bottom: 1px solid var(--line);
   text-align: left;
+  vertical-align: top;
 }
 
 .compare-table th {
@@ -462,6 +484,7 @@ body.landing {
   font-weight: var(--w-semibold);
 }
 
+/* base responsive (shared with switch pages) */
 @media (max-width: 720px) {
   .lp-features,
   .lp-pricing {
@@ -479,5 +502,221 @@ body.landing {
   .compare-table th,
   .compare-table td {
     padding: 9px 8px;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   S4-1 LANDING REDESIGN — scoped to the marketing page only.
+   `.landing:not(.switch-page)` guarantees none of this reaches switch pages.
+   Two width tiers via new containers; full-bleed bands; embedded screenshots.
+   ════════════════════════════════════════════════════════════════════ */
+.landing:not(.switch-page) .lp-wrap,
+.landing:not(.switch-page) .lp-wrap-wide {
+  width: 100%;
+  margin: 0 auto;
+  padding-left: var(--lp-gutter);
+  padding-right: var(--lp-gutter);
+}
+
+.landing:not(.switch-page) .lp-wrap {
+  max-width: var(--lp-max);
+}
+
+.landing:not(.switch-page) .lp-wrap-wide {
+  max-width: var(--lp-max-wide);
+}
+
+/* Neutralize the base .lp-* width/padding on the landing page: sections go
+   full-bleed and the inner .lp-wrap / .lp-wrap-wide owns width + gutter. */
+.landing:not(.switch-page) .lp-nav,
+.landing:not(.switch-page) .lp-section,
+.landing:not(.switch-page) .lp-footer,
+.landing:not(.switch-page) .lp-strip {
+  max-width: none;
+  display: block;
+}
+
+.landing:not(.switch-page) .lp-nav {
+  padding: 20px 0;
+}
+
+.landing:not(.switch-page) .lp-section {
+  padding: var(--lp-pad-y) 0;
+}
+
+.landing:not(.switch-page) .lp-strip {
+  padding: 0;
+  background: var(--surface-soft);
+}
+
+.landing:not(.switch-page) .lp-strip .lp-wrap {
+  padding-top: 22px;
+  padding-bottom: 22px;
+  text-align: center;
+  font-size: var(--text-emph);
+  color: var(--muted);
+}
+
+.landing:not(.switch-page) .lp-footer {
+  padding: 32px 0;
+  display: block;
+}
+
+.lp-nav-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lp-footer-inner {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* Product screenshots — card treatment */
+.landing:not(.switch-page) .lp-shot {
+  margin: 0;
+}
+
+.landing:not(.switch-page) .lp-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+}
+
+/* Hero — copy + big shot, both inside .lp-wrap-wide */
+.landing:not(.switch-page) .lp-hero {
+  max-width: none;
+  padding: 0;
+  text-align: left;
+}
+
+.landing:not(.switch-page) .lp-hero .lp-wrap-wide {
+  padding-top: var(--lp-pad-y);
+  padding-bottom: 48px;
+  display: grid;
+  gap: 40px;
+}
+
+.landing:not(.switch-page) .lp-hero-copy {
+  text-align: center;
+}
+
+.landing:not(.switch-page) .lp-lead {
+  margin: 0 auto 26px;
+  max-width: 640px;
+}
+
+.lp-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 0;
+}
+
+.lp-badges li {
+  padding: 5px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: var(--text-small);
+  font-weight: var(--w-medium);
+  color: var(--muted);
+}
+
+.lp-hero-shot {
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Alternating split: copy + screenshot */
+.lp-split {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  align-items: center;
+  gap: 44px;
+}
+
+.lp-split--reverse .lp-split-copy {
+  order: 2;
+}
+
+.lp-split--reverse .lp-shot {
+  order: 1;
+}
+
+.lp-split-copy h2 {
+  margin-bottom: 16px;
+}
+
+.lp-split-copy p {
+  margin: 0 0 16px;
+  font-size: var(--text-emph);
+  line-height: 1.65;
+}
+
+.lp-split-copy p:last-child {
+  margin-bottom: 0;
+}
+
+.lp-note {
+  color: var(--muted);
+}
+
+.landing:not(.switch-page) .lp-steps p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.landing:not(.switch-page) .lp-trust {
+  background: var(--surface-soft);
+}
+
+/* switching compare table gets a horizontal-scroll guard on the landing page */
+.lp-table-scroll {
+  overflow-x: auto;
+  margin: 4px 0 20px;
+}
+
+.lp-table-scroll .compare-table {
+  margin: 0;
+}
+
+.compare-table tbody th {
+  font-weight: var(--w-medium);
+  color: var(--text);
+}
+
+/* Landing responsive */
+@media (max-width: 900px) {
+  .landing:not(.switch-page) .lp-split,
+  .landing:not(.switch-page) .lp-split--reverse {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  /* image always below copy on narrow screens, regardless of source order */
+  .landing:not(.switch-page) .lp-split .lp-split-copy,
+  .landing:not(.switch-page) .lp-split--reverse .lp-split-copy {
+    order: 1;
+  }
+
+  .landing:not(.switch-page) .lp-split .lp-shot,
+  .landing:not(.switch-page) .lp-split--reverse .lp-shot {
+    order: 2;
+  }
+}
+
+@media (max-width: 720px) {
+  :root {
+    --lp-pad-y: 40px;
   }
 }

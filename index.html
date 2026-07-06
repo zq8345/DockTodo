@@ -45,355 +45,432 @@
   </head>
   <body class="landing">
     <header class="lp-nav">
-      <a class="lp-brand" href="/">
-        <span class="lp-logo">D</span>
-        <span>DockTodo</span>
-      </a>
-      <nav class="lp-nav-links">
-        <a href="#pricing">Pricing</a>
-        <a href="#faq">FAQ</a>
-        <a class="btn-primary btn-sm" href="./app.html">Open DockTodo</a>
-      </nav>
+      <div class="lp-wrap-wide lp-nav-inner">
+        <a class="lp-brand" href="/">
+          <span class="lp-logo">D</span>
+          <span>DockTodo</span>
+        </a>
+        <nav class="lp-nav-links">
+          <a href="#pricing">Pricing</a>
+          <a href="#faq">FAQ</a>
+          <a class="btn-primary btn-sm" href="./app.html">Open DockTodo</a>
+        </nav>
+      </div>
     </header>
 
     <main>
       <!-- 1. Hero -->
-      <section class="lp-hero">
-        <h1>Bill every hour you track.</h1>
-        <p class="lp-lead">
-          DockTodo turns focused work into invoice lines automatically. Tasks know their client and rate; the timer logs
-          billable time; Friday produces the invoice.
-        </p>
-        <div class="lp-cta-row">
-          <a class="btn-primary btn-lg" href="./app.html">Open DockTodo — free, no signup</a>
+      <section class="lp-section lp-hero">
+        <div class="lp-wrap-wide">
+          <div class="lp-hero-copy">
+            <h1>Bill every hour you track.</h1>
+            <p class="lp-lead">
+              Your focus timer writes the invoice line. Tasks carry their client and rate; the weekly timesheet totals
+              itself.
+            </p>
+            <div class="lp-cta-row">
+              <a class="btn-primary btn-lg" href="./app.html">Open DockTodo — free, no signup</a>
+            </div>
+            <ul class="lp-badges" aria-label="Trust signals">
+              <li>No account</li>
+              <li>No upload</li>
+              <li>Works offline</li>
+            </ul>
+            <p class="lp-microline">Your hours, invoices, and clients never leave your device.</p>
+          </div>
+          <figure class="lp-shot lp-hero-shot">
+            <img
+              src="./assets/shots/hero.png"
+              width="1440"
+              height="900"
+              loading="eager"
+              decoding="async"
+              alt="DockTodo focus timer running with this week's billable total"
+            />
+          </figure>
         </div>
-        <p class="lp-microline">
-          Runs entirely in your browser. No account, no card, no upload — your rates and clients never leave your device.
-        </p>
       </section>
 
       <!-- 2. Positioning strip -->
       <section class="lp-strip">
-        DockTodo is a local-first console for freelancers who bill hourly: tasks, timer, timesheet, and invoices in one
-        instant web app — no server, no login, no leaks.
+        <div class="lp-wrap">
+          One local-first console for freelancers who bill hourly: tasks, timer, timesheet, and invoices — no server, no
+          login, no leaks.
+        </div>
       </section>
 
       <!-- 3. Problem -->
       <section class="lp-section">
-        <h2>Three apps. One leak. Your billable hours.</h2>
-        <ul class="lp-bullets">
-          <li>You worked six hours yesterday and can prove maybe four of them.</li>
-          <li>Your todo app, your timer, and your invoicing tool don't talk. You're the integration.</li>
-          <li>
-            Every 30 minutes that never makes it from the timer onto the invoice is, at $90/hr, $45 you earned and won't
-            bill.
-          </li>
-        </ul>
-        <p>
-          The money doesn't disappear while you work. It disappears in the gaps between tools — the task lived in Todoist,
-          the hours lived in Toggl, and the invoice got reconstructed from memory two weeks later, rounded down out of
-          guilt. At typical freelance rates, one leaked hour a week is $4,000–7,000 a year. That's not a productivity
-          problem. That's an accounting problem.
-        </p>
+        <div class="lp-wrap">
+          <h2>Three apps. One leak. Your billable hours.</h2>
+          <ul class="lp-bullets">
+            <li>You worked six hours yesterday and can prove maybe four.</li>
+            <li>Your todo app, timer, and invoicing tool don't talk. You're the integration.</li>
+            <li>One leaked hour a week, at typical rates, is thousands a year you earned but never billed.</li>
+          </ul>
+        </div>
       </section>
 
       <!-- 4. How it works -->
       <section class="lp-section">
-        <h2>How it works</h2>
-        <ol class="lp-steps">
-          <li>
-            <h3>Give every task a rate.</h3>
-            <p>
-              Add a client, a project, an hourly rate. Every task you create underneath inherits them. From that moment, a
-              task isn't a checkbox — it's a line item waiting to happen.
-            </p>
-          </li>
-          <li>
-            <h3>Work with the timer running.</h3>
-            <p>
-              Start a focus session on any task. When the session ends, DockTodo writes a billable time entry — client,
-              task, duration, dollar amount — with zero extra keystrokes. You never "do timekeeping" as a second job — the
-              entry was written while you worked.
-            </p>
-          </li>
-          <li>
-            <h3>Invoice on Friday.</h3>
-            <p>
-              The weekly timesheet totals hours and money per client automatically. Pick a client, generate a clean
-              invoice, print to PDF, send it. What used to be an afternoon of archaeology takes about four minutes.
-            </p>
-          </li>
-        </ol>
+        <div class="lp-wrap">
+          <h2>How it works</h2>
+          <ol class="lp-steps">
+            <li>
+              <h3>Give every task a rate.</h3>
+              <p>Add a client, a project, an hourly rate. Every task underneath inherits them.</p>
+            </li>
+            <li>
+              <h3>Work with the timer running.</h3>
+              <p>End a focus session and DockTodo writes a billable entry — client, task, duration, amount.</p>
+            </li>
+            <li>
+              <h3>Invoice on Friday.</h3>
+              <p>Pick a client, generate a clean invoice, print to PDF. About four minutes, not an afternoon.</p>
+            </li>
+          </ol>
+        </div>
       </section>
 
-      <!-- 5. Feature blocks -->
+      <!-- 5a. Feature: timer is the invoice (text left / image right) -->
       <section class="lp-section">
-        <div class="lp-features">
-          <article>
-            <h3>The timer is the invoice</h3>
+        <div class="lp-wrap-wide lp-split">
+          <div class="lp-split-copy">
+            <h2>The timer is the invoice</h2>
             <p>
-              In every other setup, tracked hours still have to be carried into the invoicing tool by hand — usually by
-              you, at month-end, from memory. In DockTodo, the focus timer <em>is</em> the billing source: a 50-minute
-              session on "API refactor — Acme, $110/hr" becomes a $91.67 entry the second it ends. Every session you time
-              is already on the books — nothing to transcribe, nothing to reconstruct, nothing to round down out of guilt.
-              One honest limit: no tool can bill an hour you never timed. DockTodo's promise is the other half — every hour
-              you do time turns into money on an invoice, automatically.
+              The focus timer <em>is</em> the billing source. A 50-minute session on "API refactor — Acme, $110/hr"
+              becomes a $91.67 entry the second it ends.
             </p>
-          </article>
-          <article>
-            <h3>Every task knows its rate</h3>
-            <p>
-              Tasks belong to clients and projects, and clients carry rates. There is no "which project was that again?"
-              reconciliation step at month-end, because the association happened when you wrote the task down. One task, one
-              client, one rate — enforced by structure, not discipline.
+            <p class="lp-note">
+              One honest limit: no tool can bill an hour you never timed. Every hour you <em>do</em> time turns into
+              money automatically.
             </p>
-          </article>
-          <article>
-            <h3>Friday's timesheet, already totalled</h3>
-            <p>
-              One screen shows the week: hours and dollars per client, per project, per day. By Friday at 5 you know the
-              week was 31.5 hours and $2,835 — not "probably around 30." And because every line item traces back to a
-              tracked session, the numbers survive a skeptical client's scrutiny.
+          </div>
+          <figure class="lp-shot">
+            <img
+              src="./assets/shots/hero.png"
+              width="1440"
+              height="900"
+              loading="lazy"
+              decoding="async"
+              alt="DockTodo focus timer with today's logged hours and a task's billable time entries"
+            />
+          </figure>
+        </div>
+      </section>
+
+      <!-- 5b. Feature: Friday's timesheet (image left / text right) -->
+      <section class="lp-section">
+        <div class="lp-wrap-wide lp-split lp-split--reverse">
+          <div class="lp-split-copy">
+            <h2>Friday's timesheet, already totalled</h2>
+            <p>Hours and dollars per client, per project, per day — on one screen.</p>
+            <p class="lp-note">
+              By Friday at 5 you know the week was 26 hours and $2,532.50, not "probably around 30." Every line traces
+              back to a tracked session.
             </p>
-          </article>
-          <article>
-            <h3>Opens in milliseconds, works anywhere</h3>
-            <p>
-              No login wall, no spinner, no "reconnecting..." banner. DockTodo loads instantly and runs fully offline — on a
-              train, on a plane, on hotel wifi that barely qualifies. It's radically lighter than the cloud suites because
-              there's no cloud in it.
+          </div>
+          <figure class="lp-shot">
+            <img
+              src="./assets/shots/timesheet.png"
+              width="1440"
+              height="780"
+              loading="lazy"
+              decoding="async"
+              alt="Weekly timesheet aggregated by client with hours and amounts"
+            />
+          </figure>
+        </div>
+      </section>
+
+      <!-- 5c. Feature: invoice (text left / image right) -->
+      <section class="lp-section">
+        <div class="lp-wrap-wide lp-split">
+          <div class="lp-split-copy">
+            <h2>One click to a clean invoice</h2>
+            <p>Pick a client and a date range. DockTodo drafts the invoice — line items, tax, total — ready to print.</p>
+            <p class="lp-note">
+              Amounts are stored in whole cents, so the invoice matches the timesheet to the penny. Print to PDF and
+              send.
             </p>
-          </article>
+          </div>
+          <figure class="lp-shot">
+            <img
+              src="./assets/shots/invoice.png"
+              width="1440"
+              height="720"
+              loading="lazy"
+              decoding="async"
+              alt="Generated client invoice with line items, tax and total"
+            />
+          </figure>
+        </div>
+      </section>
+
+      <!-- 5d. Feature: two small blocks -->
+      <section class="lp-section">
+        <div class="lp-wrap-wide">
+          <div class="lp-features">
+            <article>
+              <h3>Every task knows its rate</h3>
+              <p>Tasks belong to clients and projects; clients carry rates. No month-end reconciliation — the link was made when you wrote the task down.</p>
+            </article>
+            <article>
+              <h3>Opens in milliseconds, works anywhere</h3>
+              <p>No login wall, no spinner. DockTodo loads instantly and runs fully offline — on a train, on a plane, on barely-there hotel wifi.</p>
+            </article>
+          </div>
         </div>
       </section>
 
       <!-- 6. Trust / local-first -->
       <section class="lp-section lp-trust">
-        <h2>Private by architecture, not by policy</h2>
-        <p>
-          Cloud invoicing tools hold your most sensitive commercial data — who your clients are, what you charge each of
-          them, how much they pay you — on someone else's servers. DockTodo holds it in your browser, on your machine, full
-          stop. Nothing is transmitted because there is nothing to transmit to. There's no server to breach and no database
-          of your rates to leak.
-        </p>
-        <ul class="lp-bullets">
-          <li><strong>Everything stays on your device</strong> — clients, rates, hours, and invoice amounts live in local browser storage, period.</li>
-          <li><strong>No account, no tracking of your numbers</strong> — we can't see your revenue. Nobody can.</li>
-          <li><strong>Plain JSON export, one click</strong> — your complete dataset, in an open format, whenever you want it. Your records are readable files, not hostages.</li>
-        </ul>
+        <div class="lp-wrap">
+          <h2>Private by architecture, not by policy</h2>
+          <p>
+            Cloud tools keep your clients, rates, and revenue on someone else's servers. DockTodo keeps them in your
+            browser. Nothing is transmitted, because there's nowhere to transmit to.
+          </p>
+          <ul class="lp-bullets">
+            <li><strong>Everything stays on your device</strong> — clients, rates, hours, and amounts live in local storage.</li>
+            <li><strong>No account, no tracking of your numbers</strong> — we can't see your revenue. Nobody can.</li>
+            <li><strong>Plain JSON export, one click</strong> — your complete dataset, open format, anytime. Readable files, not hostages.</li>
+          </ul>
+        </div>
       </section>
 
       <!-- 7. Switching (publish with S3-1 — importers are live) -->
       <section class="lp-section lp-switching">
-        <h2>Your last tool changed the deal. This one structurally can't.</h2>
-        <p>
-          A lot of people arrive here after their time tracker or billing suite moved the goalposts. The pattern is
-          familiar by now:
-        </p>
-        <ul class="lp-bullets">
-          <li><strong>Harvest</strong> users report usage-based fees stacked on top of seat prices after the acquisition — with forum accounts of renewals jumping from $12 a month into four figures.</li>
-          <li><strong>Clockify</strong> built its brand on "free forever," then cut billable rates and CSV export from the free plan in 2026. Its own forum called it the death of the free plan.</li>
-          <li><strong>Toggl</strong> keeps billable rates — the one feature an hourly freelancer can't bill without — behind a $9/mo (billed annually) wall, and its own docs warn that unsynced entries can be lost.</li>
-          <li><strong>Bonsai</strong> users report payouts held for 7–10 business days, sometimes without explanation, while prices climbed more than 150% over a few years — and migrating your history out takes 8–20 hours and doesn't come out clean.</li>
-        </ul>
-        <p>
-          We don't think these companies are evil. We think servers, investors, and acquisitions make those moves
-          structurally hard to avoid — and any promise built on top of that structure can be revoked. So instead of a nicer
-          promise, DockTodo offers a different structure:
-        </p>
-        <ul class="lp-bullets">
-          <li><strong>The free tier never shrinks.</strong> Unlimited clients, rates, the timer, the weekly timesheet, invoices, and export are free forever — in writing, on this page. There is no server bill that could ever force us to claw them back.</li>
-          <li><strong>Your data is a readable JSON file, not a hostage.</strong> One click, open format, no export paywall, no 8-hour migration project. Leaving DockTodo will always be easy — which is exactly why you can relax about staying.</li>
-          <li><strong>We never touch your money.</strong> DockTodo has no payment processing. Nobody can hold your payout, freeze your account, or raise a transaction fee, because your money never passes through us.</li>
-        </ul>
-        <p class="lp-callout">
-          CSV importers for Toggl, Clockify and Harvest are live — <a href="./app.html">bring your history in a click</a>.
-        </p>
-        <p class="lp-microline">
-          Coming from a specific tool? See the guides for
-          <a href="./switch/clockify.html">Clockify</a>, <a href="./switch/harvest.html">Harvest</a>,
-          <a href="./switch/toggl.html">Toggl</a>, or <a href="./switch/bonsai.html">Bonsai</a>.
-        </p>
+        <div class="lp-wrap-wide">
+          <h2>Your last tool changed the deal. This one structurally can't.</h2>
+          <p>Many people arrive here after a time tracker or billing suite moved the goalposts:</p>
+          <ul class="lp-bullets">
+            <li><strong>Harvest</strong> — users report usage-based fees stacked on seat prices after the acquisition, some renewals jumping into four figures.</li>
+            <li><strong>Clockify</strong> — cut billable rates and CSV export from the free plan in 2026; its own forum called it the death of the free plan.</li>
+            <li><strong>Toggl</strong> — locks billable rates behind a $9/mo wall, and its docs warn unsynced entries can be lost.</li>
+            <li><strong>Bonsai</strong> — users report payouts held 7–10 days and prices up 150%+ over a few years; migrating out takes 8–20 hours and isn't clean.</li>
+          </ul>
+          <p>Instead of a nicer promise, DockTodo offers a different structure:</p>
+          <div class="lp-table-scroll">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th scope="col">What can be revoked</th>
+                  <th scope="col" class="col-us">DockTodo</th>
+                  <th scope="col">Cloud suites</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">Free tier shrinks later</th>
+                  <td class="mark-us">Never — no server bill forces it</td>
+                  <td>Common (see Clockify 2026)</td>
+                </tr>
+                <tr>
+                  <th scope="row">Your data held hostage</th>
+                  <td class="mark-us">One-click JSON, open format</td>
+                  <td>Export paywalls, long migrations</td>
+                </tr>
+                <tr>
+                  <th scope="row">Someone can freeze your money</th>
+                  <td class="mark-us">No payment processing at all</td>
+                  <td>Payouts held, fees raised</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="lp-callout">
+            CSV importers for Toggl, Clockify and Harvest are live — <a href="./app.html">bring your history in a click</a>.
+          </p>
+          <p class="lp-microline">
+            Coming from a specific tool? See the guides for
+            <a href="./switch/clockify.html">Clockify</a>, <a href="./switch/harvest.html">Harvest</a>,
+            <a href="./switch/toggl.html">Toggl</a>, or <a href="./switch/bonsai.html">Bonsai</a>.
+          </p>
+        </div>
       </section>
 
       <!-- 8. Pricing -->
       <section class="lp-section" id="pricing">
-        <h2>Pricing</h2>
-        <div class="lp-pricing">
-          <article class="lp-plan">
-            <h3>Free forever</h3>
-            <p class="lp-plan-note">The full local app. Not a trial, not a teaser.</p>
-            <ul>
-              <li>Unlimited clients, projects, and tasks</li>
-              <li>Focus timer with automatic billable time entries</li>
-              <li>Weekly timesheet — hours and dollars per client</li>
-              <li>Clean invoices, print to PDF</li>
-              <li>Full JSON export, anytime</li>
-              <li>Works 100% offline, single device</li>
-            </ul>
-            <a class="btn-primary" href="./app.html">Open the app</a>
-          </article>
+        <div class="lp-wrap-wide">
+          <h2>Pricing</h2>
+          <div class="lp-pricing">
+            <article class="lp-plan">
+              <h3>Free forever</h3>
+              <p class="lp-plan-note">The full local app. Not a trial, not a teaser.</p>
+              <ul>
+                <li>Unlimited clients, projects, and tasks</li>
+                <li>Focus timer with automatic billable time entries</li>
+                <li>Weekly timesheet — hours and dollars per client</li>
+                <li>Clean invoices, print to PDF</li>
+                <li>Full JSON export, anytime</li>
+                <li>Works 100% offline, single device</li>
+              </ul>
+              <a class="btn-primary" href="./app.html">Open the app</a>
+            </article>
 
-          <article class="lp-plan">
-            <h3>Pro — $12/mo</h3>
-            <p class="lp-plan-note">For when your work lives on more than one machine.</p>
-            <ul>
-              <li>Everything in Free</li>
-              <li><strong>Your ledger, safe forever</strong> — end-to-end-encrypted sync across your devices, with versioned encrypted backups <em>(in development)</em></li>
-              <li><strong>AI weekly reports &amp; dunning drafts</strong> — where your hours and money went, plus ready-to-send payment-chaser emails <em>(planned)</em></li>
-              <li><strong>Invoice branding</strong> — your logo, your templates, on every invoice <em>(in development)</em></li>
-              <li><strong>Receivables aging &amp; payment reminders</strong> — see who owes what, and how long it's been owed <em>(in development)</em></li>
-              <li>Priority support from the maker</li>
-              <li>No charge until it ships and you opt in</li>
-            </ul>
-            <button class="btn-soft" type="button" data-waitlist="standard">Join the Pro waitlist</button>
-          </article>
+            <article class="lp-plan">
+              <h3>Pro — $12/mo</h3>
+              <p class="lp-plan-note">For when your work lives on more than one machine.</p>
+              <ul>
+                <li>Everything in Free</li>
+                <li><strong>Your ledger, safe forever</strong> — end-to-end-encrypted sync across your devices, with versioned encrypted backups <em>(in development)</em></li>
+                <li><strong>AI weekly reports &amp; dunning drafts</strong> — where your hours and money went, plus ready-to-send payment-chaser emails <em>(planned)</em></li>
+                <li><strong>Invoice branding</strong> — your logo, your templates, on every invoice <em>(in development)</em></li>
+                <li><strong>Receivables aging &amp; payment reminders</strong> — see who owes what, and how long it's been owed <em>(in development)</em></li>
+                <li>Priority support from the maker</li>
+                <li>No charge until it ships and you opt in</li>
+              </ul>
+              <button class="btn-soft" type="button" data-waitlist="standard">Join the Pro waitlist</button>
+            </article>
 
-          <article class="lp-plan lp-plan-founding">
-            <h3>Founding member — $8/mo, locked for life</h3>
-            <p class="lp-plan-note">Pro at $8 forever. Limited seats, then it's gone.</p>
-            <ul>
-              <li>Everything in Pro, when Pro ships</li>
-              <li>$8/mo locked for life — the price never rises for you</li>
-              <li>Limited founding seats, first come, first served</li>
-              <li>Early access to Pro betas</li>
-              <li>A direct say in what gets built next</li>
-              <li>Reserve now, pay nothing today</li>
-            </ul>
-            <button class="btn-primary" type="button" data-waitlist="founding">Reserve founding pricing</button>
-          </article>
-        </div>
-        <p class="lp-reassure">
-          Straight talk: the free local app is live today, and its feature list never shrinks — that's a published
-          commitment, not a promotion. Pro isn't finished, and we won't take a cent until it is; the waitlist costs nothing
-          and needs no card. The math when Pro does ship: one recovered billable hour covers roughly six months.
-        </p>
+            <article class="lp-plan lp-plan-founding">
+              <h3>Founding member — $8/mo, locked for life</h3>
+              <p class="lp-plan-note">Pro at $8 forever. Limited seats, then it's gone.</p>
+              <ul>
+                <li>Everything in Pro, when Pro ships</li>
+                <li>$8/mo locked for life — the price never rises for you</li>
+                <li>Limited founding seats, first come, first served</li>
+                <li>Early access to Pro betas</li>
+                <li>A direct say in what gets built next</li>
+                <li>Reserve now, pay nothing today</li>
+              </ul>
+              <button class="btn-primary" type="button" data-waitlist="founding">Reserve founding pricing</button>
+            </article>
+          </div>
+          <p class="lp-reassure">
+            The free local app is live today and its feature list never shrinks — a published commitment, not a
+            promotion. Pro isn't finished, and we won't take a cent until it is. One recovered billable hour covers
+            roughly six months.
+          </p>
 
-        <!-- Waitlist form (instance 1) -->
-        <div class="lp-waitlist" id="waitlist">
-          <h3>Reserve Pro before the founding price is gone.</h3>
-          <form name="waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="wl-form" id="waitlistFormTop">
-            <input type="hidden" name="form-name" value="waitlist" />
-            <input type="hidden" name="source" value="standard" />
-            <p class="wl-hp" hidden><label>Don't fill this out if you're human: <input name="bot-field" /></label></p>
-            <label>
-              Email
-              <input type="email" name="email" required placeholder="you@example.com" autocomplete="email" />
-            </label>
-            <label>
-              Do you bill clients by the hour today?
-              <select name="billing" required>
-                <option value="">Choose one…</option>
-                <option>Yes — most of my income is hourly</option>
-                <option>Sometimes — part of my income is hourly</option>
-                <option>No — mostly fixed-price or salaried</option>
-              </select>
-            </label>
-            <button class="btn-primary" type="submit">Reserve my spot</button>
-            <p class="wl-note">No card required. No charge until Pro ships and you say yes. One email when it's ready — that's the whole newsletter.</p>
-          </form>
+          <!-- Waitlist form (instance 1) -->
+          <div class="lp-waitlist" id="waitlist">
+            <h3>Reserve Pro before the founding price is gone.</h3>
+            <form name="waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="wl-form" id="waitlistFormTop">
+              <input type="hidden" name="form-name" value="waitlist" />
+              <input type="hidden" name="source" value="standard" />
+              <p class="wl-hp" hidden><label>Don't fill this out if you're human: <input name="bot-field" /></label></p>
+              <label>
+                Email
+                <input type="email" name="email" required placeholder="you@example.com" autocomplete="email" />
+              </label>
+              <label>
+                Do you bill clients by the hour today?
+                <select name="billing" required>
+                  <option value="">Choose one…</option>
+                  <option>Yes — most of my income is hourly</option>
+                  <option>Sometimes — part of my income is hourly</option>
+                  <option>No — mostly fixed-price or salaried</option>
+                </select>
+              </label>
+              <button class="btn-primary" type="submit">Reserve my spot</button>
+              <p class="wl-note">No card required. No charge until Pro ships and you say yes. One email when it's ready — that's the whole newsletter.</p>
+            </form>
+          </div>
         </div>
       </section>
 
       <!-- 9. FAQ -->
       <section class="lp-section" id="faq">
-        <h2>FAQ</h2>
-        <div class="lp-faq">
-          <details>
-            <summary>Is my data really private?</summary>
-            <p>
-              Yes, by construction rather than by promise. DockTodo runs entirely in your browser; your clients, rates,
-              hours, and invoice amounts are stored locally on your device and never sent anywhere. We don't operate a
-              server that holds your data, so there is nothing on our end to hack, subpoena, or quietly monetize.
-            </p>
-          </details>
-          <details>
-            <summary>What happens if I clear my browser data?</summary>
-            <p>
-              Honest answer: local-first means the data lives in your browser's storage, so wiping that storage deletes
-              your data — same as deleting a file on your desktop. That's why export is one click and plain JSON; make it a
-              habit after invoicing each week and you always have a complete backup. When Pro ships, end-to-end-encrypted
-              sync and versioned encrypted backups will add off-device copies for people who want a belt with their
-              suspenders.
-            </p>
-          </details>
-          <details>
-            <summary>How is this different from Toggl / Moxie / Bonsai?</summary>
-            <p>
-              Those are cloud suites: accounts, servers, your billing data on their infrastructure, and $9–49 a month for a
-              bundle you use a third of. DockTodo is one local tool built around a single mechanism — the focus timer writes
-              your billable entries — so the hours you track and the lines you invoice are the same record, with no export
-              step in between. It opens instantly, works offline, and the core app costs $0.
-            </p>
-          </details>
-          <details>
-            <summary>Is the free plan really free forever?</summary>
-            <p>
-              Yes. The free app runs on your device, so serving it costs us close to nothing — there's no per-user
-              infrastructure bill forcing us to squeeze you later. Pro — encrypted sync and backups, plus the expanded
-              billing features — is the paid product and funds development. Free is the foundation, not the bait.
-            </p>
-          </details>
-          <details>
-            <summary>Can I use it on my phone, or on two computers?</summary>
-            <p>
-              Today, DockTodo is a single-device web app — it works in a mobile browser, but there are no native apps and
-              we're not promising any. Multi-device sync (end-to-end encrypted) is exactly what Pro is for, and it isn't
-              built yet, which is why the Pro button says "waitlist" and not "buy."
-            </p>
-          </details>
-          <details>
-            <summary>What happens to my data if DockTodo shuts down?</summary>
-            <p>
-              Nothing — and that's the point of local-first. The app runs on your machine and keeps working offline whether
-              or not our domain exists; your data was never on our servers to begin with. Your JSON export is readable by
-              anything, so the worst-case scenario is "you have a fast, free tool that no longer gets updates."
-            </p>
-          </details>
+        <div class="lp-wrap">
+          <h2>FAQ</h2>
+          <div class="lp-faq">
+            <details>
+              <summary>Is my data really private?</summary>
+              <p>
+                Yes, by construction. DockTodo runs entirely in your browser; your clients, rates, hours, and invoice
+                amounts are stored locally and never sent anywhere. There's no server on our end to hack or subpoena.
+              </p>
+            </details>
+            <details>
+              <summary>What happens if I clear my browser data?</summary>
+              <p>
+                Local-first means the data lives in your browser, so wiping it deletes your data — like deleting a file.
+                That's why export is one click and plain JSON. When Pro ships, encrypted sync adds off-device backups.
+              </p>
+            </details>
+            <details>
+              <summary>How is this different from Toggl / Moxie / Bonsai?</summary>
+              <p>
+                Those are cloud suites — accounts, servers, your billing data on their infrastructure. DockTodo is one
+                local tool where the timer writes your billable entries, so tracked hours and invoice lines are the same
+                record. It opens instantly, works offline, and the core app costs $0.
+              </p>
+            </details>
+            <details>
+              <summary>Is the free plan really free forever?</summary>
+              <p>
+                Yes. The free app runs on your device, so serving it costs us close to nothing. Pro — encrypted sync,
+                backups, and expanded billing features — is the paid product that funds development. Free is the
+                foundation, not the bait.
+              </p>
+            </details>
+            <details>
+              <summary>Can I use it on my phone, or on two computers?</summary>
+              <p>
+                Today it's a single-device web app — it works in a mobile browser, but there are no native apps.
+                Multi-device sync (end-to-end encrypted) is what Pro is for, and it isn't built yet — which is why the
+                Pro button says "waitlist," not "buy."
+              </p>
+            </details>
+            <details>
+              <summary>What happens to my data if DockTodo shuts down?</summary>
+              <p>
+                Nothing — that's the point of local-first. The app runs on your machine and keeps working offline whether
+                or not our domain exists. Your JSON export is readable by anything, so worst case you keep a fast, free
+                tool that no longer updates.
+              </p>
+            </details>
+          </div>
         </div>
       </section>
 
       <!-- 10. Final CTA -->
       <section class="lp-section lp-final">
-        <h2>Stop donating hours to your clients.</h2>
-        <div class="lp-cta-row">
-          <a class="btn-primary btn-lg" href="./app.html">Open DockTodo — free</a>
-        </div>
-        <p class="lp-microline">
-          Loads in under a second. No signup, no card, nothing installed. Add one client, set one rate, run one timer — and
-          if it's not for you, there's nothing to cancel. Close the tab and it's over.
-        </p>
+        <div class="lp-wrap-wide">
+          <h2>Stop donating hours to your clients.</h2>
+          <div class="lp-cta-row">
+            <a class="btn-primary btn-lg" href="./app.html">Open DockTodo — free</a>
+          </div>
+          <p class="lp-microline">
+            Loads in under a second. No signup, no card, nothing installed. Add one client, set one rate, run one
+            timer — and if it's not for you, close the tab and it's over.
+          </p>
 
-        <!-- Waitlist form (instance 2, source=footer) -->
-        <div class="lp-waitlist">
-          <h3>Reserve Pro before the founding price is gone.</h3>
-          <form name="waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="wl-form">
-            <input type="hidden" name="form-name" value="waitlist" />
-            <input type="hidden" name="source" value="footer" />
-            <p class="wl-hp" hidden><label>Don't fill this out if you're human: <input name="bot-field" /></label></p>
-            <label>
-              Email
-              <input type="email" name="email" required placeholder="you@example.com" autocomplete="email" />
-            </label>
-            <label>
-              Do you bill clients by the hour today?
-              <select name="billing" required>
-                <option value="">Choose one…</option>
-                <option>Yes — most of my income is hourly</option>
-                <option>Sometimes — part of my income is hourly</option>
-                <option>No — mostly fixed-price or salaried</option>
-              </select>
-            </label>
-            <button class="btn-primary" type="submit">Reserve my spot</button>
-            <p class="wl-note">No card required. No charge until Pro ships and you say yes. One email when it's ready — that's the whole newsletter.</p>
-          </form>
+          <!-- Waitlist form (instance 2, source=footer) -->
+          <div class="lp-waitlist">
+            <h3>Reserve Pro before the founding price is gone.</h3>
+            <form name="waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="wl-form">
+              <input type="hidden" name="form-name" value="waitlist" />
+              <input type="hidden" name="source" value="footer" />
+              <p class="wl-hp" hidden><label>Don't fill this out if you're human: <input name="bot-field" /></label></p>
+              <label>
+                Email
+                <input type="email" name="email" required placeholder="you@example.com" autocomplete="email" />
+              </label>
+              <label>
+                Do you bill clients by the hour today?
+                <select name="billing" required>
+                  <option value="">Choose one…</option>
+                  <option>Yes — most of my income is hourly</option>
+                  <option>Sometimes — part of my income is hourly</option>
+                  <option>No — mostly fixed-price or salaried</option>
+                </select>
+              </label>
+              <button class="btn-primary" type="submit">Reserve my spot</button>
+              <p class="wl-note">No card required. No charge until Pro ships and you say yes. One email when it's ready — that's the whole newsletter.</p>
+            </form>
+          </div>
         </div>
       </section>
     </main>
 
     <footer class="lp-footer">
-      <span>DockTodo — local-first time tracking &amp; invoicing.</span>
-      <a href="./app.html">Open the app</a>
+      <div class="lp-wrap-wide lp-footer-inner">
+        <span>DockTodo — local-first time tracking &amp; invoicing.</span>
+        <a href="./app.html">Open the app</a>
+      </div>
     </footer>
 
     <script src="./assets/landing.js"></script>
