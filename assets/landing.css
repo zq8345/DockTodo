@@ -26,7 +26,9 @@ body.landing {
   color: var(--text);
 }
 
-.landing a {
+/* Link colour applies to text links only — NOT to .btn-primary, whose white
+   label must win over the accent (green-on-green was invisible otherwise). */
+.landing a:not(.btn-primary) {
   color: var(--accent);
 }
 
