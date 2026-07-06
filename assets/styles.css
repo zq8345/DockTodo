@@ -18,6 +18,22 @@
   --amber: #b07d2e;
   --red: #b3402e;
   --shadow: 0 18px 42px rgba(40, 44, 30, 0.1);
+  /* S3-U typography scale (Linear basis): only these sizes/weights ship.
+     --text-stat/-timer are the two display sizes (KPI + focus countdown). */
+  --font-ui: Inter, -apple-system, "Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --text-micro: 11px;
+  --text-small: 12px;
+  --text-body: 13px;
+  --text-emph: 14px;
+  --text-title: 16px;
+  --text-page: 20px;
+  --text-stat: 34px;
+  --text-timer: 76px;
+  --w-regular: 400;
+  --w-medium: 500;
+  --w-semibold: 600;
+  --r-control: 6px;
+  --r-card: 10px;
 }
 
 body.theme-dark {
@@ -45,8 +61,7 @@ body {
   margin: 0;
   height: 100vh;
   overflow: hidden;
-  font-family:
-    Inter, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+  font-family: var(--font-ui);
   color: var(--text);
   background: var(--bg);
 }
@@ -93,9 +108,9 @@ button {
   width: 34px;
   height: 34px;
   margin-bottom: 12px;
-  border-radius: 8px;
+  border-radius: var(--r-control);
   color: #fff;
-  font-weight: 800;
+  font-weight: var(--w-semibold);
   background: linear-gradient(135deg, var(--accent), var(--green));
 }
 
@@ -106,10 +121,10 @@ button {
   width: 36px;
   height: 36px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--r-control);
   color: var(--muted);
   background: transparent;
-  font-size: 18px;
+  font-size: var(--text-title);
 }
 
 .rail-btn.active,
@@ -153,12 +168,12 @@ h2 {
 .pane-head p {
   margin-bottom: 4px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 
 .sidebar-head h1,
 .pane-head h2 {
-  font-size: 22px;
+  font-size: var(--text-page);
   line-height: 1.15;
   letter-spacing: 0;
 }
@@ -180,8 +195,8 @@ h2 {
   gap: 12px;
   padding: 12px 20px 4px;
   color: var(--muted);
-  font-size: 12px;
-  font-weight: 800;
+  font-size: var(--text-small);
+  font-weight: var(--w-semibold);
   text-transform: uppercase;
 }
 
@@ -193,8 +208,8 @@ h2 {
   border: 0;
   color: var(--blue);
   background: transparent;
-  font-size: 12px;
-  font-weight: 800;
+  font-size: var(--text-small);
+  font-weight: var(--w-semibold);
 }
 
 .search-box {
@@ -206,7 +221,7 @@ h2 {
   height: 36px;
   padding: 0 12px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--r-control);
   color: var(--text);
   background: var(--surface);
   outline: none;
@@ -226,7 +241,7 @@ h2 {
   min-height: 38px;
   padding: 0 10px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--r-control);
   color: var(--text);
   background: transparent;
   text-align: left;
@@ -250,12 +265,12 @@ h2 {
 
 .nav-count {
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 
 .nav-meta {
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--text-micro);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -270,7 +285,7 @@ h2 {
 
 .nav-item.nav-sub {
   padding-left: 20px;
-  font-size: 13px;
+  font-size: var(--text-body);
 }
 
 #tagSection[open],
@@ -294,7 +309,7 @@ h2 {
 .nav-edit {
   display: none;
   color: var(--muted);
-  font-size: 13px;
+  font-size: var(--text-body);
 }
 
 .nav-item:hover .nav-edit {
@@ -326,8 +341,8 @@ h2 {
 .quick-form button {
   min-height: 36px;
   padding: 0 14px;
-  border-radius: 8px;
-  font-weight: 750;
+  border-radius: var(--r-control);
+  font-weight: var(--w-semibold);
 }
 
 .primary-btn,
@@ -379,7 +394,7 @@ h2 {
 .focus-card select {
   min-width: 0;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--r-control);
   color: var(--text);
   background: var(--surface);
   outline: none;
@@ -408,7 +423,7 @@ h2 {
   gap: 14px;
   padding: 12px 20px;
   color: var(--muted);
-  font-size: 13px;
+  font-size: var(--text-body);
 }
 
 .task-list {
@@ -423,8 +438,8 @@ h2 {
   padding: 14px 8px 8px;
   color: var(--muted);
   background: var(--surface);
-  font-size: 12px;
-  font-weight: 800;
+  font-size: var(--text-small);
+  font-weight: var(--w-semibold);
   text-transform: uppercase;
   z-index: 1;
 }
@@ -438,7 +453,7 @@ h2 {
   min-height: 58px;
   padding: 8px 10px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--r-control);
   color: var(--text);
   background: transparent;
   text-align: left;
@@ -481,14 +496,14 @@ h2 {
 }
 
 .task-main strong {
-  font-size: 15px;
-  font-weight: 680;
+  font-size: var(--text-emph);
+  font-weight: var(--w-semibold);
 }
 
 .task-main small,
 .task-date {
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 
 /* Priority is also cued without colour (colour-blind safe): high = thick
@@ -522,7 +537,7 @@ h2 {
 
 .empty strong {
   color: var(--text);
-  font-size: 18px;
+  font-size: var(--text-title);
 }
 
 .empty .soft-btn {
@@ -552,7 +567,7 @@ h2 {
 .calendar-toolbar strong {
   min-width: 160px;
   text-align: center;
-  font-size: 20px;
+  font-size: var(--text-page);
 }
 
 .calendar-grid {
@@ -563,7 +578,7 @@ h2 {
   gap: 1px;
   overflow: hidden;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--r-control);
   background: var(--line);
 }
 
@@ -571,8 +586,8 @@ h2 {
   padding: 8px 6px;
   background: var(--surface-soft);
   color: var(--muted);
-  font-size: 11px;
-  font-weight: 700;
+  font-size: var(--text-micro);
+  font-weight: var(--w-semibold);
   text-align: center;
   text-transform: uppercase;
 }
@@ -595,8 +610,8 @@ h2 {
   display: flex;
   justify-content: space-between;
   color: var(--muted);
-  font-size: 12px;
-  font-weight: 800;
+  font-size: var(--text-small);
+  font-weight: var(--w-semibold);
 }
 
 .calendar-task {
@@ -607,10 +622,10 @@ h2 {
   margin-top: 4px;
   padding: 2px 4px;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--r-control);
   background: transparent;
   color: var(--text);
-  font-size: 12px;
+  font-size: var(--text-small);
   text-align: left;
   cursor: pointer;
 }
@@ -638,7 +653,7 @@ h2 {
   border-radius: 999px;
   background: var(--surface-soft);
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--text-micro);
   text-align: center;
 }
 
@@ -646,7 +661,7 @@ h2 {
   margin-top: 2px;
   padding: 0 4px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--text-micro);
 }
 
 .calendar-day.muted .calendar-task {
@@ -686,32 +701,32 @@ h2 {
   width: min(460px, 100%);
   padding: 28px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--r-control);
   background: var(--surface);
   box-shadow: var(--shadow);
 }
 
 .settings-card h3 {
   margin: 0;
-  font-size: 18px;
+  font-size: var(--text-title);
 }
 
 .settings-field {
   display: grid;
   gap: 6px;
   color: var(--muted);
-  font-size: 12px;
-  font-weight: 800;
+  font-size: var(--text-small);
+  font-weight: var(--w-semibold);
 }
 
 .settings-field select {
   min-height: 38px;
   padding: 0 11px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--r-control);
   color: var(--text);
   background: var(--surface);
-  font-weight: 400;
+  font-weight: var(--w-regular);
   outline: none;
 }
 
@@ -723,7 +738,7 @@ h2 {
 .settings-hint {
   margin: -6px 0 0;
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--text-small);
   line-height: 1.5;
 }
 
@@ -746,7 +761,7 @@ h2 {
 }
 
 .clients-head h2 {
-  font-size: 20px;
+  font-size: var(--text-page);
 }
 
 .cp-card {
@@ -754,7 +769,7 @@ h2 {
   gap: 12px;
   padding: 18px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--r-control);
   background: var(--surface);
 }
 
@@ -766,12 +781,12 @@ h2 {
 
 .cp-head strong {
   display: block;
-  font-size: 16px;
+  font-size: var(--text-title);
 }
 
 .cp-head small {
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 
 .cp-projects {
@@ -784,16 +799,16 @@ h2 {
   align-items: center;
   justify-content: space-between;
   padding: 6px 10px;
-  border-radius: 6px;
+  border-radius: var(--r-control);
   background: var(--surface-soft);
-  font-size: 13px;
+  font-size: var(--text-body);
 }
 
 .cp-edit {
   border: 0;
   color: var(--muted);
   background: transparent;
-  font-size: 13px;
+  font-size: var(--text-body);
   cursor: pointer;
 }
 
@@ -803,7 +818,7 @@ h2 {
 
 .cp-empty {
   color: var(--muted);
-  font-size: 13px;
+  font-size: var(--text-body);
 }
 
 .detail-inline-check {
@@ -822,10 +837,10 @@ h2 {
   min-height: 64px;
   padding: 9px 11px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--r-control);
   color: var(--text);
   background: var(--surface);
-  font-weight: 400;
+  font-weight: var(--w-regular);
   outline: none;
   resize: vertical;
 }
@@ -848,10 +863,10 @@ h2 {
   width: 100%;
   padding: 8px 10px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--r-control);
   color: var(--text);
   background: var(--surface);
-  font-size: 13px;
+  font-size: var(--text-body);
   text-align: left;
 }
 
@@ -860,13 +875,13 @@ h2 {
 }
 
 .te-amount {
-  font-weight: 700;
+  font-weight: var(--w-semibold);
   font-variant-numeric: tabular-nums;
 }
 
 .te-empty {
   color: var(--muted);
-  font-size: 13px;
+  font-size: var(--text-body);
   padding: 4px 2px;
 }
 
@@ -904,7 +919,7 @@ h2 {
 .ts-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: var(--text-body);
 }
 
 .ts-table th,
@@ -915,8 +930,8 @@ h2 {
 
 .ts-table thead th {
   color: var(--muted);
-  font-size: 11px;
-  font-weight: 700;
+  font-size: var(--text-micro);
+  font-weight: var(--w-semibold);
   text-transform: uppercase;
 }
 
@@ -933,8 +948,8 @@ h2 {
 .ts-dom {
   display: block;
   color: var(--muted);
-  font-weight: 400;
-  font-size: 11px;
+  font-weight: var(--w-regular);
+  font-size: var(--text-micro);
 }
 
 .ts-label {
@@ -948,7 +963,7 @@ h2 {
 
 .ts-label span {
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 
 .ts-zero {
@@ -957,24 +972,24 @@ h2 {
 
 .ts-total,
 .ts-amount {
-  font-weight: 700;
+  font-weight: var(--w-semibold);
 }
 
 .ts-totalrow td {
   border-top: 2px solid var(--line-strong);
   border-bottom: 0;
-  font-weight: 800;
+  font-weight: var(--w-semibold);
 }
 
 .ts-totalrow .ts-label {
   color: var(--muted);
   text-transform: uppercase;
-  font-size: 11px;
+  font-size: var(--text-micro);
 }
 
 .ts-warn {
   color: var(--amber);
-  font-size: 13px;
+  font-size: var(--text-body);
   padding: 8px 2px;
 }
 
@@ -985,13 +1000,13 @@ h2 {
   padding: 8px 20px;
   border-bottom: 1px solid var(--line);
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--text-small);
   font-variant-numeric: tabular-nums;
 }
 
 .bs-week em {
   font-style: normal;
-  font-weight: 700;
+  font-weight: var(--w-semibold);
   color: var(--text);
   margin-right: 6px;
 }
@@ -999,7 +1014,7 @@ h2 {
 .bs-timer {
   margin-left: auto;
   color: var(--accent);
-  font-weight: 700;
+  font-weight: var(--w-semibold);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1013,7 +1028,7 @@ h2 {
   border-radius: 999px;
   background: var(--surface);
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--text-small);
   white-space: nowrap;
   cursor: pointer;
 }
@@ -1035,9 +1050,9 @@ h2 {
 .backup-status {
   margin-top: 4px;
   padding: 8px 12px;
-  border-radius: 8px;
+  border-radius: var(--r-control);
   background: var(--surface-soft);
-  font-size: 13px;
+  font-size: var(--text-body);
 }
 
 .backup-status.ok {
@@ -1079,20 +1094,20 @@ h2 {
 .invoice-doc {
   padding: 28px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--r-control);
   background: var(--surface);
 }
 
 .inv-doc-head h1 {
   margin: 0;
-  font-size: 26px;
+  font-size: var(--text-page);
   font-variant-numeric: tabular-nums;
 }
 
 .inv-doc-head p {
   margin: 4px 0 0;
   color: var(--muted);
-  font-size: 13px;
+  font-size: var(--text-body);
 }
 
 .inv-parties {
@@ -1105,7 +1120,7 @@ h2 {
 .inv-parties h4 {
   margin: 0 0 4px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--text-micro);
   text-transform: uppercase;
 }
 
@@ -1118,7 +1133,7 @@ h2 {
 .inv-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: var(--text-body);
 }
 
 .inv-table th,
@@ -1130,25 +1145,25 @@ h2 {
 
 .inv-table thead th {
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--text-micro);
   text-transform: uppercase;
 }
 
 .inv-table tfoot td {
   border-bottom: 0;
-  font-weight: 700;
+  font-weight: var(--w-semibold);
 }
 
 .inv-table .inv-total td {
   border-top: 2px solid var(--line-strong);
-  font-size: 15px;
-  font-weight: 800;
+  font-size: var(--text-emph);
+  font-weight: var(--w-semibold);
 }
 
 .inv-note {
   margin-top: 16px;
   color: var(--muted);
-  font-size: 13px;
+  font-size: var(--text-body);
 }
 
 .inv-actions {
@@ -1170,7 +1185,7 @@ h2 {
   justify-content: space-between;
   padding: 10px 12px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--r-control);
   background: var(--surface);
   color: var(--text);
   cursor: pointer;
@@ -1216,7 +1231,7 @@ h2 {
   width: 100%;
   padding: 30px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--r-control);
   background: var(--surface);
   box-shadow: var(--shadow);
   text-align: center;
@@ -1234,12 +1249,12 @@ h2 {
 }
 
 .focus-context strong {
-  font-size: 15px;
+  font-size: var(--text-emph);
 }
 
 .focus-context small {
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 
 .focus-context:empty {
@@ -1256,8 +1271,8 @@ h2 {
   padding: 8px 0;
   border-bottom: 1px solid var(--line);
   color: var(--muted);
-  font-size: 12px;
-  font-weight: 700;
+  font-size: var(--text-small);
+  font-weight: var(--w-semibold);
   text-transform: uppercase;
 }
 
@@ -1272,7 +1287,7 @@ h2 {
   gap: 12px;
   padding: 8px 0;
   border-bottom: 1px solid var(--line);
-  font-size: 13px;
+  font-size: var(--text-body);
 }
 
 .ft-row span:first-child {
@@ -1290,11 +1305,11 @@ h2 {
 .ft-empty {
   padding: 12px 0;
   color: var(--muted);
-  font-size: 13px;
+  font-size: var(--text-body);
 }
 
 .focus-card > strong {
-  font-size: 76px;
+  font-size: var(--text-timer);
   line-height: 1;
   letter-spacing: 0;
 }
@@ -1314,21 +1329,21 @@ h2 {
 .stat-card {
   padding: 18px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--r-control);
   background: var(--surface);
 }
 
 .stat-card span {
   color: var(--muted);
-  font-size: 12px;
-  font-weight: 700;
+  font-size: var(--text-small);
+  font-weight: var(--w-semibold);
   text-transform: uppercase;
 }
 
 .stat-card strong {
   display: block;
   margin-top: 8px;
-  font-size: 34px;
+  font-size: var(--text-stat);
   font-variant-numeric: tabular-nums;
 }
 
@@ -1351,7 +1366,7 @@ h2 {
 
 .detail-empty strong {
   color: var(--text);
-  font-size: 18px;
+  font-size: var(--text-title);
 }
 
 .hidden {
@@ -1379,8 +1394,8 @@ h2 {
   min-height: 76px;
   padding: 12px;
   border-color: transparent;
-  font-size: 22px;
-  font-weight: 760;
+  font-size: var(--text-page);
+  font-weight: var(--w-semibold);
   resize: vertical;
 }
 
@@ -1395,8 +1410,8 @@ h2 {
   display: grid;
   gap: 6px;
   color: var(--muted);
-  font-size: 12px;
-  font-weight: 800;
+  font-size: var(--text-small);
+  font-weight: var(--w-semibold);
 }
 
 .field-grid input,
@@ -1405,7 +1420,7 @@ h2 {
   min-height: 38px;
   padding: 9px 11px;
   color: var(--text);
-  font-weight: 400;
+  font-weight: var(--w-regular);
 }
 
 .notes textarea {
@@ -1440,10 +1455,10 @@ h2 {
   width: 28px;
   height: 28px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--r-control);
   color: var(--muted);
   background: transparent;
-  font-size: 20px;
+  font-size: var(--text-page);
 }
 
 .subtask-row button:hover {
@@ -1453,10 +1468,10 @@ h2 {
 
 .history-item {
   padding: 8px 10px;
-  border-radius: 8px;
+  border-radius: var(--r-control);
   color: var(--muted);
   background: var(--surface-soft);
-  font-size: 12px;
+  font-size: var(--text-small);
 }
 
 .modal-overlay {
@@ -1473,22 +1488,22 @@ h2 {
   gap: 14px;
   width: min(400px, calc(100vw - 40px));
   padding: 22px;
-  border-radius: 12px;
+  border-radius: var(--r-card);
   background: var(--surface);
   box-shadow: var(--shadow);
 }
 
 .modal h3 {
   margin: 0;
-  font-size: 17px;
+  font-size: var(--text-title);
 }
 
 .modal-field {
   display: grid;
   gap: 6px;
   color: var(--muted);
-  font-size: 12px;
-  font-weight: 800;
+  font-size: var(--text-small);
+  font-weight: var(--w-semibold);
 }
 
 .modal-field input,
@@ -1496,10 +1511,10 @@ h2 {
   min-height: 38px;
   padding: 0 11px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--r-control);
   color: var(--text);
   background: var(--surface);
-  font-weight: 400;
+  font-weight: var(--w-regular);
   outline: none;
 }
 
@@ -1516,7 +1531,7 @@ h2 {
 
 .modal-text {
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--text-emph);
   line-height: 1.5;
 }
 
@@ -1542,10 +1557,10 @@ h2 {
 .toast {
   max-width: 340px;
   padding: 10px 16px;
-  border-radius: 8px;
+  border-radius: var(--r-control);
   color: var(--bg);
   background: var(--text);
-  font-size: 13px;
+  font-size: var(--text-body);
   box-shadow: var(--shadow);
   animation: toast-in 0.25s ease;
 }
@@ -1610,10 +1625,10 @@ h2 {
     width: 32px;
     height: 32px;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--r-control);
     background: var(--surface-soft);
     color: var(--muted);
-    font-size: 20px;
+    font-size: var(--text-page);
   }
 
   .quick-form {
