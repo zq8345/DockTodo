@@ -655,6 +655,81 @@ function openImportModal(raw) {
   });
 }
 
+function openCsvImportModal(result) {
+  const stats = importStats(result);
+  const locale = currentLang() === "zh" ? "zh-CN" : "en-US";
+  const fmtDate = (ms) => (ms ? new Date(ms).toLocaleDateString(locale) : "—");
+  openModal(t("import.csvTitle", { tool: result.label }), (modal) => {
+    modal.append(
+      modalText(
+        t("import.csvSummary", {
+          clients: stats.clientCount,
+          projects: stats.projectCount,
+          entries: stats.entryCount,
+          from: fmtDate(stats.dateFrom),
+          to: fmtDate(stats.dateTo),
+        })
+      )
+    );
+
+    const suggestions = Object.entries(stats.rateSuggestions);
+    if (suggestions.length) {
+      const note = document.createElement("p");
+      note.className = "settings-hint";
+      note.textContent = t("import.rateNote", {
+        list: suggestions.map(([client, rate]) => `${client} — ${moneyFormat(rate, "USD")}/h`).join(" · "),
+      });
+      modal.append(note);
+    }
+
+    const table = document.createElement("div");
+    table.className = "import-sample";
+    table.innerHTML =
+      `<div class="is-row is-head"><span>${t("import.colClient")}</span><span>${t("import.colProject")}</span><span>${t("import.colTask")}</span><span>${t("import.colHours")}</span></div>` +
+      stats.sample
+        .map(
+          (r) =>
+            `<div class="is-row"><span>${escapeHtml(r.client || "—")}</span><span>${escapeHtml(r.project || "—")}</span><span>${escapeHtml(r.task)}</span><span>${formatHours(r.seconds)}h</span></div>`
+        )
+        .join("");
+    modal.append(table);
+
+    modal.append(
+      modalActions(
+        modalButton(t("action.cancel"), "soft-btn", closeModal),
+        modalButton(t("import.confirm"), "primary-btn", () => {
+          const plan = buildImportPlan(result, stats.rateSuggestions);
+          applyImportPlan(plan);
+          closeModal();
+          openImportSummary(plan);
+        })
+      )
+    );
+  });
+}
+
+function openImportSummary(plan) {
+  openModal(t("import.doneTitle"), (modal) => {
+    modal.append(
+      modalText(
+        t("import.doneBody", {
+          clients: plan.newClients.length,
+          projects: plan.newProjects.length,
+          tasks: plan.newTasks.length,
+          entries: plan.newEntries.length,
+        })
+      ),
+      modalActions(
+        modalButton(t("import.undo"), "danger-btn", () => {
+          if (rollbackImport()) toast(t("import.undone"));
+          closeModal();
+        }),
+        modalButton(t("import.done"), "primary-btn", closeModal)
+      )
+    );
+  });
+}
+
 function openClientModal(client) {
   openModal(client ? t("client.edit") : t("client.new"), (modal) => {
     const nameInput = inputEl("text", client?.name ?? "", t("client.namePlaceholder"));
@@ -1763,10 +1838,24 @@ els.importFile.addEventListener("change", async () => {
   const file = els.importFile.files[0];
   els.importFile.value = "";
   if (!file) return;
+  const text = await file.text();
+  // Try a DockTodo JSON export first; otherwise treat it as a tool CSV.
   try {
-    const parsed = JSON.parse(await file.text());
-    if (!isImportShape(parsed)) throw new Error("invalid");
-    openImportModal(parsed);
+    const parsed = JSON.parse(text);
+    if (isImportShape(parsed)) {
+      openImportModal(parsed);
+      return;
+    }
+  } catch {
+    /* not JSON — fall through to CSV */
+  }
+  try {
+    const result = parseImport(text);
+    if (!result.records.length) {
+      toast(t("import.csvEmpty"));
+      return;
+    }
+    openCsvImportModal(result);
   } catch {
     toast(t("toast.importBadFile"));
   }

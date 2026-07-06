@@ -1107,6 +1107,43 @@ h2 {
   color: var(--amber);
 }
 
+.import-sample {
+  margin: 4px 0;
+  border: 1px solid var(--line);
+  border-radius: var(--r-control);
+  overflow: hidden;
+  font-size: var(--text-small);
+}
+
+.import-sample .is-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.4fr auto;
+  gap: 8px;
+  padding: 6px 10px;
+  border-top: 1px solid var(--line);
+}
+
+.import-sample .is-row:first-child {
+  border-top: 0;
+}
+
+.import-sample .is-head {
+  color: var(--muted);
+  font-weight: var(--w-semibold);
+  background: var(--surface-soft);
+}
+
+.import-sample .is-row span:last-child {
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.import-sample .is-row span:not(:last-child) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .invoice-view {
   padding: 24px;
   overflow: auto;
