@@ -102,14 +102,19 @@ function selectedTask() {
   return state.tasks.find((task) => task.id === state.selectedTaskId) ?? null;
 }
 
+// Inline Lucide icon reference (sprite lives in index.html).
+function icon(name) {
+  return `<svg class="ic" aria-hidden="true"><use href="#i-${name}"></use></svg>`;
+}
+
 function smartDefinitions() {
   return [
-    { id: "today", icon: "☑", title: t("view.today"), count: countTasks((task) => !task.completed && taskDate(task) === todayKey) },
-    { id: "next7", icon: "▣", title: t("view.next7"), count: countTasks((task) => !task.completed && isWithinNextSevenDays(taskDate(task))) },
-    { id: "calendar", icon: "▦", title: t("view.calendar"), count: countTasks((task) => !task.completed && Boolean(taskDate(task))) },
-    { id: "inbox", icon: "⌂", title: t("view.inbox"), count: countTasks((task) => !task.completed && task.listId === "inbox") },
-    { id: "all", icon: "≡", title: t("view.all"), count: countTasks((task) => !task.completed) },
-    { id: "completed", icon: "✓", title: t("view.completed"), count: countTasks((task) => task.completed) },
+    { id: "today", icon: "today", title: t("view.today"), count: countTasks((task) => !task.completed && taskDate(task) === todayKey) },
+    { id: "next7", icon: "next7", title: t("view.next7"), count: countTasks((task) => !task.completed && isWithinNextSevenDays(taskDate(task))) },
+    { id: "calendar", icon: "calendar", title: t("view.calendar"), count: countTasks((task) => !task.completed && Boolean(taskDate(task))) },
+    { id: "inbox", icon: "inbox", title: t("view.inbox"), count: countTasks((task) => !task.completed && task.listId === "inbox") },
+    { id: "all", icon: "all", title: t("view.all"), count: countTasks((task) => !task.completed) },
+    { id: "completed", icon: "completed", title: t("view.completed"), count: countTasks((task) => task.completed) },
   ];
 }
 
@@ -911,7 +916,7 @@ function renderClients() {
               (project) =>
                 `<div class="cp-project"><span>${escapeHtml(project.name)}${
                   project.rateOverrideCents != null ? ` · ${escapeHtml(moneyFormat(project.rateOverrideCents, client.currency))}` : ""
-                }</span><button class="cp-edit" type="button" data-edit-project="${project.id}">✎</button></div>`
+                }</span><button class="cp-edit" type="button" data-edit-project="${project.id}">${icon("edit")}</button></div>`
             )
             .join("")
         : `<div class="cp-empty">${t("clients.noProjects")}</div>`;
@@ -922,7 +927,7 @@ function renderClients() {
               <strong>${escapeHtml(client.name)}</strong>
               <small>${escapeHtml(t("clients.rate", { rate: moneyFormat(client.hourlyRateCents, client.currency) }))} · ${client.currency}</small>
             </div>
-            <button class="cp-edit" type="button" data-edit-client="${client.id}">✎</button>
+            <button class="cp-edit" type="button" data-edit-client="${client.id}">${icon("edit")}</button>
           </div>
           <div class="cp-projects">${projectRows}</div>
           <button class="plain-btn" type="button" data-add-project="${client.id}">+ ${t("clients.addProject")}</button>
@@ -1037,7 +1042,7 @@ function renderBillingStrip() {
   let timerChip = "";
   if (focusTimer && focusSession) {
     const task = state.tasks.find((item) => item.id === focusSession.taskId);
-    timerChip = `<span class="bs-timer">◉ ${els.focusTime.textContent}${task ? ` · ${escapeHtml(task.title)}` : ""}</span>`;
+    timerChip = `<span class="bs-timer">${icon("focus")} ${els.focusTime.textContent}${task ? ` · ${escapeHtml(task.title)}` : ""}</span>`;
   }
   const backupChip = typeof backupChipHtml === "function" ? backupChipHtml() : "";
   els.billingStrip.innerHTML = `<span class="bs-week"><em>${t("billing.thisWeek")}</em> ${escapeHtml(summary)}</span>${timerChip}${backupChip}`;
@@ -1064,7 +1069,7 @@ function renderInvoices() {
         .sort((a, b) => b.createdAt - a.createdAt)
         .map((inv) => {
           const client = state.clients.find((item) => item.id === inv.clientId);
-          return `<div class="inv-saved-row"><button class="inv-open" type="button" data-open="${inv.id}"><strong>${escapeHtml(inv.number)}</strong><span>${escapeHtml(client?.name ?? "—")} · ${escapeHtml(moneyFormat(inv.totalCents, inv.currency))}</span></button><button class="cp-edit" type="button" data-del-invoice="${inv.id}">×</button></div>`;
+          return `<div class="inv-saved-row"><button class="inv-open" type="button" data-open="${inv.id}"><strong>${escapeHtml(inv.number)}</strong><span>${escapeHtml(client?.name ?? "—")} · ${escapeHtml(moneyFormat(inv.totalCents, inv.currency))}</span></button><button class="cp-edit" type="button" data-del-invoice="${inv.id}">${icon("close")}</button></div>`;
         })
         .join("")
     : `<p class="cp-empty">${t("invoice.noSaved")}</p>`;
@@ -1285,12 +1290,12 @@ function renderNav() {
   state.clients.forEach((client) => {
     const count = countTasks((task) => !task.completed && resolveClient(task)?.id === client.id);
     const rate = t("clients.rate", { rate: moneyFormat(client.hourlyRateCents, client.currency) });
-    els.clientNav.append(navButton(`client:${client.id}`, "●", client.name, count, "var(--accent)", null, rate));
+    els.clientNav.append(navButton(`client:${client.id}`, "clients", client.name, count, "var(--accent)", null, rate));
     state.projects
       .filter((project) => project.clientId === client.id)
       .forEach((project) => {
         const pcount = countTasks((task) => !task.completed && task.projectId === project.id);
-        const button = navButton(`project:${project.id}`, "○", project.name, pcount);
+        const button = navButton(`project:${project.id}`, "project", project.name, pcount);
         button.classList.add("nav-sub");
         els.clientNav.append(button);
       });
@@ -1299,27 +1304,27 @@ function renderNav() {
   // Timesheet and invoices are modes rather than task filters, but they are
   // first-class money views and belong in the sidebar Views group.
   [
-    { mode: "timesheet", icon: "▤" },
-    { mode: "invoices", icon: "🧾" },
-  ].forEach(({ mode, icon }) => els.smartLists.append(modeNavButton(mode, icon)));
+    { mode: "timesheet", iconName: "timesheet" },
+    { mode: "invoices", iconName: "invoices" },
+  ].forEach(({ mode, iconName }) => els.smartLists.append(modeNavButton(mode, iconName)));
   state.lists.forEach((list) => {
     const count = countTasks((task) => task.listId === list.id && !task.completed);
     const onEdit = list.id === "inbox" ? null : () => openListModal(list);
-    els.projectList.append(navButton(list.id, "●", list.name, count, list.color, onEdit));
+    els.projectList.append(navButton(list.id, "list", list.name, count, list.color, onEdit));
   });
   state.filters.forEach((filter) => {
     const count = countTasks((task) => matchesFilter(task, filter));
-    els.filterList.append(navButton(filter.id, "◇", filter.name, count, null, () => openFilterModal(filter)));
+    els.filterList.append(navButton(filter.id, "filter", filter.name, count, null, () => openFilterModal(filter)));
   });
   const tags = [...new Set(state.tasks.flatMap((task) => task.tags))].sort((a, b) => a.localeCompare(b, "zh-CN"));
   els.tagSection.classList.toggle("hidden", tags.length === 0);
   tags.forEach((tag) => {
     const count = countTasks((task) => !task.completed && task.tags.includes(tag));
-    els.tagList.append(navButton(`tag:${tag}`, "#", tag, count));
+    els.tagList.append(navButton(`tag:${tag}`, "tag", tag, count));
   });
 }
 
-function navButton(id, icon, title, count, color, onEdit, meta) {
+function navButton(id, iconName, title, count, color, onEdit, meta) {
   const button = document.createElement("button");
   button.type = "button";
   button.className = "nav-item";
@@ -1333,8 +1338,8 @@ function navButton(id, icon, title, count, color, onEdit, meta) {
     iconEl.className = "nav-dot";
     iconEl.style.background = color;
   } else {
-    iconEl.style.color = "currentColor";
-    iconEl.textContent = icon;
+    iconEl.className = "nav-ic";
+    iconEl.innerHTML = icon(iconName);
   }
   const titleEl = document.createElement("span");
   titleEl.textContent = title;
@@ -1352,7 +1357,7 @@ function navButton(id, icon, title, count, color, onEdit, meta) {
   if (onEdit) {
     const edit = document.createElement("span");
     edit.className = "nav-edit";
-    edit.textContent = "✎";
+    edit.innerHTML = icon("edit");
     edit.title = t("title.edit");
     edit.addEventListener("click", (event) => {
       event.stopPropagation();
@@ -1364,13 +1369,14 @@ function navButton(id, icon, title, count, color, onEdit, meta) {
   return button;
 }
 
-function modeNavButton(mode, icon) {
+function modeNavButton(mode, iconName) {
   const button = document.createElement("button");
   button.type = "button";
   button.className = "nav-item";
   button.classList.toggle("active", state.activeMode === mode);
   const iconEl = document.createElement("span");
-  iconEl.textContent = icon;
+  iconEl.className = "nav-ic";
+  iconEl.innerHTML = icon(iconName);
   const titleEl = document.createElement("span");
   titleEl.textContent = t(`rail.${mode}`);
   button.append(iconEl, titleEl);

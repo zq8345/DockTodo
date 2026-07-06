@@ -251,7 +251,7 @@ function backupState() {
 
 function backupChipHtml() {
   const s = backupState();
-  return `<button class="bs-backup ${s.cls}" type="button" data-backup-action="${s.action}" title="${escapeHtml(s.label)}">◆ ${escapeHtml(s.label)}</button>`;
+  return `<button class="bs-backup ${s.cls}" type="button" data-backup-action="${s.action}" title="${escapeHtml(s.label)}">${icon("backup")} ${escapeHtml(s.label)}</button>`;
 }
 
 function renderBackupStatus() {
@@ -272,7 +272,7 @@ function backupSettingsHtml() {
   const s = backupState();
   const supported = backup.perm !== "unsupported";
   const rows = [`<p class="settings-hint">${t("backup.settingsHint")}</p>`];
-  rows.push(`<div class="backup-status ${s.cls}">◆ ${escapeHtml(s.label)}</div>`);
+  rows.push(`<div class="backup-status ${s.cls}">${icon("backup")} ${escapeHtml(s.label)}</div>`);
   if (!supported) {
     rows.push(`<p class="settings-hint">${t("backup.unsupportedHint")}</p>`);
   } else if (!backup.handle) {

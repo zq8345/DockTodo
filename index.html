@@ -13,17 +13,41 @@
     <link rel="stylesheet" href="./assets/styles.css" />
   </head>
   <body>
+    <!-- Lucide icon sprite (ISC license). 24x24 viewBox; styled by .ic. -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none" aria-hidden="true">
+      <symbol id="i-tasks" viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+      <symbol id="i-focus" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></symbol>
+      <symbol id="i-stats" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol>
+      <symbol id="i-timesheet" viewBox="0 0 24 24"><path d="M12 3v18"/><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/></symbol>
+      <symbol id="i-invoices" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+      <symbol id="i-clients" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-today" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></symbol>
+      <symbol id="i-next7" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></symbol>
+      <symbol id="i-inbox" viewBox="0 0 24 24"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
+      <symbol id="i-all" viewBox="0 0 24 24"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></symbol>
+      <symbol id="i-completed" viewBox="0 0 24 24"><path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/></symbol>
+      <symbol id="i-project" viewBox="0 0 24 24"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></symbol>
+      <symbol id="i-filter" viewBox="0 0 24 24"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"/></symbol>
+      <symbol id="i-tag" viewBox="0 0 24 24"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
+      <symbol id="i-edit" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+      <symbol id="i-backup" viewBox="0 0 24 24"><path d="M12 2v8"/><path d="m16 6-4 4-4-4"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 18h.01"/><path d="M10 18h.01"/></symbol>
+    </svg>
+
     <main class="app" aria-label="DockTodo Pro">
       <aside class="rail" aria-label="Main navigation">
         <div class="brand" title="DockTodo">D</div>
-        <button class="rail-btn active" type="button" data-mode="tasks" data-i18n-title="rail.tasks" data-i18n-aria="rail.tasks" aria-label="Tasks">✓</button>
-        <button class="rail-btn" type="button" data-mode="calendar" data-i18n-title="rail.calendar" data-i18n-aria="rail.calendar" aria-label="Calendar">▦</button>
-        <button class="rail-btn" type="button" data-mode="focus" data-i18n-title="rail.focus" data-i18n-aria="rail.focus" aria-label="Focus">◎</button>
-        <button class="rail-btn" type="button" data-mode="stats" data-i18n-title="rail.stats" data-i18n-aria="rail.stats" aria-label="Stats">▥</button>
-        <button class="rail-btn" type="button" data-mode="timesheet" data-i18n-title="rail.timesheet" data-i18n-aria="rail.timesheet" aria-label="Timesheet">▤</button>
-        <button class="rail-btn" type="button" data-mode="invoices" data-i18n-title="rail.invoices" data-i18n-aria="rail.invoices" aria-label="Invoices">🧾</button>
-        <button class="rail-btn" type="button" data-mode="clients" data-i18n-title="rail.clients" data-i18n-aria="rail.clients" aria-label="Clients">👥</button>
-        <button class="rail-btn bottom" type="button" data-mode="settings" data-i18n-title="rail.settings" data-i18n-aria="rail.settings" aria-label="Settings">⚙</button>
+        <button class="rail-btn active" type="button" data-mode="tasks" data-i18n-title="rail.tasks" data-i18n-aria="rail.tasks" aria-label="Tasks"><svg class="ic" aria-hidden="true"><use href="#i-tasks"></use></svg></button>
+        <button class="rail-btn" type="button" data-mode="calendar" data-i18n-title="rail.calendar" data-i18n-aria="rail.calendar" aria-label="Calendar"><svg class="ic" aria-hidden="true"><use href="#i-calendar"></use></svg></button>
+        <button class="rail-btn" type="button" data-mode="focus" data-i18n-title="rail.focus" data-i18n-aria="rail.focus" aria-label="Focus"><svg class="ic" aria-hidden="true"><use href="#i-focus"></use></svg></button>
+        <button class="rail-btn" type="button" data-mode="stats" data-i18n-title="rail.stats" data-i18n-aria="rail.stats" aria-label="Stats"><svg class="ic" aria-hidden="true"><use href="#i-stats"></use></svg></button>
+        <button class="rail-btn" type="button" data-mode="timesheet" data-i18n-title="rail.timesheet" data-i18n-aria="rail.timesheet" aria-label="Timesheet"><svg class="ic" aria-hidden="true"><use href="#i-timesheet"></use></svg></button>
+        <button class="rail-btn" type="button" data-mode="invoices" data-i18n-title="rail.invoices" data-i18n-aria="rail.invoices" aria-label="Invoices"><svg class="ic" aria-hidden="true"><use href="#i-invoices"></use></svg></button>
+        <button class="rail-btn" type="button" data-mode="clients" data-i18n-title="rail.clients" data-i18n-aria="rail.clients" aria-label="Clients"><svg class="ic" aria-hidden="true"><use href="#i-clients"></use></svg></button>
+        <button class="rail-btn bottom" type="button" data-mode="settings" data-i18n-title="rail.settings" data-i18n-aria="rail.settings" aria-label="Settings"><svg class="ic" aria-hidden="true"><use href="#i-settings"></use></svg></button>
       </aside>
 
       <aside class="sidebar" aria-label="Lists and filters">
@@ -32,7 +56,7 @@
             <p data-i18n="sidebar.kicker">DockTodo Pro</p>
             <h1 data-i18n="sidebar.title">Task workbench</h1>
           </div>
-          <button class="icon-btn" id="quickAddTop" type="button" data-i18n-title="title.addTask">+</button>
+          <button class="icon-btn" id="quickAddTop" type="button" data-i18n-title="title.addTask"><svg class="ic" aria-hidden="true"><use href="#i-plus"></use></svg></button>
         </header>
 
         <div class="search-box">
@@ -166,7 +190,7 @@
       </section>
 
       <aside class="detail-pane" aria-label="Task details">
-        <button class="detail-close" id="detailClose" type="button" aria-label="Close">×</button>
+        <button class="detail-close" id="detailClose" type="button" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#i-close"></use></svg></button>
         <div class="detail-empty" id="detailEmpty">
           <strong data-i18n="detail.empty">Select a task</strong>
           <span data-i18n="detail.emptyHint">View notes, dates, reminders, priority, pomodoro and history.</span>
@@ -283,7 +307,7 @@
         <input class="subtask-done" type="checkbox" />
         <input class="subtask-title" type="text" maxlength="120" />
         <input class="subtask-reminder" type="datetime-local" data-i18n-title="detail.subtaskReminder" />
-        <button class="subtask-delete" type="button" data-i18n-title="detail.subtaskDelete">×</button>
+        <button class="subtask-delete" type="button" data-i18n-title="detail.subtaskDelete"><svg class="ic" aria-hidden="true"><use href="#i-close"></use></svg></button>
       </label>
     </template>
 

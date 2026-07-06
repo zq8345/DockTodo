@@ -91,6 +91,36 @@ button {
   cursor: pointer;
 }
 
+/* Lucide icons (S3-U): 16px, stroke 1.75, currentColor, inherited from text. */
+.ic {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vertical-align: middle;
+}
+
+.nav-ic {
+  display: grid;
+  place-items: center;
+}
+
+.bs-backup,
+.bs-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cp-edit {
+  display: inline-grid;
+  place-items: center;
+}
+
 .app {
   display: grid;
   grid-template-columns: 58px 260px minmax(0, 1fr) 340px;
