@@ -1,3 +1,12 @@
+/* Self-hosted Inter (variable, latin) — official Inter v4, ISC-adjacent
+   OFL license. Kept local so nothing loads cross-origin (CSP: font-src 'self'). */
+@font-face {
+  font-family: "Inter";
+  src: url("./InterVariable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
 /* Ledger / workbench palette: a single green accent + warm greyscale,
    distinct from a card/network aesthetic. --blue is kept as the accent
    variable name to avoid a global rename; --accent aliases it. */
