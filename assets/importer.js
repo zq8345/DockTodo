@@ -278,26 +278,22 @@ function importStats(parsed) {
   };
 }
 
-function findByName(list, name) {
-  const lower = String(name).toLowerCase();
-  return list.find((x) => String(x.name).toLowerCase() === lower);
-}
-
 // Turn records into a v2 increment: new clients/projects/tasks (deduped against
 // existing state by name) plus one TimeEntry per record. Pure — builds arrays,
 // mutates nothing, so the preview can show counts before the user commits.
+// Uses name-keyed maps so 10k rows stay O(n), not O(n²).
 function buildImportPlan(parsed, rates) {
   const acceptedRates = rates || {};
   const newClients = [];
   const newProjects = [];
   const newTasks = [];
   const newEntries = [];
-  const clients = [...state.clients];
-  const projects = [...state.projects];
-  const tasks = [...state.tasks];
+  const clientByName = new Map(state.clients.map((c) => [String(c.name).toLowerCase(), c]));
+  const projectByKey = new Map(state.projects.map((p) => [`${p.clientId}::${String(p.name).toLowerCase()}`, p]));
+  const taskByKey = new Map(state.tasks.map((tk) => [`${tk.projectId ?? ""}::${String(tk.title).toLowerCase()}`, tk]));
 
   parsed.records.forEach((r) => {
-    let client = r.client ? findByName(clients, r.client) : null;
+    let client = r.client ? clientByName.get(r.client.toLowerCase()) : null;
     if (r.client && !client) {
       client = {
         id: createId(),
@@ -307,26 +303,26 @@ function buildImportPlan(parsed, rates) {
         billingInfo: "",
         note: "",
       };
-      clients.push(client);
+      clientByName.set(r.client.toLowerCase(), client);
       newClients.push(client);
     }
 
     let project = null;
     if (r.project && client) {
-      project = projects.find((p) => String(p.name).toLowerCase() === r.project.toLowerCase() && p.clientId === client.id);
+      const key = `${client.id}::${r.project.toLowerCase()}`;
+      project = projectByKey.get(key);
       if (!project) {
         project = { id: createId(), name: r.project, clientId: client.id, rateOverrideCents: null };
-        projects.push(project);
+        projectByKey.set(key, project);
         newProjects.push(project);
       }
     }
 
-    let task = tasks.find(
-      (t) => String(t.title).toLowerCase() === r.task.toLowerCase() && (project ? t.projectId === project.id : true)
-    );
+    const taskKey = `${project?.id ?? ""}::${r.task.toLowerCase()}`;
+    let task = taskByKey.get(taskKey);
     if (!task) {
       task = makeTask(r.task, "inbox", "", "", "none", { projectId: project?.id ?? null, billable: r.billable, tags: r.tags });
-      tasks.push(task);
+      taskByKey.set(taskKey, task);
       newTasks.push(task);
     }
 
