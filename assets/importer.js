@@ -98,10 +98,16 @@ function modeOf(numbers) {
   return best;
 }
 
-// Parse a date-ish string to a local-day epoch ms (falls back to Date parsing).
+// Parse a date-ish string to a local-day epoch ms.
 function parseEpochMs(value) {
   const text = String(value ?? "").trim();
   if (!text) return 0;
+  // Date.parse treats a bare ISO date ("2026-06-01") as UTC midnight, which
+  // lands on the previous day in western timezones (and mis-buckets the week).
+  // Build date-only strings in local time instead. Strings with a time part
+  // (Toggl/Clockify start date + time) keep normal parsing.
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(text);
+  if (m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])).getTime();
   const ms = Date.parse(text);
   return Number.isFinite(ms) ? ms : 0;
 }
@@ -291,6 +297,14 @@ function buildImportPlan(parsed, rates) {
   const clientByName = new Map(state.clients.map((c) => [String(c.name).toLowerCase(), c]));
   const projectByKey = new Map(state.projects.map((p) => [`${p.clientId}::${String(p.name).toLowerCase()}`, p]));
   const taskByKey = new Map(state.tasks.map((tk) => [`${tk.projectId ?? ""}::${String(tk.title).toLowerCase()}`, tk]));
+  // Entry-level dedupe so re-importing the same file doesn't double up hours.
+  // Fingerprint = start + seconds + task title + rate (title, not id, so it
+  // matches across the import that created the task).
+  const titleById = new Map(state.tasks.map((tk) => [tk.id, String(tk.title).toLowerCase()]));
+  const seenEntries = new Set(
+    state.timeEntries.map((e) => `${e.start}|${e.seconds}|${titleById.get(e.taskId) || ""}|${e.rateSnapshotCents}`)
+  );
+  let skipped = 0;
 
   parsed.records.forEach((r) => {
     let client = r.client ? clientByName.get(r.client.toLowerCase()) : null;
@@ -328,6 +342,12 @@ function buildImportPlan(parsed, rates) {
 
     const rateCents = r.rateCents || (client ? acceptedRates[client.name] || client.hourlyRateCents : 0) || 0;
     const start = r.startMs || Date.now();
+    const fingerprint = `${start}|${r.seconds}|${r.task.toLowerCase()}|${rateCents}`;
+    if (seenEntries.has(fingerprint)) {
+      skipped += 1;
+      return;
+    }
+    seenEntries.add(fingerprint);
     newEntries.push({
       id: createId(),
       taskId: task.id,
@@ -341,7 +361,7 @@ function buildImportPlan(parsed, rates) {
     });
   });
 
-  return { newClients, newProjects, newTasks, newEntries };
+  return { newClients, newProjects, newTasks, newEntries, skipped };
 }
 
 // Commit a plan, snapshotting the whole state to a .pre-import key first so the

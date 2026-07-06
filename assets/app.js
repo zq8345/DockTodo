@@ -766,15 +766,15 @@ function openCsvImportModal(result) {
 
 function openImportSummary(plan) {
   openModal(t("import.doneTitle"), (modal) => {
+    const body =
+      t("import.doneBody", {
+        clients: plan.newClients.length,
+        projects: plan.newProjects.length,
+        tasks: plan.newTasks.length,
+        entries: plan.newEntries.length,
+      }) + (plan.skipped ? ` ${t("import.skipped", { n: plan.skipped })}` : "");
     modal.append(
-      modalText(
-        t("import.doneBody", {
-          clients: plan.newClients.length,
-          projects: plan.newProjects.length,
-          tasks: plan.newTasks.length,
-          entries: plan.newEntries.length,
-        })
-      ),
+      modalText(body),
       modalActions(
         modalButton(t("import.undo"), "danger-btn", () => {
           if (rollbackImport()) toast(t("import.undone"));
@@ -1909,6 +1909,12 @@ els.importFile.addEventListener("change", async () => {
     const result = parseImport(text);
     // Unrecognized tool → let the user map columns by hand, then preview.
     if (result.format === "generic") {
+      // Guard against binary/garbage files: need at least two real text columns
+      // before offering a column-mapping modal.
+      if (result.headers.filter((h) => h && /\S/.test(h)).length < 2) {
+        toast(t("toast.importBadFile"));
+        return;
+      }
       openGenericMapModal(text, result.headers);
       return;
     }
