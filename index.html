@@ -3,323 +3,394 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DockTodo — Local-first time tracking &amp; invoicing for freelancers</title>
-    <meta name="description" content="DockTodo is a local-first workbench for freelancers: turn tasks into tracked time, weekly timesheets and invoices. Works offline; your data never leaves your browser." />
-    <meta property="og:title" content="DockTodo — Local-first time tracking &amp; invoicing for freelancers" />
-    <meta property="og:description" content="Turn tasks into tracked time, weekly timesheets and invoices. Local-first and offline; your client data stays yours." />
+    <title>DockTodo — Bill every hour you track. Local-first time tracking &amp; invoicing.</title>
+    <meta
+      name="description"
+      content="DockTodo turns focused work into invoice lines automatically. Tasks know their client and rate; the timer logs billable time; Friday produces the invoice. Runs entirely in your browser — no account, no upload."
+    />
+    <link rel="canonical" href="https://docktodo.com/" />
+    <meta property="og:title" content="DockTodo — Bill every hour you track." />
+    <meta
+      property="og:description"
+      content="Local-first time tracking &amp; invoicing for freelancers who bill hourly. The focus timer is the billing source; the weekly timesheet totals itself; invoices print to PDF. No server, no login, no leaks."
+    />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://docktodo.com/" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231d6b4f'/%3E%3Cstop offset='1' stop-color='%232a7d5c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='45' font-family='Arial,sans-serif' font-size='38' font-weight='800' fill='%23fff' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E" />
+    <meta property="og:image" content="https://docktodo.com/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231d6b4f'/%3E%3Cstop offset='1' stop-color='%232a7d5c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='45' font-family='Arial,sans-serif' font-size='38' font-weight='800' fill='%23fff' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E"
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "DockTodo",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "description": "Local-first time tracking and invoicing for freelancers who bill hourly. The focus timer writes billable time entries; the weekly timesheet totals hours and money per client; invoices print to PDF. Runs entirely in the browser.",
+        "url": "https://docktodo.com/",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "description": "Free forever: unlimited clients, projects, tasks, timer, weekly timesheet, invoices and JSON export."
+        }
+      }
+    </script>
     <link rel="stylesheet" href="./assets/styles.css" />
+    <link rel="stylesheet" href="./assets/landing.css" />
   </head>
-  <body>
-    <!-- Lucide icon sprite (ISC license). 24x24 viewBox; styled by .ic. -->
-    <svg xmlns="http://www.w3.org/2000/svg" style="display: none" aria-hidden="true">
-      <symbol id="i-tasks" viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></symbol>
-      <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
-      <symbol id="i-focus" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></symbol>
-      <symbol id="i-stats" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol>
-      <symbol id="i-timesheet" viewBox="0 0 24 24"><path d="M12 3v18"/><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/></symbol>
-      <symbol id="i-invoices" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
-      <symbol id="i-clients" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></symbol>
-      <symbol id="i-settings" viewBox="0 0 24 24"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></symbol>
-      <symbol id="i-today" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></symbol>
-      <symbol id="i-next7" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></symbol>
-      <symbol id="i-inbox" viewBox="0 0 24 24"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
-      <symbol id="i-all" viewBox="0 0 24 24"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></symbol>
-      <symbol id="i-completed" viewBox="0 0 24 24"><path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/></symbol>
-      <symbol id="i-project" viewBox="0 0 24 24"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></symbol>
-      <symbol id="i-filter" viewBox="0 0 24 24"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"/></symbol>
-      <symbol id="i-tag" viewBox="0 0 24 24"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
-      <symbol id="i-edit" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></symbol>
-      <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
-      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
-      <symbol id="i-backup" viewBox="0 0 24 24"><path d="M12 2v8"/><path d="m16 6-4 4-4-4"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 18h.01"/><path d="M10 18h.01"/></symbol>
-    </svg>
+  <body class="landing">
+    <header class="lp-nav">
+      <a class="lp-brand" href="/">
+        <span class="lp-logo">D</span>
+        <span>DockTodo</span>
+      </a>
+      <nav class="lp-nav-links">
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+        <a class="btn-primary btn-sm" href="./app.html">Open DockTodo</a>
+      </nav>
+    </header>
 
-    <main class="app" aria-label="DockTodo Pro">
-      <aside class="rail" aria-label="Main navigation">
-        <div class="brand" title="DockTodo">D</div>
-        <button class="rail-btn active" type="button" data-mode="tasks" data-i18n-title="rail.tasks" data-i18n-aria="rail.tasks" aria-label="Tasks"><svg class="ic" aria-hidden="true"><use href="#i-tasks"></use></svg></button>
-        <button class="rail-btn" type="button" data-mode="calendar" data-i18n-title="rail.calendar" data-i18n-aria="rail.calendar" aria-label="Calendar"><svg class="ic" aria-hidden="true"><use href="#i-calendar"></use></svg></button>
-        <button class="rail-btn" type="button" data-mode="focus" data-i18n-title="rail.focus" data-i18n-aria="rail.focus" aria-label="Focus"><svg class="ic" aria-hidden="true"><use href="#i-focus"></use></svg></button>
-        <button class="rail-btn" type="button" data-mode="stats" data-i18n-title="rail.stats" data-i18n-aria="rail.stats" aria-label="Stats"><svg class="ic" aria-hidden="true"><use href="#i-stats"></use></svg></button>
-        <button class="rail-btn" type="button" data-mode="timesheet" data-i18n-title="rail.timesheet" data-i18n-aria="rail.timesheet" aria-label="Timesheet"><svg class="ic" aria-hidden="true"><use href="#i-timesheet"></use></svg></button>
-        <button class="rail-btn" type="button" data-mode="invoices" data-i18n-title="rail.invoices" data-i18n-aria="rail.invoices" aria-label="Invoices"><svg class="ic" aria-hidden="true"><use href="#i-invoices"></use></svg></button>
-        <button class="rail-btn" type="button" data-mode="clients" data-i18n-title="rail.clients" data-i18n-aria="rail.clients" aria-label="Clients"><svg class="ic" aria-hidden="true"><use href="#i-clients"></use></svg></button>
-        <button class="rail-btn bottom" type="button" data-mode="settings" data-i18n-title="rail.settings" data-i18n-aria="rail.settings" aria-label="Settings"><svg class="ic" aria-hidden="true"><use href="#i-settings"></use></svg></button>
-      </aside>
-
-      <aside class="sidebar" aria-label="Lists and filters">
-        <header class="sidebar-head">
-          <div>
-            <p data-i18n="sidebar.kicker">DockTodo Pro</p>
-            <h1 data-i18n="sidebar.title">Task workbench</h1>
-          </div>
-          <button class="icon-btn" id="quickAddTop" type="button" data-i18n-title="title.addTask"><svg class="ic" aria-hidden="true"><use href="#i-plus"></use></svg></button>
-        </header>
-
-        <div class="search-box">
-          <input id="searchInput" type="search" data-i18n-placeholder="search.placeholder" placeholder="Search tasks, notes or tags" autocomplete="off" />
+    <main>
+      <!-- 1. Hero -->
+      <section class="lp-hero">
+        <h1>Bill every hour you track.</h1>
+        <p class="lp-lead">
+          DockTodo turns focused work into invoice lines automatically. Tasks know their client and rate; the timer logs
+          billable time; Friday produces the invoice.
+        </p>
+        <div class="lp-cta-row">
+          <a class="btn-primary btn-lg" href="./app.html">Open DockTodo — free, no signup</a>
         </div>
-
-        <section class="side-section" id="clientSection">
-          <div class="section-title">
-            <span data-i18n="clients.title">Clients &amp; projects</span>
-            <button class="plain-btn" id="addClientTop" type="button" data-i18n="action.new">New</button>
-          </div>
-          <div class="nav-list" id="clientNav"></div>
-        </section>
-
-        <section class="side-section">
-          <div class="section-title">
-            <span data-i18n="section.views">Views</span>
-          </div>
-          <nav class="nav-list" id="smartLists" data-i18n-aria="section.views" aria-label="Views"></nav>
-        </section>
-
-        <section class="side-section">
-          <div class="section-title">
-            <span data-i18n="section.lists">Lists</span>
-            <button class="plain-btn" id="addList" type="button" data-i18n="action.new">New</button>
-          </div>
-          <div class="nav-list" id="projectList"></div>
-        </section>
-
-        <section class="side-section">
-          <div class="section-title">
-            <span data-i18n="section.filters">Custom filters</span>
-            <button class="plain-btn" id="addFilter" type="button" data-i18n="action.new">New</button>
-          </div>
-          <div class="nav-list" id="filterList"></div>
-        </section>
-
-        <details class="side-section hidden" id="tagSection">
-          <summary class="section-title">
-            <span data-i18n="section.tags">Tags</span>
-          </summary>
-          <div class="nav-list" id="tagList"></div>
-        </details>
-      </aside>
-
-      <section class="main-pane" aria-label="Workspace">
-        <header class="pane-head">
-          <div>
-            <p id="viewMeta"></p>
-            <h2 id="viewTitle"></h2>
-          </div>
-          <div class="head-actions">
-            <button class="soft-btn" id="importData" type="button" data-i18n="action.import">Import</button>
-            <input id="importFile" type="file" accept=".json,application/json" hidden />
-            <button class="soft-btn" id="exportData" type="button" data-i18n="action.export">Export</button>
-            <button class="soft-btn" id="copyData" type="button" data-i18n="action.copy">Copy</button>
-            <button class="soft-btn" id="clearDone" type="button" data-i18n="action.clearDone">Clear completed</button>
-            <button class="primary-btn" id="quickAdd" type="button" data-i18n="action.addTask">Add task</button>
-          </div>
-        </header>
-
-        <div class="billing-strip" id="billingStrip"></div>
-
-        <section class="task-view" id="taskView">
-          <form class="quick-form" id="taskForm">
-            <input id="taskInput" type="text" maxlength="140" autocomplete="off" data-i18n-placeholder="form.placeholder" placeholder="Add a task, press Enter to save" />
-            <input id="taskStart" type="date" data-i18n-title="form.startDate" />
-            <input id="taskDue" type="date" data-i18n-title="form.dueDate" />
-            <select id="taskPriority" data-i18n-title="form.priority">
-              <option value="none" data-i18n="priority.none">No priority</option>
-              <option value="high" data-i18n="priority.high">High priority</option>
-              <option value="medium" data-i18n="priority.medium">Medium priority</option>
-              <option value="low" data-i18n="priority.low">Low priority</option>
-            </select>
-            <button type="submit" data-i18n="form.save">Save</button>
-          </form>
-
-          <div class="stats-line" id="statsLine"></div>
-          <div class="task-list" id="taskList" aria-label="Tasks"></div>
-          <section class="empty" id="emptyState">
-            <strong data-i18n="empty.title">No tasks here</strong>
-            <span data-i18n="empty.hint">Add something to move forward — DockTodo will hold on to it.</span>
-            <button class="soft-btn" id="emptyCta" type="button" data-i18n="empty.cta">Add your first task</button>
-          </section>
-        </section>
-
-        <section class="calendar-view hidden" id="calendarView">
-          <div class="calendar-toolbar">
-            <button class="soft-btn" id="prevMonth" type="button" data-i18n="calendar.prev">Prev</button>
-            <strong id="calendarTitle"></strong>
-            <button class="soft-btn" id="nextMonth" type="button" data-i18n="calendar.next">Next</button>
-          </div>
-          <div class="calendar-grid" id="calendarGrid"></div>
-          <section class="empty" id="calendarEmpty">
-            <strong data-i18n="calendar.emptyTitle">Nothing scheduled this month</strong>
-            <span data-i18n="calendar.emptyHint">Tasks with a start or due date appear on this calendar.</span>
-            <button class="soft-btn" id="calendarEmptyCta" type="button" data-i18n="action.addTask">Add task</button>
-          </section>
-        </section>
-
-        <section class="focus-view hidden" id="focusView">
-          <div class="focus-workspace" id="focusWorkspace">
-            <div class="focus-card">
-              <p data-i18n="focus.timer">Focus timer</p>
-              <strong id="focusTime">25:00</strong>
-              <select id="focusTask" data-i18n-aria="focus.taskSelect" aria-label="Focus task"></select>
-              <div class="focus-context" id="focusContext"></div>
-              <div class="focus-actions">
-                <button class="primary-btn" id="startFocus" type="button" data-i18n="focus.start">Start</button>
-                <button class="soft-btn" id="resetFocus" type="button" data-i18n="focus.reset">Reset</button>
-                <button class="soft-btn" id="completePomo" type="button" data-i18n="focus.logPomo">Log 1 pomodoro</button>
-              </div>
-            </div>
-            <div class="focus-today" id="focusToday"></div>
-          </div>
-          <section class="empty" id="focusEmpty">
-            <strong data-i18n="focus.emptyTitle">Nothing to focus on</strong>
-            <span data-i18n="focus.emptyHint">Add a task first — focus sessions become billable time.</span>
-            <button class="soft-btn" id="focusEmptyCta" type="button" data-i18n="action.addTask">Add task</button>
-          </section>
-        </section>
-
-        <section class="stats-view hidden" id="statsView"></section>
-
-        <section class="settings-view hidden" id="settingsView"></section>
-
-        <section class="timesheet-view hidden" id="timesheetView"></section>
-
-        <section class="invoice-view hidden" id="invoiceView"></section>
-
-        <section class="clients-view hidden" id="clientsView"></section>
+        <p class="lp-microline">
+          Runs entirely in your browser. No account, no card, no upload — your rates and clients never leave your device.
+        </p>
       </section>
 
-      <aside class="detail-pane" aria-label="Task details">
-        <button class="detail-close" id="detailClose" type="button" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#i-close"></use></svg></button>
-        <div class="detail-empty" id="detailEmpty">
-          <strong data-i18n="detail.empty">Select a task</strong>
-          <span data-i18n="detail.emptyHint">View notes, dates, reminders, priority, pomodoro and history.</span>
+      <!-- 2. Positioning strip -->
+      <section class="lp-strip">
+        DockTodo is a local-first console for freelancers who bill hourly: tasks, timer, timesheet, and invoices in one
+        instant web app — no server, no login, no leaks.
+      </section>
+
+      <!-- 3. Problem -->
+      <section class="lp-section">
+        <h2>Three apps. One leak. Your billable hours.</h2>
+        <ul class="lp-bullets">
+          <li>You worked six hours yesterday and can prove maybe four of them.</li>
+          <li>Your todo app, your timer, and your invoicing tool don't talk. You're the integration.</li>
+          <li>
+            Every 30 minutes that never makes it from the timer onto the invoice is, at $90/hr, $45 you earned and won't
+            bill.
+          </li>
+        </ul>
+        <p>
+          The money doesn't disappear while you work. It disappears in the gaps between tools — the task lived in Todoist,
+          the hours lived in Toggl, and the invoice got reconstructed from memory two weeks later, rounded down out of
+          guilt. At typical freelance rates, one leaked hour a week is $4,000–7,000 a year. That's not a productivity
+          problem. That's an accounting problem.
+        </p>
+      </section>
+
+      <!-- 4. How it works -->
+      <section class="lp-section">
+        <h2>How it works</h2>
+        <ol class="lp-steps">
+          <li>
+            <h3>Give every task a rate.</h3>
+            <p>
+              Add a client, a project, an hourly rate. Every task you create underneath inherits them. From that moment, a
+              task isn't a checkbox — it's a line item waiting to happen.
+            </p>
+          </li>
+          <li>
+            <h3>Work with the timer running.</h3>
+            <p>
+              Start a focus session on any task. When the session ends, DockTodo writes a billable time entry — client,
+              task, duration, dollar amount — with zero extra keystrokes. You never "do timekeeping" as a second job — the
+              entry was written while you worked.
+            </p>
+          </li>
+          <li>
+            <h3>Invoice on Friday.</h3>
+            <p>
+              The weekly timesheet totals hours and money per client automatically. Pick a client, generate a clean
+              invoice, print to PDF, send it. What used to be an afternoon of archaeology takes about four minutes.
+            </p>
+          </li>
+        </ol>
+      </section>
+
+      <!-- 5. Feature blocks -->
+      <section class="lp-section">
+        <div class="lp-features">
+          <article>
+            <h3>The timer is the invoice</h3>
+            <p>
+              In every other setup, tracked hours still have to be carried into the invoicing tool by hand — usually by
+              you, at month-end, from memory. In DockTodo, the focus timer <em>is</em> the billing source: a 50-minute
+              session on "API refactor — Acme, $110/hr" becomes a $91.67 entry the second it ends. Every session you time
+              is already on the books — nothing to transcribe, nothing to reconstruct, nothing to round down out of guilt.
+              One honest limit: no tool can bill an hour you never timed. DockTodo's promise is the other half — every hour
+              you do time turns into money on an invoice, automatically.
+            </p>
+          </article>
+          <article>
+            <h3>Every task knows its rate</h3>
+            <p>
+              Tasks belong to clients and projects, and clients carry rates. There is no "which project was that again?"
+              reconciliation step at month-end, because the association happened when you wrote the task down. One task, one
+              client, one rate — enforced by structure, not discipline.
+            </p>
+          </article>
+          <article>
+            <h3>Friday's timesheet, already totalled</h3>
+            <p>
+              One screen shows the week: hours and dollars per client, per project, per day. By Friday at 5 you know the
+              week was 31.5 hours and $2,835 — not "probably around 30." And because every line item traces back to a
+              tracked session, the numbers survive a skeptical client's scrutiny.
+            </p>
+          </article>
+          <article>
+            <h3>Opens in milliseconds, works anywhere</h3>
+            <p>
+              No login wall, no spinner, no "reconnecting..." banner. DockTodo loads instantly and runs fully offline — on a
+              train, on a plane, on hotel wifi that barely qualifies. It's radically lighter than the cloud suites because
+              there's no cloud in it.
+            </p>
+          </article>
         </div>
+      </section>
 
-        <form class="detail-form hidden" id="detailForm">
-          <label class="detail-check">
-            <input id="detailCompleted" type="checkbox" />
-            <span data-i18n="detail.complete">Complete task</span>
-          </label>
+      <!-- 6. Trust / local-first -->
+      <section class="lp-section lp-trust">
+        <h2>Private by architecture, not by policy</h2>
+        <p>
+          Cloud invoicing tools hold your most sensitive commercial data — who your clients are, what you charge each of
+          them, how much they pay you — on someone else's servers. DockTodo holds it in your browser, on your machine, full
+          stop. Nothing is transmitted because there is nothing to transmit to. There's no server to breach and no database
+          of your rates to leak.
+        </p>
+        <ul class="lp-bullets">
+          <li><strong>Everything stays on your device</strong> — clients, rates, hours, and invoice amounts live in local browser storage, period.</li>
+          <li><strong>No account, no tracking of your numbers</strong> — we can't see your revenue. Nobody can.</li>
+          <li><strong>Plain JSON export, one click</strong> — your complete dataset, in an open format, whenever you want it. Your records are readable files, not hostages.</li>
+        </ul>
+      </section>
 
-          <textarea id="detailTitle" rows="2" maxlength="180" aria-label="Task title"></textarea>
+      <!-- 7. Switching (publish with S3-1 — importers are live) -->
+      <section class="lp-section lp-switching">
+        <h2>Your last tool changed the deal. This one structurally can't.</h2>
+        <p>
+          A lot of people arrive here after their time tracker or billing suite moved the goalposts. The pattern is
+          familiar by now:
+        </p>
+        <ul class="lp-bullets">
+          <li><strong>Harvest</strong> users report usage-based fees stacked on top of seat prices after the acquisition — with forum accounts of renewals jumping from $12 a month into four figures.</li>
+          <li><strong>Clockify</strong> built its brand on "free forever," then cut billable rates and CSV export from the free plan in 2026. Its own forum called it the death of the free plan.</li>
+          <li><strong>Toggl</strong> keeps billable rates — the one feature an hourly freelancer can't bill without — behind a $9/mo (billed annually) wall, and its own docs warn that unsynced entries can be lost.</li>
+          <li><strong>Bonsai</strong> users report payouts held for 7–10 business days, sometimes without explanation, while prices climbed more than 150% over a few years — and migrating your history out takes 8–20 hours and doesn't come out clean.</li>
+        </ul>
+        <p>
+          We don't think these companies are evil. We think servers, investors, and acquisitions make those moves
+          structurally hard to avoid — and any promise built on top of that structure can be revoked. So instead of a nicer
+          promise, DockTodo offers a different structure:
+        </p>
+        <ul class="lp-bullets">
+          <li><strong>The free tier never shrinks.</strong> Unlimited clients, rates, the timer, the weekly timesheet, invoices, and export are free forever — in writing, on this page. There is no server bill that could ever force us to claw them back.</li>
+          <li><strong>Your data is a readable JSON file, not a hostage.</strong> One click, open format, no export paywall, no 8-hour migration project. Leaving DockTodo will always be easy — which is exactly why you can relax about staying.</li>
+          <li><strong>We never touch your money.</strong> DockTodo has no payment processing. Nobody can hold your payout, freeze your account, or raise a transaction fee, because your money never passes through us.</li>
+        </ul>
+        <p class="lp-callout">
+          CSV importers for Toggl, Clockify and Harvest are live — <a href="./app.html">bring your history in a click</a>.
+        </p>
+      </section>
 
-          <div class="field-grid">
+      <!-- 8. Pricing -->
+      <section class="lp-section" id="pricing">
+        <h2>Pricing</h2>
+        <div class="lp-pricing">
+          <article class="lp-plan">
+            <h3>Free forever</h3>
+            <p class="lp-plan-note">The full local app. Not a trial, not a teaser.</p>
+            <ul>
+              <li>Unlimited clients, projects, and tasks</li>
+              <li>Focus timer with automatic billable time entries</li>
+              <li>Weekly timesheet — hours and dollars per client</li>
+              <li>Clean invoices, print to PDF</li>
+              <li>Full JSON export, anytime</li>
+              <li>Works 100% offline, single device</li>
+            </ul>
+            <a class="btn-primary" href="./app.html">Open the app</a>
+          </article>
+
+          <article class="lp-plan">
+            <h3>Pro — $12/mo</h3>
+            <p class="lp-plan-note">For when your work lives on more than one machine.</p>
+            <ul>
+              <li>Everything in Free</li>
+              <li><strong>Your ledger, safe forever</strong> — end-to-end-encrypted sync across your devices, with versioned encrypted backups <em>(in development)</em></li>
+              <li><strong>AI weekly reports &amp; dunning drafts</strong> — where your hours and money went, plus ready-to-send payment-chaser emails <em>(planned)</em></li>
+              <li><strong>Invoice branding</strong> — your logo, your templates, on every invoice <em>(in development)</em></li>
+              <li><strong>Receivables aging &amp; payment reminders</strong> — see who owes what, and how long it's been owed <em>(in development)</em></li>
+              <li>Priority support from the maker</li>
+              <li>No charge until it ships and you opt in</li>
+            </ul>
+            <button class="btn-soft" type="button" data-waitlist="standard">Join the Pro waitlist</button>
+          </article>
+
+          <article class="lp-plan lp-plan-founding">
+            <h3>Founding member — $8/mo, locked for life</h3>
+            <p class="lp-plan-note">Pro at $8 forever. Limited seats, then it's gone.</p>
+            <ul>
+              <li>Everything in Pro, when Pro ships</li>
+              <li>$8/mo locked for life — the price never rises for you</li>
+              <li>Limited founding seats, first come, first served</li>
+              <li>Early access to Pro betas</li>
+              <li>A direct say in what gets built next</li>
+              <li>Reserve now, pay nothing today</li>
+            </ul>
+            <button class="btn-primary" type="button" data-waitlist="founding">Reserve founding pricing</button>
+          </article>
+        </div>
+        <p class="lp-reassure">
+          Straight talk: the free local app is live today, and its feature list never shrinks — that's a published
+          commitment, not a promotion. Pro isn't finished, and we won't take a cent until it is; the waitlist costs nothing
+          and needs no card. The math when Pro does ship: one recovered billable hour covers roughly six months.
+        </p>
+
+        <!-- Waitlist form (instance 1) -->
+        <div class="lp-waitlist" id="waitlist">
+          <h3>Reserve Pro before the founding price is gone.</h3>
+          <form name="waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="wl-form" id="waitlistFormTop">
+            <input type="hidden" name="form-name" value="waitlist" />
+            <input type="hidden" name="source" value="standard" />
+            <p class="wl-hp" hidden><label>Don't fill this out if you're human: <input name="bot-field" /></label></p>
             <label>
-              <span data-i18n="detail.list">List</span>
-              <select id="detailList"></select>
+              Email
+              <input type="email" name="email" required placeholder="you@example.com" autocomplete="email" />
             </label>
             <label>
-              <span data-i18n="detail.start">Start date</span>
-              <input id="detailStart" type="date" />
-            </label>
-            <label>
-              <span data-i18n="detail.due">Due date</span>
-              <input id="detailDue" type="date" />
-            </label>
-            <label>
-              <span data-i18n="detail.reminder">Reminder</span>
-              <input id="detailReminder" type="datetime-local" />
-            </label>
-            <label>
-              <span data-i18n="detail.priority">Priority</span>
-              <select id="detailPriority">
-                <option value="none" data-i18n="priority.short.none">None</option>
-                <option value="high" data-i18n="priority.short.high">High</option>
-                <option value="medium" data-i18n="priority.short.medium">Medium</option>
-                <option value="low" data-i18n="priority.short.low">Low</option>
+              Do you bill clients by the hour today?
+              <select name="billing" required>
+                <option value="">Choose one…</option>
+                <option>Yes — most of my income is hourly</option>
+                <option>Sometimes — part of my income is hourly</option>
+                <option>No — mostly fixed-price or salaried</option>
               </select>
             </label>
-            <label>
-              <span data-i18n="detail.estimate">Estimated pomodoro</span>
-              <input id="detailEstimate" type="number" min="0" max="20" />
-            </label>
-            <label>
-              <span data-i18n="detail.repeat">Repeat</span>
-              <select id="detailRepeat"></select>
-            </label>
-            <label>
-              <span data-i18n="detail.tags">Tags</span>
-              <input id="detailTags" type="text" maxlength="120" data-i18n-placeholder="detail.tagsPlaceholder" placeholder="Separate with spaces" />
-            </label>
-            <label>
-              <span data-i18n="detail.project">Project</span>
-              <select id="detailProject"></select>
-            </label>
-            <label>
-              <span data-i18n="detail.rateOverride">Rate override</span>
-              <input id="detailRate" type="number" min="0" step="0.01" data-i18n-placeholder="detail.ratePlaceholder" placeholder="Inherit" />
-            </label>
-            <label class="detail-inline-check">
-              <input id="detailBillable" type="checkbox" />
-              <span data-i18n="detail.billable">Billable</span>
-            </label>
-          </div>
+            <button class="btn-primary" type="submit">Reserve my spot</button>
+            <p class="wl-note">No card required. No charge until Pro ships and you say yes. One email when it's ready — that's the whole newsletter.</p>
+          </form>
+        </div>
+      </section>
 
-          <label class="notes">
-            <span data-i18n="detail.notes">Notes</span>
-            <textarea id="detailNotes" rows="5" data-i18n-placeholder="detail.notesPlaceholder" placeholder="Jot down context, links or next steps"></textarea>
-          </label>
+      <!-- 9. FAQ -->
+      <section class="lp-section" id="faq">
+        <h2>FAQ</h2>
+        <div class="lp-faq">
+          <details>
+            <summary>Is my data really private?</summary>
+            <p>
+              Yes, by construction rather than by promise. DockTodo runs entirely in your browser; your clients, rates,
+              hours, and invoice amounts are stored locally on your device and never sent anywhere. We don't operate a
+              server that holds your data, so there is nothing on our end to hack, subpoena, or quietly monetize.
+            </p>
+          </details>
+          <details>
+            <summary>What happens if I clear my browser data?</summary>
+            <p>
+              Honest answer: local-first means the data lives in your browser's storage, so wiping that storage deletes
+              your data — same as deleting a file on your desktop. That's why export is one click and plain JSON; make it a
+              habit after invoicing each week and you always have a complete backup. When Pro ships, end-to-end-encrypted
+              sync and versioned encrypted backups will add off-device copies for people who want a belt with their
+              suspenders.
+            </p>
+          </details>
+          <details>
+            <summary>How is this different from Toggl / Moxie / Bonsai?</summary>
+            <p>
+              Those are cloud suites: accounts, servers, your billing data on their infrastructure, and $9–49 a month for a
+              bundle you use a third of. DockTodo is one local tool built around a single mechanism — the focus timer writes
+              your billable entries — so the hours you track and the lines you invoice are the same record, with no export
+              step in between. It opens instantly, works offline, and the core app costs $0.
+            </p>
+          </details>
+          <details>
+            <summary>Is the free plan really free forever?</summary>
+            <p>
+              Yes. The free app runs on your device, so serving it costs us close to nothing — there's no per-user
+              infrastructure bill forcing us to squeeze you later. Pro — encrypted sync and backups, plus the expanded
+              billing features — is the paid product and funds development. Free is the foundation, not the bait.
+            </p>
+          </details>
+          <details>
+            <summary>Can I use it on my phone, or on two computers?</summary>
+            <p>
+              Today, DockTodo is a single-device web app — it works in a mobile browser, but there are no native apps and
+              we're not promising any. Multi-device sync (end-to-end encrypted) is exactly what Pro is for, and it isn't
+              built yet, which is why the Pro button says "waitlist" and not "buy."
+            </p>
+          </details>
+          <details>
+            <summary>What happens to my data if DockTodo shuts down?</summary>
+            <p>
+              Nothing — and that's the point of local-first. The app runs on your machine and keeps working offline whether
+              or not our domain exists; your data was never on our servers to begin with. Your JSON export is readable by
+              anything, so the worst-case scenario is "you have a fast, free tool that no longer gets updates."
+            </p>
+          </details>
+        </div>
+      </section>
 
-          <section class="subtasks">
-            <div class="section-title flat">
-              <span data-i18n="detail.subtasks">Checklist</span>
-              <button class="plain-btn" id="addSubtask" type="button" data-i18n="detail.add">Add</button>
-            </div>
-            <div id="subtaskList"></div>
-          </section>
+      <!-- 10. Final CTA -->
+      <section class="lp-section lp-final">
+        <h2>Stop donating hours to your clients.</h2>
+        <div class="lp-cta-row">
+          <a class="btn-primary btn-lg" href="./app.html">Open DockTodo — free</a>
+        </div>
+        <p class="lp-microline">
+          Loads in under a second. No signup, no card, nothing installed. Add one client, set one rate, run one timer — and
+          if it's not for you, there's nothing to cancel. Close the tab and it's over.
+        </p>
 
-          <section class="time-entries">
-            <div class="section-title flat">
-              <span data-i18n="detail.timeEntries">Time entries</span>
-              <button class="plain-btn" id="addTimeEntry" type="button" data-i18n="entry.add">Add entry</button>
-            </div>
-            <div id="timeEntryList"></div>
-          </section>
-
-          <section class="history">
-            <div class="section-title flat">
-              <span data-i18n="detail.history">History</span>
-            </div>
-            <div id="historyList"></div>
-          </section>
-
-          <button class="danger-btn" id="deleteTask" type="button" data-i18n="detail.delete">Delete task</button>
-        </form>
-      </aside>
+        <!-- Waitlist form (instance 2, source=footer) -->
+        <div class="lp-waitlist">
+          <h3>Reserve Pro before the founding price is gone.</h3>
+          <form name="waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="wl-form">
+            <input type="hidden" name="form-name" value="waitlist" />
+            <input type="hidden" name="source" value="footer" />
+            <p class="wl-hp" hidden><label>Don't fill this out if you're human: <input name="bot-field" /></label></p>
+            <label>
+              Email
+              <input type="email" name="email" required placeholder="you@example.com" autocomplete="email" />
+            </label>
+            <label>
+              Do you bill clients by the hour today?
+              <select name="billing" required>
+                <option value="">Choose one…</option>
+                <option>Yes — most of my income is hourly</option>
+                <option>Sometimes — part of my income is hourly</option>
+                <option>No — mostly fixed-price or salaried</option>
+              </select>
+            </label>
+            <button class="btn-primary" type="submit">Reserve my spot</button>
+            <p class="wl-note">No card required. No charge until Pro ships and you say yes. One email when it's ready — that's the whole newsletter.</p>
+          </form>
+        </div>
+      </section>
     </main>
 
-    <div class="detail-scrim" id="detailScrim"></div>
+    <footer class="lp-footer">
+      <span>DockTodo — local-first time tracking &amp; invoicing.</span>
+      <a href="./app.html">Open the app</a>
+    </footer>
 
-    <template id="taskTemplate">
-      <button class="task-row" type="button">
-        <span class="task-check" aria-hidden="true"></span>
-        <span class="task-main">
-          <strong></strong>
-          <small></small>
-        </span>
-        <span class="task-date"></span>
-      </button>
-    </template>
-
-    <template id="subtaskTemplate">
-      <label class="subtask-row">
-        <input class="subtask-done" type="checkbox" />
-        <input class="subtask-title" type="text" maxlength="120" />
-        <input class="subtask-reminder" type="datetime-local" data-i18n-title="detail.subtaskReminder" />
-        <button class="subtask-delete" type="button" data-i18n-title="detail.subtaskDelete"><svg class="ic" aria-hidden="true"><use href="#i-close"></use></svg></button>
-      </label>
-    </template>
-
-    <div class="toast-stack" id="toastStack" aria-live="polite"></div>
-
-    <script src="./assets/i18n.js"></script>
-    <script src="./assets/money.js"></script>
-    <script src="./assets/data.js"></script>
-    <script src="./assets/billing.js"></script>
-    <script src="./assets/backup.js"></script>
-    <script src="./assets/importer.js"></script>
-    <script src="./assets/app.js"></script>
+    <script src="./assets/landing.js"></script>
   </body>
 </html>

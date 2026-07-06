@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DockTodo — Local-first time tracking &amp; invoicing for freelancers</title>
+    <meta name="description" content="DockTodo is a local-first workbench for freelancers: turn tasks into tracked time, weekly timesheets and invoices. Works offline; your data never leaves your browser." />
+    <meta property="og:title" content="DockTodo — Local-first time tracking &amp; invoicing for freelancers" />
+    <meta property="og:description" content="Turn tasks into tracked time, weekly timesheets and invoices. Local-first and offline; your client data stays yours." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://docktodo.com/" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231d6b4f'/%3E%3Cstop offset='1' stop-color='%232a7d5c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='45' font-family='Arial,sans-serif' font-size='38' font-weight='800' fill='%23fff' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="./assets/styles.css" />
+  </head>
+  <body>
+    <!-- Lucide icon sprite (ISC license). 24x24 viewBox; styled by .ic. -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none" aria-hidden="true">
+      <symbol id="i-tasks" viewBox="0 0 24 24"><path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"/><path d="m9 11 3 3L22 4"/></symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+      <symbol id="i-focus" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></symbol>
+      <symbol id="i-stats" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol>
+      <symbol id="i-timesheet" viewBox="0 0 24 24"><path d="M12 3v18"/><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/></symbol>
+      <symbol id="i-invoices" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+      <symbol id="i-clients" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-today" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></symbol>
+      <symbol id="i-next7" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></symbol>
+      <symbol id="i-inbox" viewBox="0 0 24 24"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
+      <symbol id="i-all" viewBox="0 0 24 24"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></symbol>
+      <symbol id="i-completed" viewBox="0 0 24 24"><path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/></symbol>
+      <symbol id="i-project" viewBox="0 0 24 24"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></symbol>
+      <symbol id="i-filter" viewBox="0 0 24 24"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"/></symbol>
+      <symbol id="i-tag" viewBox="0 0 24 24"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
+      <symbol id="i-edit" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+      <symbol id="i-backup" viewBox="0 0 24 24"><path d="M12 2v8"/><path d="m16 6-4 4-4-4"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 18h.01"/><path d="M10 18h.01"/></symbol>
+    </svg>
+
+    <main class="app" aria-label="DockTodo Pro">
+      <aside class="rail" aria-label="Main navigation">
+        <div class="brand" title="DockTodo">D</div>
+        <button class="rail-btn active" type="button" data-mode="tasks" data-i18n-title="rail.tasks" data-i18n-aria="rail.tasks" aria-label="Tasks"><svg class="ic" aria-hidden="true"><use href="#i-tasks"></use></svg></button>
+        <button class="rail-btn" type="button" data-mode="calendar" data-i18n-title="rail.calendar" data-i18n-aria="rail.calendar" aria-label="Calendar"><svg class="ic" aria-hidden="true"><use href="#i-calendar"></use></svg></button>
+        <button class="rail-btn" type="button" data-mode="focus" data-i18n-title="rail.focus" data-i18n-aria="rail.focus" aria-label="Focus"><svg class="ic" aria-hidden="true"><use href="#i-focus"></use></svg></button>
+        <button class="rail-btn" type="button" data-mode="stats" data-i18n-title="rail.stats" data-i18n-aria="rail.stats" aria-label="Stats"><svg class="ic" aria-hidden="true"><use href="#i-stats"></use></svg></button>
+        <button class="rail-btn" type="button" data-mode="timesheet" data-i18n-title="rail.timesheet" data-i18n-aria="rail.timesheet" aria-label="Timesheet"><svg class="ic" aria-hidden="true"><use href="#i-timesheet"></use></svg></button>
+        <button class="rail-btn" type="button" data-mode="invoices" data-i18n-title="rail.invoices" data-i18n-aria="rail.invoices" aria-label="Invoices"><svg class="ic" aria-hidden="true"><use href="#i-invoices"></use></svg></button>
+        <button class="rail-btn" type="button" data-mode="clients" data-i18n-title="rail.clients" data-i18n-aria="rail.clients" aria-label="Clients"><svg class="ic" aria-hidden="true"><use href="#i-clients"></use></svg></button>
+        <button class="rail-btn bottom" type="button" data-mode="settings" data-i18n-title="rail.settings" data-i18n-aria="rail.settings" aria-label="Settings"><svg class="ic" aria-hidden="true"><use href="#i-settings"></use></svg></button>
+      </aside>
+
+      <aside class="sidebar" aria-label="Lists and filters">
+        <header class="sidebar-head">
+          <div>
+            <p data-i18n="sidebar.kicker">DockTodo Pro</p>
+            <h1 data-i18n="sidebar.title">Task workbench</h1>
+          </div>
+          <button class="icon-btn" id="quickAddTop" type="button" data-i18n-title="title.addTask"><svg class="ic" aria-hidden="true"><use href="#i-plus"></use></svg></button>
+        </header>
+
+        <div class="search-box">
+          <input id="searchInput" type="search" data-i18n-placeholder="search.placeholder" placeholder="Search tasks, notes or tags" autocomplete="off" />
+        </div>
+
+        <section class="side-section" id="clientSection">
+          <div class="section-title">
+            <span data-i18n="clients.title">Clients &amp; projects</span>
+            <button class="plain-btn" id="addClientTop" type="button" data-i18n="action.new">New</button>
+          </div>
+          <div class="nav-list" id="clientNav"></div>
+        </section>
+
+        <section class="side-section">
+          <div class="section-title">
+            <span data-i18n="section.views">Views</span>
+          </div>
+          <nav class="nav-list" id="smartLists" data-i18n-aria="section.views" aria-label="Views"></nav>
+        </section>
+
+        <section class="side-section">
+          <div class="section-title">
+            <span data-i18n="section.lists">Lists</span>
+            <button class="plain-btn" id="addList" type="button" data-i18n="action.new">New</button>
+          </div>
+          <div class="nav-list" id="projectList"></div>
+        </section>
+
+        <section class="side-section">
+          <div class="section-title">
+            <span data-i18n="section.filters">Custom filters</span>
+            <button class="plain-btn" id="addFilter" type="button" data-i18n="action.new">New</button>
+          </div>
+          <div class="nav-list" id="filterList"></div>
+        </section>
+
+        <details class="side-section hidden" id="tagSection">
+          <summary class="section-title">
+            <span data-i18n="section.tags">Tags</span>
+          </summary>
+          <div class="nav-list" id="tagList"></div>
+        </details>
+      </aside>
+
+      <section class="main-pane" aria-label="Workspace">
+        <header class="pane-head">
+          <div>
+            <p id="viewMeta"></p>
+            <h2 id="viewTitle"></h2>
+          </div>
+          <div class="head-actions">
+            <button class="soft-btn" id="importData" type="button" data-i18n="action.import">Import</button>
+            <input id="importFile" type="file" accept=".json,application/json" hidden />
+            <button class="soft-btn" id="exportData" type="button" data-i18n="action.export">Export</button>
+            <button class="soft-btn" id="copyData" type="button" data-i18n="action.copy">Copy</button>
+            <button class="soft-btn" id="clearDone" type="button" data-i18n="action.clearDone">Clear completed</button>
+            <button class="primary-btn" id="quickAdd" type="button" data-i18n="action.addTask">Add task</button>
+          </div>
+        </header>
+
+        <div class="billing-strip" id="billingStrip"></div>
+
+        <section class="task-view" id="taskView">
+          <form class="quick-form" id="taskForm">
+            <input id="taskInput" type="text" maxlength="140" autocomplete="off" data-i18n-placeholder="form.placeholder" placeholder="Add a task, press Enter to save" />
+            <input id="taskStart" type="date" data-i18n-title="form.startDate" />
+            <input id="taskDue" type="date" data-i18n-title="form.dueDate" />
+            <select id="taskPriority" data-i18n-title="form.priority">
+              <option value="none" data-i18n="priority.none">No priority</option>
+              <option value="high" data-i18n="priority.high">High priority</option>
+              <option value="medium" data-i18n="priority.medium">Medium priority</option>
+              <option value="low" data-i18n="priority.low">Low priority</option>
+            </select>
+            <button type="submit" data-i18n="form.save">Save</button>
+          </form>
+
+          <div class="stats-line" id="statsLine"></div>
+          <div class="task-list" id="taskList" aria-label="Tasks"></div>
+          <section class="empty" id="emptyState">
+            <strong data-i18n="empty.title">No tasks here</strong>
+            <span data-i18n="empty.hint">Add something to move forward — DockTodo will hold on to it.</span>
+            <button class="soft-btn" id="emptyCta" type="button" data-i18n="empty.cta">Add your first task</button>
+          </section>
+        </section>
+
+        <section class="calendar-view hidden" id="calendarView">
+          <div class="calendar-toolbar">
+            <button class="soft-btn" id="prevMonth" type="button" data-i18n="calendar.prev">Prev</button>
+            <strong id="calendarTitle"></strong>
+            <button class="soft-btn" id="nextMonth" type="button" data-i18n="calendar.next">Next</button>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+          <section class="empty" id="calendarEmpty">
+            <strong data-i18n="calendar.emptyTitle">Nothing scheduled this month</strong>
+            <span data-i18n="calendar.emptyHint">Tasks with a start or due date appear on this calendar.</span>
+            <button class="soft-btn" id="calendarEmptyCta" type="button" data-i18n="action.addTask">Add task</button>
+          </section>
+        </section>
+
+        <section class="focus-view hidden" id="focusView">
+          <div class="focus-workspace" id="focusWorkspace">
+            <div class="focus-card">
+              <p data-i18n="focus.timer">Focus timer</p>
+              <strong id="focusTime">25:00</strong>
+              <select id="focusTask" data-i18n-aria="focus.taskSelect" aria-label="Focus task"></select>
+              <div class="focus-context" id="focusContext"></div>
+              <div class="focus-actions">
+                <button class="primary-btn" id="startFocus" type="button" data-i18n="focus.start">Start</button>
+                <button class="soft-btn" id="resetFocus" type="button" data-i18n="focus.reset">Reset</button>
+                <button class="soft-btn" id="completePomo" type="button" data-i18n="focus.logPomo">Log 1 pomodoro</button>
+              </div>
+            </div>
+            <div class="focus-today" id="focusToday"></div>
+          </div>
+          <section class="empty" id="focusEmpty">
+            <strong data-i18n="focus.emptyTitle">Nothing to focus on</strong>
+            <span data-i18n="focus.emptyHint">Add a task first — focus sessions become billable time.</span>
+            <button class="soft-btn" id="focusEmptyCta" type="button" data-i18n="action.addTask">Add task</button>
+          </section>
+        </section>
+
+        <section class="stats-view hidden" id="statsView"></section>
+
+        <section class="settings-view hidden" id="settingsView"></section>
+
+        <section class="timesheet-view hidden" id="timesheetView"></section>
+
+        <section class="invoice-view hidden" id="invoiceView"></section>
+
+        <section class="clients-view hidden" id="clientsView"></section>
+      </section>
+
+      <aside class="detail-pane" aria-label="Task details">
+        <button class="detail-close" id="detailClose" type="button" aria-label="Close"><svg class="ic" aria-hidden="true"><use href="#i-close"></use></svg></button>
+        <div class="detail-empty" id="detailEmpty">
+          <strong data-i18n="detail.empty">Select a task</strong>
+          <span data-i18n="detail.emptyHint">View notes, dates, reminders, priority, pomodoro and history.</span>
+        </div>
+
+        <form class="detail-form hidden" id="detailForm">
+          <label class="detail-check">
+            <input id="detailCompleted" type="checkbox" />
+            <span data-i18n="detail.complete">Complete task</span>
+          </label>
+
+          <textarea id="detailTitle" rows="2" maxlength="180" aria-label="Task title"></textarea>
+
+          <div class="field-grid">
+            <label>
+              <span data-i18n="detail.list">List</span>
+              <select id="detailList"></select>
+            </label>
+            <label>
+              <span data-i18n="detail.start">Start date</span>
+              <input id="detailStart" type="date" />
+            </label>
+            <label>
+              <span data-i18n="detail.due">Due date</span>
+              <input id="detailDue" type="date" />
+            </label>
+            <label>
+              <span data-i18n="detail.reminder">Reminder</span>
+              <input id="detailReminder" type="datetime-local" />
+            </label>
+            <label>
+              <span data-i18n="detail.priority">Priority</span>
+              <select id="detailPriority">
+                <option value="none" data-i18n="priority.short.none">None</option>
+                <option value="high" data-i18n="priority.short.high">High</option>
+                <option value="medium" data-i18n="priority.short.medium">Medium</option>
+                <option value="low" data-i18n="priority.short.low">Low</option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="detail.estimate">Estimated pomodoro</span>
+              <input id="detailEstimate" type="number" min="0" max="20" />
+            </label>
+            <label>
+              <span data-i18n="detail.repeat">Repeat</span>
+              <select id="detailRepeat"></select>
+            </label>
+            <label>
+              <span data-i18n="detail.tags">Tags</span>
+              <input id="detailTags" type="text" maxlength="120" data-i18n-placeholder="detail.tagsPlaceholder" placeholder="Separate with spaces" />
+            </label>
+            <label>
+              <span data-i18n="detail.project">Project</span>
+              <select id="detailProject"></select>
+            </label>
+            <label>
+              <span data-i18n="detail.rateOverride">Rate override</span>
+              <input id="detailRate" type="number" min="0" step="0.01" data-i18n-placeholder="detail.ratePlaceholder" placeholder="Inherit" />
+            </label>
+            <label class="detail-inline-check">
+              <input id="detailBillable" type="checkbox" />
+              <span data-i18n="detail.billable">Billable</span>
+            </label>
+          </div>
+
+          <label class="notes">
+            <span data-i18n="detail.notes">Notes</span>
+            <textarea id="detailNotes" rows="5" data-i18n-placeholder="detail.notesPlaceholder" placeholder="Jot down context, links or next steps"></textarea>
+          </label>
+
+          <section class="subtasks">
+            <div class="section-title flat">
+              <span data-i18n="detail.subtasks">Checklist</span>
+              <button class="plain-btn" id="addSubtask" type="button" data-i18n="detail.add">Add</button>
+            </div>
+            <div id="subtaskList"></div>
+          </section>
+
+          <section class="time-entries">
+            <div class="section-title flat">
+              <span data-i18n="detail.timeEntries">Time entries</span>
+              <button class="plain-btn" id="addTimeEntry" type="button" data-i18n="entry.add">Add entry</button>
+            </div>
+            <div id="timeEntryList"></div>
+          </section>
+
+          <section class="history">
+            <div class="section-title flat">
+              <span data-i18n="detail.history">History</span>
+            </div>
+            <div id="historyList"></div>
+          </section>
+
+          <button class="danger-btn" id="deleteTask" type="button" data-i18n="detail.delete">Delete task</button>
+        </form>
+      </aside>
+    </main>
+
+    <div class="detail-scrim" id="detailScrim"></div>
+
+    <template id="taskTemplate">
+      <button class="task-row" type="button">
+        <span class="task-check" aria-hidden="true"></span>
+        <span class="task-main">
+          <strong></strong>
+          <small></small>
+        </span>
+        <span class="task-date"></span>
+      </button>
+    </template>
+
+    <template id="subtaskTemplate">
+      <label class="subtask-row">
+        <input class="subtask-done" type="checkbox" />
+        <input class="subtask-title" type="text" maxlength="120" />
+        <input class="subtask-reminder" type="datetime-local" data-i18n-title="detail.subtaskReminder" />
+        <button class="subtask-delete" type="button" data-i18n-title="detail.subtaskDelete"><svg class="ic" aria-hidden="true"><use href="#i-close"></use></svg></button>
+      </label>
+    </template>
+
+    <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+    <script src="./assets/i18n.js"></script>
+    <script src="./assets/money.js"></script>
+    <script src="./assets/data.js"></script>
+    <script src="./assets/billing.js"></script>
+    <script src="./assets/backup.js"></script>
+    <script src="./assets/importer.js"></script>
+    <script src="./assets/app.js"></script>
+  </body>
+</html>
