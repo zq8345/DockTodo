@@ -52,6 +52,7 @@
   --band-bg: linear-gradient(165deg, rgba(34, 198, 127, 0.16), rgba(34, 198, 127, 0.045));
   --band-bd: rgba(34, 198, 127, 0.26);
   --band-chip: rgba(255, 255, 255, 0.09);
+  --danger: #ff6f61;
 }
 
 /* Light values, shared by an explicit data-theme="light" and the system pref. */
@@ -80,6 +81,7 @@
   --band-bg: linear-gradient(165deg, #d3f1e2, #eaf7f0);
   --band-bd: rgba(11, 148, 99, 0.22);
   --band-chip: #ffffff;
+  --danger: #c53d2e;
 }
 
 @media (prefers-color-scheme: light) {
@@ -108,6 +110,7 @@
     --band-bg: linear-gradient(165deg, #d3f1e2, #eaf7f0);
     --band-bd: rgba(11, 148, 99, 0.22);
     --band-chip: #ffffff;
+    --danger: #c53d2e;
   }
 }
 
@@ -1169,30 +1172,60 @@ body.landing {
   height: 20px;
 }
 
-/* How it works — an icon marker replaces the number badge (landing only;
-   switch pages keep their numbered .lp-steps via the untouched base rule). */
-.landing:not(.switch-page) .lp-steps-ico li {
-  padding-left: 0;
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-}
-.landing:not(.switch-page) .lp-steps-ico li::before {
-  display: none;
-}
-.landing:not(.switch-page) .lp-mk {
-  flex: none;
+/* How it works — S6-5: three icon-forward columns, one short line each
+   (image leads, text follows). Own class so switch pages' numbered
+   .lp-steps stays untouched. */
+.landing:not(.switch-page) .lp-steps-flow {
+  list-style: none;
+  counter-reset: step;
+  padding: 0;
+  margin: 0;
   display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+.landing:not(.switch-page) .lp-steps-flow li {
+  counter-increment: step;
+  text-align: center;
+}
+.landing:not(.switch-page) .lp-flow-ic {
+  position: relative;
+  display: inline-grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--r-card);
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
   background: var(--accent-soft);
   color: var(--accent);
+  margin-bottom: 16px;
 }
-.landing:not(.switch-page) .lp-mk svg {
+.landing:not(.switch-page) .lp-flow-ic svg {
+  width: 26px;
+  height: 26px;
+}
+.landing:not(.switch-page) .lp-flow-ic::after {
+  content: counter(step);
+  position: absolute;
+  top: -6px;
+  right: -6px;
   width: 20px;
   height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: var(--text-micro);
+  font-weight: var(--w-semibold);
+}
+.landing:not(.switch-page) .lp-steps-flow h3 {
+  margin: 0 0 4px;
+  font-size: var(--text-title);
+}
+.landing:not(.switch-page) .lp-steps-flow p {
+  margin: 0;
+  font-size: var(--text-body);
+  color: var(--muted);
 }
 
 /* Trust bullets — a Lucide icon replaces the dot (landing only) */
@@ -1226,4 +1259,68 @@ body.landing {
 .lp-plan-price {
   color: var(--accent);
   font-weight: var(--w-semibold);
+}
+
+/* ── S6-5 Problem diagram: three disconnected tools, one leak ──────────── */
+.landing:not(.switch-page) .lp-leak {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  margin-top: 8px;
+}
+.landing:not(.switch-page) .lp-leak-tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 28px;
+}
+.landing:not(.switch-page) .lp-leak-tool {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--text-body);
+  font-weight: var(--w-medium);
+  color: var(--muted);
+}
+.landing:not(.switch-page) .lp-leak-ic {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--text-3);
+}
+.landing:not(.switch-page) .lp-leak-ic svg {
+  width: 24px;
+  height: 24px;
+}
+.landing:not(.switch-page) .lp-leak-cap {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: var(--text-emph);
+  color: var(--muted);
+}
+.landing:not(.switch-page) .lp-leak-drop {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  color: var(--danger);
+}
+.landing:not(.switch-page) .lp-leak-drop svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* How it works flow — phones: single column */
+@media (max-width: 720px) {
+  .landing:not(.switch-page) .lp-steps-flow {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 }
