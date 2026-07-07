@@ -391,31 +391,6 @@
             promotion. Pro isn't finished, and we won't take a cent until it is. One recovered billable hour covers
             roughly six months.
           </p>
-
-          <!-- Waitlist form (instance 1) -->
-          <div class="lp-waitlist" id="waitlist">
-            <h3>Reserve Pro before the founding price is gone.</h3>
-            <form name="waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="wl-form" id="waitlistFormTop">
-              <input type="hidden" name="form-name" value="waitlist" />
-              <input type="hidden" name="source" value="standard" />
-              <p class="wl-hp" hidden><label>Don't fill this out if you're human: <input name="bot-field" /></label></p>
-              <label>
-                Email
-                <input type="email" name="email" required placeholder="you@example.com" autocomplete="email" />
-              </label>
-              <label>
-                Do you bill clients by the hour today?
-                <select name="billing" required>
-                  <option value="">Choose one…</option>
-                  <option>Yes — most of my income is hourly</option>
-                  <option>Sometimes — part of my income is hourly</option>
-                  <option>No — mostly fixed-price or salaried</option>
-                </select>
-              </label>
-              <button class="btn-primary" type="submit">Reserve my spot</button>
-              <p class="wl-note">No card required. No charge until Pro ships and you say yes. One email when it's ready — that's the whole newsletter.</p>
-            </form>
-          </div>
         </div>
       </section>
 
@@ -486,10 +461,10 @@
             timer — and if it's not for you, close the tab and it's over.
           </p>
 
-          <!-- Waitlist form (instance 2, source=footer) -->
-          <div class="lp-waitlist">
+          <!-- Waitlist form (the only one on the page — pricing CTAs scroll here) -->
+          <div class="lp-waitlist" id="waitlist">
             <h3>Reserve Pro before the founding price is gone.</h3>
-            <form name="waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="wl-form">
+            <form name="waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="wl-form" id="waitlistFormTop">
               <input type="hidden" name="form-name" value="waitlist" />
               <input type="hidden" name="source" value="footer" />
               <p class="wl-hp" hidden><label>Don't fill this out if you're human: <input name="bot-field" /></label></p>
