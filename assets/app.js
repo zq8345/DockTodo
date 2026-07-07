@@ -1088,7 +1088,7 @@ function renderClients() {
   els.clientsView.innerHTML = `
     <div class="clients-board">
       <div class="clients-head">
-        <h2>${t("clients.title")}</h2>
+        <h2 class="view-title">${t("clients.title")}</h2>
         <button class="primary-btn" type="button" id="addClientBtn">${t("clients.addClient")}</button>
       </div>
       ${
@@ -1229,7 +1229,7 @@ function renderInvoices() {
   els.invoiceView.innerHTML = `
     <div class="inv-board">
       <div class="inv-generator no-print">
-        <h2>${t("invoice.title")}</h2>
+        <h2 class="view-title">${t("invoice.title")}</h2>
         <div class="inv-form">
           <label class="modal-field"><span>${t("invoice.client")}</span><select id="invClient">${clientOptions}</select></label>
           <label class="modal-field"><span>${t("invoice.from")}</span><input id="invFrom" type="date" value="${addDays(todayKey, -30)}" /></label>
@@ -1365,7 +1365,7 @@ function renderSettings() {
     .join("");
   els.settingsView.innerHTML = `
     <div class="settings-card">
-      <h3>${t("settings.title")}</h3>
+      <h3 class="view-title">${t("settings.title")}</h3>
       <label class="settings-field">
         <span>${t("settings.language")}</span>
         <select id="settingsLanguage">${languageOptions}</select>

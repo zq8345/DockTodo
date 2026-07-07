@@ -76,6 +76,9 @@ body {
   height: 100vh;
   overflow: hidden;
   font-family: var(--font-ui);
+  /* S7-3: explicit base size — without it, headings with no size fell back to
+     the UA's 16px and pulled per-mode page titles out of step. */
+  font-size: var(--text-body);
   color: var(--text);
   background: var(--bg);
 }
@@ -216,7 +219,9 @@ h2 {
 }
 
 .sidebar-head h1,
-.pane-head h2 {
+.pane-head h2,
+.view-title {
+  margin: 0;
   font-size: var(--text-page);
   line-height: 1.15;
   letter-spacing: 0;
@@ -789,7 +794,7 @@ h2 {
   box-shadow: var(--shadow);
 }
 
-.settings-card h3 {
+.settings-card h3:not(.view-title) {
   margin: 0;
   font-size: var(--text-title);
 }
