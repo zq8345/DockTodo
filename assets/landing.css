@@ -722,12 +722,12 @@ body.landing {
   position: relative;
   padding-top: var(--lp-pad-y);
   padding-bottom: 56px;
-  display: grid;
-  /* S6-4: tip the balance toward the visual (was 1.05fr 0.95fr) so the live
-     card dominates the first screen. */
-  grid-template-columns: 5fr 6fr;
+  /* S6-5: stacked hero — centred copy on top, a full-width live card below
+     (replaces the S6-4 side-by-side 5fr/6fr layout). */
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 56px;
+  gap: 40px;
 }
 
 /* Ambient accent blobs sit behind the hero content */
@@ -758,7 +758,9 @@ body.landing {
 }
 
 .landing:not(.switch-page) .lp-hero-copy {
-  text-align: left;
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 .lp-eyebrow {
@@ -796,16 +798,16 @@ body.landing {
 }
 
 .landing:not(.switch-page) .lp-hero .lp-lead {
-  margin: 0 0 22px;
-  max-width: 384px;
+  margin: 0 auto 22px;
+  max-width: 460px;
 }
 
 .landing:not(.switch-page) .lp-hero .lp-badges {
-  justify-content: flex-start;
+  justify-content: center;
 }
 
 .landing:not(.switch-page) .lp-hero .lp-cta-row {
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   gap: 16px;
   margin-top: 24px;
@@ -851,12 +853,13 @@ body.landing {
   font-feature-settings: "tnum";
 }
 .lp-demo {
-  /* S6-4: bigger, more present card — deeper padding/radius and a second
-     mode-aware glow layer on top of the base shadow for real depth. */
+  /* S6-5: full-width wide card (was the narrow right-hand column). Deep
+     padding/radius + a second mode-aware glow layer for real presence. */
+  width: 100%;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 22px;
-  padding: 26px;
+  padding: 26px 28px;
   box-shadow: var(--shadow), var(--btn-glow);
 }
 .lp-demo-head {
@@ -886,10 +889,20 @@ body.landing {
   font-size: var(--text-micro);
   font-weight: 500;
 }
-.lp-demo-main {
-  display: flex;
+/* S6-5: three zones in one wide row — ring | earned | this-week invoice */
+.lp-demo-body {
+  display: grid;
+  grid-template-columns: auto 1fr 1.3fr;
   align-items: center;
-  gap: 26px;
+  gap: 34px;
+  margin-top: 18px;
+}
+.lp-demo-timer {
+  display: grid;
+  place-items: center;
+}
+.lp-demo-earned {
+  min-width: 0;
 }
 .lp-ring-wrap {
   /* S6-4: ring blown up from 112 → 150; the SVG fills the wrap via width:100%
@@ -936,7 +949,7 @@ body.landing {
   color: var(--text-3);
 }
 .lp-money {
-  font-size: 52px;
+  font-size: 56px;
   line-height: 1;
   font-weight: 600;
   letter-spacing: -0.03em;
@@ -949,7 +962,8 @@ body.landing {
   color: var(--text-3);
 }
 .lp-demo-week {
-  margin-top: 20px;
+  padding-left: 34px;
+  border-left: 1px solid var(--line);
 }
 .lp-demo-week-head {
   display: flex;
@@ -1058,28 +1072,23 @@ body.landing {
 }
 
 /* Landing responsive */
-@media (max-width: 900px) {
-  /* Hero collapses to a single centred column; the demo card drops below. */
-  .landing:not(.switch-page) .lp-hero .lp-wrap-wide {
+/* S6-5: on narrow screens the wide card's three zones stack; the week zone
+   swaps its left divider for a top one. */
+@media (max-width: 820px) {
+  .lp-demo-body {
     grid-template-columns: 1fr;
-    gap: 30px;
-  }
-  .landing:not(.switch-page) .lp-hero-copy {
+    gap: 22px;
     text-align: center;
   }
-  .landing:not(.switch-page) .lp-hero .lp-eyebrow,
-  .landing:not(.switch-page) .lp-hero .lp-badges,
-  .landing:not(.switch-page) .lp-hero .lp-cta-row {
-    justify-content: center;
+  .lp-demo-timer {
+    justify-items: center;
   }
-  .landing:not(.switch-page) .lp-hero .lp-lead {
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .lp-demo {
-    max-width: 420px;
-    margin: 0 auto;
-    width: 100%;
+  .lp-demo-week {
+    padding-left: 0;
+    padding-top: 22px;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    text-align: left;
   }
 }
 
