@@ -27,13 +27,15 @@
    styles switch automatically; --on-accent is the button label colour and is
    written straight into .btn-primary so no link rule can override it. ─────── */
 .landing:not(.switch-page) {
-  --bg: #081310;
+  /* S6-7: neutral near-black base (was the #081310 dark-green tint). Green is
+     accent-only now — text/icons/buttons/numbers/ring/glow keep it. */
+  --bg: #0a0a0b;
   --surface: rgba(255, 255, 255, 0.04);
-  --surface-soft: rgba(255, 255, 255, 0.06);
-  --line: rgba(255, 255, 255, 0.13);
-  --text: #f4f8f6;
-  --muted: #9fb0a8;
-  --text-3: #7d8c85;
+  --surface-soft: rgba(255, 255, 255, 0.055);
+  --line: rgba(255, 255, 255, 0.12);
+  --text: #f7f8f8;
+  --muted: #9294a0;
+  --text-3: #6c6e78;
   --accent: #2fd08a;
   --blue-dark: #26b477;
   --accent-soft: rgba(34, 198, 127, 0.14);
@@ -42,73 +44,74 @@
   --track: rgba(255, 255, 255, 0.1);
   --glow: 0 0 26px rgba(47, 208, 138, 0.5);
   --btn-glow: 0 0 28px rgba(34, 198, 127, 0.4);
-  --shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  --shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
   --eb-bg: rgba(34, 198, 127, 0.14);
   --eb-fg: #5fe3a6;
   --eb-bd: rgba(34, 198, 127, 0.3);
-  --blob1: radial-gradient(circle, rgba(34, 198, 127, 0.28), rgba(34, 198, 127, 0) 70%);
-  --blob2: radial-gradient(circle, rgba(29, 158, 117, 0.16), rgba(29, 158, 117, 0) 70%);
-  /* S6-3 green band (local-first section) + contrasting chip on it */
-  --band-bg: linear-gradient(165deg, rgba(34, 198, 127, 0.16), rgba(34, 198, 127, 0.045));
-  --band-bd: rgba(34, 198, 127, 0.26);
-  --band-chip: rgba(255, 255, 255, 0.09);
+  --blob1: radial-gradient(circle, rgba(34, 198, 127, 0.22), rgba(34, 198, 127, 0) 70%);
+  --blob2: radial-gradient(circle, rgba(29, 158, 117, 0.12), rgba(29, 158, 117, 0) 70%);
+  /* S6-7: local-first section is a neutral elevation band now (was green) */
+  --band-bg: #111113;
+  --band-bd: rgba(255, 255, 255, 0.08);
+  --band-chip: rgba(255, 255, 255, 0.08);
   --danger: #ff6f61;
 }
 
 /* Light values, shared by an explicit data-theme="light" and the system pref. */
 .landing:not(.switch-page)[data-theme="light"] {
-  --bg: #f3f7f5;
+  /* S6-7: neutral light base (was the #f3f7f5 green tint); green accent-only */
+  --bg: #f8f8f9;
   --surface: #ffffff;
-  --surface-soft: #eef3f0;
-  --line: rgba(13, 21, 18, 0.1);
-  --text: #0d1512;
-  --muted: #48564f;
-  --text-3: #7c8a83;
+  --surface-soft: #f1f1f3;
+  --line: rgba(18, 19, 23, 0.1);
+  --text: #14151a;
+  --muted: #55575f;
+  --text-3: #85878f;
   --accent: #0b8659;
   --blue-dark: #097a52;
   --accent-soft: #dff3ea;
   --on-accent: #ffffff;
   --chip: #ffffff;
-  --track: #e6ebe8;
+  --track: #e7e7ea;
   --glow: none;
   --btn-glow: 0 6px 18px rgba(11, 148, 99, 0.28);
-  --shadow: 0 16px 40px rgba(20, 40, 32, 0.12);
+  --shadow: 0 16px 40px rgba(15, 16, 22, 0.1);
   --eb-bg: #dff3ea;
   --eb-fg: #0b7a52;
   --eb-bd: rgba(11, 148, 99, 0.22);
-  --blob1: radial-gradient(circle, rgba(11, 148, 99, 0.14), rgba(11, 148, 99, 0) 70%);
-  --blob2: radial-gradient(circle, rgba(47, 180, 120, 0.1), rgba(47, 180, 120, 0) 70%);
-  --band-bg: linear-gradient(165deg, #d3f1e2, #eaf7f0);
-  --band-bd: rgba(11, 148, 99, 0.22);
+  --blob1: radial-gradient(circle, rgba(11, 148, 99, 0.12), rgba(11, 148, 99, 0) 70%);
+  --blob2: radial-gradient(circle, rgba(47, 180, 120, 0.08), rgba(47, 180, 120, 0) 70%);
+  --band-bg: #f0f0f2;
+  --band-bd: rgba(18, 19, 23, 0.09);
   --band-chip: #ffffff;
   --danger: #c53d2e;
 }
 
 @media (prefers-color-scheme: light) {
   .landing:not(.switch-page):not([data-theme="dark"]) {
-    --bg: #f3f7f5;
+    --bg: #f8f8f9;
     --surface: #ffffff;
-    --surface-soft: #eef3f0;
-    --line: rgba(13, 21, 18, 0.1);
-    --text: #0d1512;
-    --muted: #48564f;
-    --text-3: #7c8a83;
+    --surface-soft: #f1f1f3;
+    --line: rgba(18, 19, 23, 0.1);
+    --text: #14151a;
+    --muted: #55575f;
+    --text-3: #85878f;
     --accent: #0b8659;
     --blue-dark: #097a52;
     --accent-soft: #dff3ea;
     --on-accent: #ffffff;
     --chip: #ffffff;
-    --track: #e6ebe8;
+    --track: #e7e7ea;
     --glow: none;
     --btn-glow: 0 6px 18px rgba(11, 148, 99, 0.28);
-    --shadow: 0 16px 40px rgba(20, 40, 32, 0.12);
+    --shadow: 0 16px 40px rgba(15, 16, 22, 0.1);
     --eb-bg: #dff3ea;
     --eb-fg: #0b7a52;
     --eb-bd: rgba(11, 148, 99, 0.22);
-    --blob1: radial-gradient(circle, rgba(11, 148, 99, 0.14), rgba(11, 148, 99, 0) 70%);
-    --blob2: radial-gradient(circle, rgba(47, 180, 120, 0.1), rgba(47, 180, 120, 0) 70%);
-    --band-bg: linear-gradient(165deg, #d3f1e2, #eaf7f0);
-    --band-bd: rgba(11, 148, 99, 0.22);
+    --blob1: radial-gradient(circle, rgba(11, 148, 99, 0.12), rgba(11, 148, 99, 0) 70%);
+    --blob2: radial-gradient(circle, rgba(47, 180, 120, 0.08), rgba(47, 180, 120, 0) 70%);
+    --band-bg: #f0f0f2;
+    --band-bd: rgba(18, 19, 23, 0.09);
     --band-chip: #ffffff;
     --danger: #c53d2e;
   }
