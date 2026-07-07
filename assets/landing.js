@@ -197,3 +197,38 @@ document.querySelectorAll(".wl-form").forEach((form) => {
   };
   requestAnimationFrame(frame);
 })();
+
+// S5-3 scroll reveal: sections fade + rise into view. Progressive enhancement —
+// the hiding `.reveal` class is only added by JS, so a no-JS visitor sees
+// everything; reduced-motion and old browsers opt out entirely.
+(function () {
+  if (!("IntersectionObserver" in window)) return;
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const root = document.querySelector(".landing:not(.switch-page)");
+  if (!root) return;
+  const targets = root.querySelectorAll(".lp-strip, .lp-section:not(.lp-hero)");
+  const io = new IntersectionObserver(
+    (entries, obs) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add("in");
+          obs.unobserve(e.target);
+        }
+      });
+    },
+    { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
+  );
+  const hidden = [];
+  targets.forEach((el) => {
+    // Never hide anything already in (or near) the first viewport — only
+    // below-the-fold sections should fade in on scroll. Guards against
+    // content getting stuck invisible if the observer is slow to fire.
+    if (el.getBoundingClientRect().top < window.innerHeight * 0.9) return;
+    el.classList.add("reveal");
+    hidden.push(el);
+    io.observe(el);
+  });
+  // Belt-and-suspenders: whatever hasn't revealed after 6s is force-shown, so a
+  // marketing section can never be permanently stuck invisible on a live page.
+  setTimeout(() => hidden.forEach((el) => el.classList.add("in")), 6000);
+})();
