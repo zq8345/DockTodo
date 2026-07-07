@@ -625,7 +625,9 @@ body.landing {
 }
 
 .landing:not(.switch-page) .lp-wrap {
-  max-width: var(--lp-max);
+  /* S6-1: unified to the wide tier so every section's container edge lines up
+     into one vertical line down the page (long copy is re-narrowed per block). */
+  max-width: var(--lp-max-wide);
 }
 
 .landing:not(.switch-page) .lp-wrap-wide {
@@ -979,37 +981,30 @@ body.landing {
   width: 100%;
 }
 
-/* Alternating split: copy + screenshot */
-.lp-split {
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  align-items: center;
-  gap: 44px;
+/* S6-2: stacked feature block — short copy centred on top, full-width product
+   shot below (replaces the old small side-by-side "lp-split" for real impact).
+   The shot reuses .lp-shot img, which is already full width + rounded + deep
+   shadow, so it now spans the whole unified container. */
+.lp-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
 }
 
-.lp-split--reverse .lp-split-copy {
-  order: 2;
+.lp-stack-copy {
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
 }
 
-.lp-split--reverse .lp-shot {
-  order: 1;
+.lp-stack-copy h2 {
+  margin-bottom: 12px;
 }
 
-.lp-split-copy h2 {
-  margin-bottom: 16px;
-}
-
-.lp-split-copy p {
-  margin: 0 0 16px;
+.lp-stack-copy p {
+  margin: 0;
   font-size: var(--text-emph);
-  line-height: 1.65;
-}
-
-.lp-split-copy p:last-child {
-  margin-bottom: 0;
-}
-
-.lp-note {
+  line-height: 1.6;
   color: var(--muted);
 }
 
@@ -1039,23 +1034,6 @@ body.landing {
 
 /* Landing responsive */
 @media (max-width: 900px) {
-  .landing:not(.switch-page) .lp-split,
-  .landing:not(.switch-page) .lp-split--reverse {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-
-  /* image always below copy on narrow screens, regardless of source order */
-  .landing:not(.switch-page) .lp-split .lp-split-copy,
-  .landing:not(.switch-page) .lp-split--reverse .lp-split-copy {
-    order: 1;
-  }
-
-  .landing:not(.switch-page) .lp-split .lp-shot,
-  .landing:not(.switch-page) .lp-split--reverse .lp-shot {
-    order: 2;
-  }
-
   /* Hero collapses to a single centred column; the demo card drops below. */
   .landing:not(.switch-page) .lp-hero .lp-wrap-wide {
     grid-template-columns: 1fr;
