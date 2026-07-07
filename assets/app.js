@@ -64,6 +64,8 @@ const els = {
   detailEmpty: document.querySelector("#detailEmpty"),
   detailClose: document.querySelector("#detailClose"),
   detailScrim: document.querySelector("#detailScrim"),
+  menuToggle: document.querySelector("#menuToggle"),
+  sidebarClose: document.querySelector("#sidebarClose"),
   detailForm: document.querySelector("#detailForm"),
   detailCompleted: document.querySelector("#detailCompleted"),
   detailTitle: document.querySelector("#detailTitle"),
@@ -239,7 +241,19 @@ function closeDetail() {
   render();
 }
 
+// S7-1: the sidebar drawer (mobile). Transient UI state on <body>; renderTheme
+// preserves non-theme classes so a background render can't slam it shut.
+function openSidebar() {
+  els.body.classList.add("sidebar-visible");
+  els.menuToggle?.setAttribute("aria-expanded", "true");
+}
+function closeSidebar() {
+  els.body.classList.remove("sidebar-visible");
+  els.menuToggle?.setAttribute("aria-expanded", "false");
+}
+
 function setMode(mode) {
+  closeSidebar();
   state.activeMode = mode;
   if (mode === "calendar") state.activeView = "calendar";
   // Leaving calendar via the rail must drop the calendar-only view, otherwise
@@ -250,6 +264,7 @@ function setMode(mode) {
 }
 
 function setView(view) {
+  closeSidebar();
   searchQuery = "";
   els.searchInput.value = "";
   state.activeView = view;
@@ -1009,7 +1024,11 @@ function render() {
 }
 
 function renderTheme() {
-  els.body.className = "";
+  // Only manage theme-* classes here — leave transient UI classes like
+  // detail-visible / sidebar-visible (S7-1) untouched across renders.
+  [...els.body.classList].forEach((c) => {
+    if (c.startsWith("theme-")) els.body.classList.remove(c);
+  });
   if (state.theme !== "light") els.body.classList.add(`theme-${state.theme}`);
 }
 
@@ -1809,6 +1828,8 @@ function subtaskRow(task, subtask) {
 }
 
 els.railButtons.forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
+els.menuToggle.addEventListener("click", openSidebar);
+els.sidebarClose.addEventListener("click", closeSidebar);
 els.quickAdd.addEventListener("click", () => {
   state.activeMode = "tasks";
   render();
@@ -2187,11 +2208,16 @@ els.deleteTask.addEventListener("click", () => {
 });
 
 els.detailClose.addEventListener("click", closeDetail);
-els.detailScrim.addEventListener("click", closeDetail);
+els.detailScrim.addEventListener("click", () => {
+  // One scrim serves both slide-overs; dismiss whichever is open.
+  if (document.body.classList.contains("sidebar-visible")) closeSidebar();
+  else closeDetail();
+});
 
 document.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") return;
   if (document.querySelector("#modalOverlay")) closeModal();
+  else if (document.body.classList.contains("sidebar-visible")) closeSidebar();
   else if (document.body.classList.contains("detail-visible")) closeDetail();
 });
 
