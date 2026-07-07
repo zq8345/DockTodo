@@ -232,3 +232,53 @@ document.querySelectorAll(".wl-form").forEach((form) => {
   // marketing section can never be permanently stuck invisible on a live page.
   setTimeout(() => hidden.forEach((el) => el.classList.add("in")), 6000);
 })();
+
+// S6-6: product shots follow the theme. When dark is active, swap each
+// ./assets/shots/foo.png for foo-dark.png — but only if that file exists, so
+// the page degrades gracefully to the light shot until the dark set lands.
+// Probe results are cached, so a missing dark shot costs at most one 404 per
+// image, and the swap starts working the moment the -dark.png files appear.
+(function () {
+  const root = document.querySelector(".landing:not(.switch-page)");
+  if (!root) return;
+  const shots = Array.from(document.querySelectorAll(".lp-shot img"));
+  if (!shots.length) return;
+  shots.forEach((img) => (img.dataset.lightSrc = img.getAttribute("src")));
+
+  const darkSrc = (light) => light.replace(/\.(png|jpe?g|webp)$/i, "-dark.$1");
+  const isDark = () => {
+    const dt = root.getAttribute("data-theme");
+    return dt === "dark" || (!dt && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  };
+  const setSrc = (img, src) => {
+    if (img.getAttribute("src") !== src) img.setAttribute("src", src);
+  };
+  const darkOk = {}; // light src -> boolean probe result (cached)
+
+  const apply = () => {
+    const dark = isDark();
+    shots.forEach((img) => {
+      const light = img.dataset.lightSrc;
+      if (!dark) return setSrc(img, light);
+      const d = darkSrc(light);
+      if (darkOk[light] === true) return setSrc(img, d);
+      if (darkOk[light] === false) return setSrc(img, light);
+      const probe = new Image();
+      probe.onload = () => {
+        darkOk[light] = true;
+        if (isDark()) setSrc(img, d);
+      };
+      probe.onerror = () => {
+        darkOk[light] = false;
+        setSrc(img, light);
+      };
+      probe.src = d;
+    });
+  };
+
+  apply();
+  new MutationObserver(apply).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  if (mq.addEventListener) mq.addEventListener("change", apply);
+  else if (mq.addListener) mq.addListener(apply);
+})();
