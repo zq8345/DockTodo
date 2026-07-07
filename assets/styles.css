@@ -388,7 +388,7 @@ h2 {
 .soft-btn,
 .danger-btn,
 .quick-form button {
-  min-height: 36px;
+  min-height: 38px; /* S7-4: align with the 38px inputs */
   padding: 0 14px;
   border-radius: var(--r-control);
   font-weight: var(--w-semibold);
@@ -413,10 +413,12 @@ h2 {
 }
 
 .danger-btn {
+  /* S7-4: border/tint derived from the same --red as the text, not a
+     hardcoded rgba(217,77,77) that didn't match. */
   width: 100%;
-  border: 1px solid rgba(217, 77, 77, 0.28);
+  border: 1px solid color-mix(in srgb, var(--red) 30%, transparent);
   color: var(--red);
-  background: rgba(217, 77, 77, 0.08);
+  background: color-mix(in srgb, var(--red) 8%, transparent);
 }
 
 /* S7-1 mobile nav: hamburger opens the sidebar as a slide-over drawer (same
