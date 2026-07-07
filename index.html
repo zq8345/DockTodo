@@ -194,16 +194,29 @@
             <h2>The timer is the invoice</h2>
             <p>A 50-minute session on "API refactor — Acme, $110/hr" becomes a $91.67 line the moment it ends.</p>
           </div>
-          <figure class="lp-shot">
-            <img
-              src="./assets/shots/hero.png"
-              width="1440"
-              height="900"
-              loading="lazy"
-              decoding="async"
-              alt="DockTodo focus timer with today's logged hours and a task's billable time entries"
-            />
-          </figure>
+          <div class="lp-mock lp-mock-focus" role="img" aria-label="A 50-minute focus session on API refactor for Acme at $110 per hour ends and creates a $91.67 billable entry.">
+            <div class="lp-mock-head">
+              <span class="lp-mock-title"><span class="lp-mock-dot"></span>API refactor · Acme</span>
+              <span class="lp-mock-chip">$110/hr</span>
+            </div>
+            <div class="lp-mock-focus-body">
+              <div class="lp-mock-ring">
+                <svg viewBox="0 0 112 112" aria-hidden="true">
+                  <circle class="lp-ring-track" cx="56" cy="56" r="49" />
+                  <circle class="lp-ring-fill" cx="56" cy="56" r="49" stroke-dasharray="308" stroke-dashoffset="0" transform="rotate(-90 56 56)" />
+                </svg>
+                <div class="lp-mock-ring-c"><span class="lp-num">50:00</span><span class="lp-mock-ring-l">billable</span></div>
+              </div>
+              <div class="lp-mock-earned">
+                <div class="lp-num lp-mock-money">$91.67</div>
+                <div class="lp-mock-sub">logged to this week's invoice</div>
+              </div>
+            </div>
+            <div class="lp-mock-entry">
+              <span class="lp-mock-entry-l"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Billable entry created</span>
+              <span class="lp-num lp-mock-entry-amt">50m · $91.67</span>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -215,16 +228,25 @@
             <h2>Friday's timesheet, already totalled</h2>
             <p>Hours and dollars per client, per project, per day — on one screen, by Friday at 5.</p>
           </div>
-          <figure class="lp-shot">
-            <img
-              src="./assets/shots/timesheet.png"
-              width="1440"
-              height="780"
-              loading="lazy"
-              decoding="async"
-              alt="Weekly timesheet aggregated by client with hours and amounts"
-            />
-          </figure>
+          <div class="lp-mock lp-mock-sheet" role="img" aria-label="Weekly timesheet: Acme 12.5 hours $1,375, Northwind 9 hours $765, Pine and Co 11 hours $1,045, totalling 32.5 hours and $3,185.">
+            <div class="lp-mock-head">
+              <span class="lp-mock-title">This week · Mar 4–8</span>
+              <span class="lp-mock-chip">32.5h · $3,185</span>
+            </div>
+            <table class="lp-sheet">
+              <thead>
+                <tr><th>Client · Project</th><th>Hrs</th><th>Rate</th><th>Amount</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><span class="lp-mock-dot"></span>Acme · Onboarding</td><td>12.5</td><td>$110</td><td>$1,375</td></tr>
+                <tr><td><span class="lp-mock-dot lp-mock-dot-b"></span>Northwind · Brand</td><td>9.0</td><td>$85</td><td>$765</td></tr>
+                <tr><td><span class="lp-mock-dot lp-mock-dot-c"></span>Pine &amp; Co · Site</td><td>11.0</td><td>$95</td><td>$1,045</td></tr>
+              </tbody>
+              <tfoot>
+                <tr><td>Total</td><td>32.5</td><td></td><td>$3,185</td></tr>
+              </tfoot>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -236,16 +258,31 @@
             <h2>One click to a clean invoice</h2>
             <p>Pick a client and a range; the invoice drafts itself — line items, tax, total, ready to print.</p>
           </div>
-          <figure class="lp-shot">
-            <img
-              src="./assets/shots/invoice.png"
-              width="1440"
-              height="720"
-              loading="lazy"
-              decoding="async"
-              alt="Generated client invoice with line items, tax and total"
-            />
-          </figure>
+          <div class="lp-mock lp-mock-invoice" role="img" aria-label="Invoice INV-0007 to Acme Inc: three line items subtotalling $3,190, tax 0, total $3,190.">
+            <div class="lp-mock-head">
+              <span class="lp-mock-title">Invoice · INV-0007</span>
+              <span class="lp-mock-chip">Mar 8, 2026</span>
+            </div>
+            <div class="lp-inv-meta">
+              <div><span class="lp-inv-lbl">From</span>Your Studio</div>
+              <div><span class="lp-inv-lbl">Bill to</span>Acme Inc.</div>
+            </div>
+            <table class="lp-sheet lp-inv-lines">
+              <thead>
+                <tr><th>Description</th><th>Hrs</th><th>Rate</th><th>Amount</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Onboarding flow</td><td>12.5</td><td>$110</td><td>$1,375</td></tr>
+                <tr><td>Design review</td><td>4.0</td><td>$110</td><td>$440</td></tr>
+                <tr><td>API refactor</td><td>12.5</td><td>$110</td><td>$1,375</td></tr>
+              </tbody>
+            </table>
+            <div class="lp-inv-totals">
+              <div><span>Subtotal</span><span class="lp-num">$3,190</span></div>
+              <div><span>Tax (0%)</span><span class="lp-num">$0</span></div>
+              <div class="lp-inv-total"><span>Total</span><span class="lp-num">$3,190</span></div>
+            </div>
+          </div>
         </div>
       </section>
 

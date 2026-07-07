@@ -35,7 +35,7 @@
   --line: rgba(255, 255, 255, 0.12);
   --text: #f7f8f8;
   --muted: #9294a0;
-  --text-3: #6c6e78;
+  --text-3: #82848e;
   --accent: #2fd08a;
   --blue-dark: #26b477;
   --accent-soft: rgba(34, 198, 127, 0.14);
@@ -66,7 +66,7 @@
   --line: rgba(18, 19, 23, 0.1);
   --text: #14151a;
   --muted: #55575f;
-  --text-3: #85878f;
+  --text-3: #696b73;
   --accent: #0b8659;
   --blue-dark: #097a52;
   --accent-soft: #dff3ea;
@@ -95,7 +95,7 @@
     --line: rgba(18, 19, 23, 0.1);
     --text: #14151a;
     --muted: #55575f;
-    --text-3: #85878f;
+    --text-3: #696b73;
     --accent: #0b8659;
     --blue-dark: #097a52;
     --accent-soft: #dff3ea;
@@ -698,18 +698,238 @@ body.landing {
   gap: 16px;
 }
 
-/* Product screenshots — card treatment */
-.landing:not(.switch-page) .lp-shot {
-  margin: 0;
+/* ════ S6-7: native, theme-aware product mockups (replaced raster shots) ════
+   These share the live demo card's token / radius / border language, so every
+   visual on the page renders in one system and follows light + dark. ─────── */
+.landing:not(.switch-page) .lp-mock {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.landing:not(.switch-page) .lp-mock-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--line);
+}
+.landing:not(.switch-page) .lp-mock-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-emph);
+  font-weight: var(--w-semibold);
+  color: var(--text);
+}
+.landing:not(.switch-page) .lp-mock-chip {
+  font-size: var(--text-small);
+  font-weight: var(--w-semibold);
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.landing:not(.switch-page) .lp-mock-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex: none;
+}
+.landing:not(.switch-page) .lp-mock-dot-b {
+  background: #8b83f0;
+}
+.landing:not(.switch-page) .lp-mock-dot-c {
+  background: #f0b45e;
 }
 
-.landing:not(.switch-page) .lp-shot img {
-  display: block;
+/* Focus mockup — a finished session dropping one billable entry */
+.landing:not(.switch-page) .lp-mock-focus-body {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 26px 24px;
+}
+.landing:not(.switch-page) .lp-mock-ring {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  flex: none;
+}
+.landing:not(.switch-page) .lp-mock-ring svg {
   width: 100%;
-  height: auto;
-  border: 1px solid var(--line);
-  border-radius: var(--r-card);
-  box-shadow: var(--shadow);
+  height: 100%;
+}
+.landing:not(.switch-page) .lp-mock-ring-c {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.landing:not(.switch-page) .lp-mock-ring-c .lp-num {
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--text);
+}
+.landing:not(.switch-page) .lp-mock-ring-l {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+}
+.landing:not(.switch-page) .lp-mock-money {
+  font-size: 48px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--accent);
+  text-shadow: var(--glow);
+}
+.landing:not(.switch-page) .lp-mock-sub {
+  margin-top: 6px;
+  font-size: var(--text-small);
+  color: var(--text-3);
+}
+.landing:not(.switch-page) .lp-mock-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 24px;
+  border-top: 1px solid var(--line);
+  background: var(--surface-soft);
+  font-size: var(--text-small);
+}
+.landing:not(.switch-page) .lp-mock-entry-l {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+}
+.landing:not(.switch-page) .lp-mock-entry-l svg {
+  width: 16px;
+  height: 16px;
+  color: var(--accent);
+}
+.landing:not(.switch-page) .lp-mock-entry-amt {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* Table shared by the timesheet + invoice mockups (Harvest-style) */
+.landing:not(.switch-page) .lp-sheet {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-small);
+}
+.landing:not(.switch-page) .lp-sheet th,
+.landing:not(.switch-page) .lp-sheet td {
+  padding: 10px 20px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.landing:not(.switch-page) .lp-sheet th:first-child,
+.landing:not(.switch-page) .lp-sheet td:first-child {
+  text-align: left;
+  white-space: normal;
+}
+.landing:not(.switch-page) .lp-sheet thead th {
+  color: var(--text-3);
+  font-weight: var(--w-medium);
+  border-bottom: 1px solid var(--line);
+}
+.landing:not(.switch-page) .lp-sheet tbody td {
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+}
+.landing:not(.switch-page) .lp-sheet tbody td:first-child {
+  color: var(--text);
+}
+.landing:not(.switch-page) .lp-sheet tbody td:last-child {
+  color: var(--text);
+  font-weight: 500;
+}
+.landing:not(.switch-page) .lp-sheet tbody td:first-child .lp-mock-dot {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+.landing:not(.switch-page) .lp-sheet tfoot td {
+  padding-top: 12px;
+  padding-bottom: 14px;
+  font-weight: var(--w-semibold);
+  color: var(--text);
+}
+.landing:not(.switch-page) .lp-sheet tfoot td:last-child {
+  color: var(--accent);
+}
+
+/* Invoice mockup extras */
+.landing:not(.switch-page) .lp-inv-meta {
+  display: flex;
+  gap: 40px;
+  padding: 16px 20px 4px;
+}
+.landing:not(.switch-page) .lp-inv-meta > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--text-body);
+  color: var(--text);
+}
+.landing:not(.switch-page) .lp-inv-lbl {
+  font-size: var(--text-micro);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-3);
+}
+.landing:not(.switch-page) .lp-inv-totals {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 20px 18px;
+  border-top: 1px solid var(--line);
+  font-size: var(--text-small);
+}
+.landing:not(.switch-page) .lp-inv-totals > div {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+}
+.landing:not(.switch-page) .lp-inv-totals .lp-num {
+  color: var(--text);
+}
+.landing:not(.switch-page) .lp-inv-total {
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+  font-weight: var(--w-semibold);
+}
+.landing:not(.switch-page) .lp-inv-total .lp-num {
+  color: var(--accent);
+}
+
+@media (max-width: 720px) {
+  .landing:not(.switch-page) .lp-mock-focus-body {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+  .landing:not(.switch-page) .lp-mock-money {
+    font-size: 40px;
+  }
+  .landing:not(.switch-page) .lp-sheet th,
+  .landing:not(.switch-page) .lp-sheet td {
+    padding: 9px 14px;
+  }
+  .landing:not(.switch-page) .lp-inv-meta {
+    gap: 28px;
+  }
 }
 
 /* Hero — copy + big shot, both inside .lp-wrap-wide */
@@ -1017,16 +1237,8 @@ body.landing {
   color: var(--text);
 }
 
-.lp-hero-shot {
-  max-width: 960px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-/* S6-2: stacked feature block — short copy centred on top, full-width product
-   shot below (replaces the old small side-by-side "lp-split" for real impact).
-   The shot reuses .lp-shot img, which is already full width + rounded + deep
-   shadow, so it now spans the whole unified container. */
+/* S6-2/S6-7: stacked feature block — short copy centred on top, the native
+   full-width mockup (.lp-mock) below. */
 .lp-stack {
   display: flex;
   flex-direction: column;
