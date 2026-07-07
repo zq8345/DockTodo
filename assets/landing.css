@@ -701,6 +701,10 @@ body.landing {
   max-width: none;
   padding: 0;
   text-align: left;
+  /* The ambient blobs bleed sideways past the viewport; clip that horizontal
+     bleed so it never yields a horizontal scrollbar (S2-7). overflow-y stays
+     visible so the blobs' vertical glow still softens into neighbouring bands. */
+  overflow-x: clip;
 }
 
 /* ── S5-1 Hero (bold, two columns: copy + live time→money demo) ──────── */
@@ -709,9 +713,11 @@ body.landing {
   padding-top: var(--lp-pad-y);
   padding-bottom: 56px;
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
+  /* S6-4: tip the balance toward the visual (was 1.05fr 0.95fr) so the live
+     card dominates the first screen. */
+  grid-template-columns: 5fr 6fr;
   align-items: center;
-  gap: 48px;
+  gap: 56px;
 }
 
 /* Ambient accent blobs sit behind the hero content */
@@ -835,17 +841,19 @@ body.landing {
   font-feature-settings: "tnum";
 }
 .lp-demo {
+  /* S6-4: bigger, more present card — deeper padding/radius and a second
+     mode-aware glow layer on top of the base shadow for real depth. */
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 18px;
-  box-shadow: var(--shadow);
+  border-radius: 22px;
+  padding: 26px;
+  box-shadow: var(--shadow), var(--btn-glow);
 }
 .lp-demo-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 18px;
 }
 .lp-demo-task {
   display: inline-flex;
@@ -871,15 +879,19 @@ body.landing {
 .lp-demo-main {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 26px;
 }
 .lp-ring-wrap {
+  /* S6-4: ring blown up from 112 → 150; the SVG fills the wrap via width:100%
+     so its 0 0 112 112 viewBox (and the JS dash math) is untouched. */
   position: relative;
-  width: 112px;
-  height: 112px;
+  width: 150px;
+  height: 150px;
   flex: none;
 }
 .lp-ring {
+  width: 100%;
+  height: 100%;
   transform: rotate(-90deg);
 }
 .lp-ring-track {
@@ -903,18 +915,18 @@ body.landing {
   justify-content: center;
 }
 .lp-timer {
-  font-size: 21px;
+  font-size: 27px;
   font-weight: 500;
   color: var(--text);
 }
 .lp-ring-label {
-  font-size: 9px;
+  font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-3);
 }
 .lp-money {
-  font-size: 38px;
+  font-size: 52px;
   line-height: 1;
   font-weight: 600;
   letter-spacing: -0.03em;
@@ -927,7 +939,7 @@ body.landing {
   color: var(--text-3);
 }
 .lp-demo-week {
-  margin-top: 16px;
+  margin-top: 20px;
 }
 .lp-demo-week-head {
   display: flex;
@@ -939,7 +951,7 @@ body.landing {
   color: var(--text-3);
 }
 .lp-demo-week-total {
-  font-size: 19px;
+  font-size: 23px;
   font-weight: 600;
   color: var(--text);
   transition: color 0.4s;
@@ -1061,6 +1073,20 @@ body.landing {
 @media (max-width: 720px) {
   :root {
     --lp-pad-y: 40px;
+  }
+  /* S6-4: rein the enlarged demo back in on phones so nothing overflows. */
+  .lp-ring-wrap {
+    width: 128px;
+    height: 128px;
+  }
+  .lp-money {
+    font-size: 44px;
+  }
+  .lp-timer {
+    font-size: 24px;
+  }
+  .lp-demo {
+    padding: 20px;
   }
 }
 
