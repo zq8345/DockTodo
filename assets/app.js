@@ -1415,6 +1415,10 @@ function buildRepeatOptions() {
 }
 
 function renderHeader() {
+  // S7-2: task-only header bits (the "N due today…" meta and the Add task /
+  // Clear completed actions) belong to the task views only. Other modes have
+  // their own titles and would show a meaningless task count / dead buttons.
+  const taskContext = state.activeMode === "tasks" || state.activeMode === "calendar";
   const open = countTasks((task) => !task.completed);
   const todayOpen = countTasks((task) => !task.completed && taskDate(task) === todayKey);
   const reminders = countTasks((task) => !task.completed && Boolean(task.reminder));
@@ -1429,7 +1433,9 @@ function renderHeader() {
     settings: t("rail.settings"),
   }[state.activeMode];
   els.viewTitle.textContent = searchQuery ? t("header.search", { q: searchQuery }) : modeTitle;
-  els.viewMeta.textContent = t("header.meta", { todayOpen, open, reminders });
+  els.viewMeta.textContent = taskContext ? t("header.meta", { todayOpen, open, reminders }) : "";
+  els.quickAdd.hidden = !taskContext;
+  els.clearDone.hidden = !taskContext;
   els.taskStart.value = currentDefaultDate();
   els.taskDue.value = currentDefaultDate();
 }
