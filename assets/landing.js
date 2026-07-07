@@ -53,25 +53,44 @@ const SUCCESS =
 document.querySelectorAll(".wl-form").forEach((form) => {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    const submitBtn = form.querySelector("button[type=submit]");
+    if (submitBtn) submitBtn.disabled = true;
     const body = new URLSearchParams(new FormData(form)).toString();
+
+    let ok = false;
     try {
-      // Netlify Forms accepts a urlencoded POST to any path on the site.
-      await fetch("/", {
+      const res = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body,
       });
+      // Success is ONLY a real {ok:true} from the Function — never "just a 200".
+      // Treating any 200 as success is exactly what silently dropped every
+      // signup on the Netlify→Cloudflare move.
+      const data = res.ok ? await res.json().catch(() => ({})) : {};
+      ok = data.ok === true;
+    } catch {
+      ok = false;
+    }
+
+    if (ok) {
       const done = document.createElement("p");
       done.className = "wl-success";
       done.textContent = SUCCESS;
       form.replaceWith(done);
-    } catch {
-      const err = document.createElement("p");
-      err.className = "wl-note";
-      err.style.color = "var(--red)";
-      err.textContent = "Something went wrong — please try again, or email hello@docktodo.com.";
+      return;
+    }
+
+    // Real failure: re-enable and show a retry message — never a fake success.
+    if (submitBtn) submitBtn.disabled = false;
+    let err = form.querySelector(".wl-error");
+    if (!err) {
+      err = document.createElement("p");
+      err.className = "wl-note wl-error";
+      err.style.color = "var(--danger)";
       form.append(err);
     }
+    err.textContent = "Something went wrong — please try again, or email hello@docktodo.com.";
   });
 });
 

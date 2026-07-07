@@ -494,8 +494,7 @@
           <!-- Waitlist form (the only one on the page — pricing CTAs scroll here) -->
           <div class="lp-waitlist" id="waitlist">
             <h3>Reserve Pro before the founding price is gone.</h3>
-            <form name="waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="wl-form" id="waitlistFormTop">
-              <input type="hidden" name="form-name" value="waitlist" />
+            <form name="waitlist" method="POST" action="/api/waitlist" class="wl-form" id="waitlistFormTop">
               <input type="hidden" name="source" value="footer" />
               <p class="wl-hp" hidden><label>Don't fill this out if you're human: <input name="bot-field" /></label></p>
               <label>
