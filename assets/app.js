@@ -66,6 +66,8 @@ const els = {
   detailScrim: document.querySelector("#detailScrim"),
   menuToggle: document.querySelector("#menuToggle"),
   sidebarClose: document.querySelector("#sidebarClose"),
+  moreActions: document.querySelector("#moreActions"),
+  headMore: document.querySelector("#headMore"),
   detailForm: document.querySelector("#detailForm"),
   detailCompleted: document.querySelector("#detailCompleted"),
   detailTitle: document.querySelector("#detailTitle"),
@@ -250,6 +252,13 @@ function openSidebar() {
 function closeSidebar() {
   els.body.classList.remove("sidebar-visible");
   els.menuToggle?.setAttribute("aria-expanded", "false");
+}
+
+// S7-1b: the header "…" overflow menu (mobile). Secondary actions live in
+// #headMore, which is display:contents on desktop and a popover <=760px.
+function closeMore() {
+  els.body.classList.remove("more-open");
+  els.moreActions?.setAttribute("aria-expanded", "false");
 }
 
 function setMode(mode) {
@@ -1836,6 +1845,16 @@ function subtaskRow(task, subtask) {
 els.railButtons.forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
 els.menuToggle.addEventListener("click", openSidebar);
 els.sidebarClose.addEventListener("click", closeSidebar);
+els.moreActions.addEventListener("click", (event) => {
+  event.stopPropagation();
+  const open = els.body.classList.toggle("more-open");
+  els.moreActions.setAttribute("aria-expanded", String(open));
+});
+// Any action inside the menu (or a click outside it) dismisses the popover.
+els.headMore.addEventListener("click", closeMore);
+document.addEventListener("click", (event) => {
+  if (els.body.classList.contains("more-open") && !event.target.closest(".head-actions")) closeMore();
+});
 els.quickAdd.addEventListener("click", () => {
   state.activeMode = "tasks";
   render();
@@ -2223,6 +2242,7 @@ els.detailScrim.addEventListener("click", () => {
 document.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") return;
   if (document.querySelector("#modalOverlay")) closeModal();
+  else if (document.body.classList.contains("more-open")) closeMore();
   else if (document.body.classList.contains("sidebar-visible")) closeSidebar();
   else if (document.body.classList.contains("detail-visible")) closeDetail();
 });

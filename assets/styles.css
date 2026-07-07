@@ -460,6 +460,28 @@ h2 {
   color: var(--muted);
 }
 
+/* S7-1b header overflow menu: on desktop the secondary actions flow inline
+   (display:contents makes .head-more transparent); the "…" button is hidden.
+   <=760 they collapse into a "…" popover (see the 760 media block). */
+.overflow-btn {
+  display: none;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border: 1px solid var(--line);
+  border-radius: var(--r-control);
+  background: var(--surface);
+  color: var(--muted);
+}
+.overflow-btn:hover {
+  color: var(--blue);
+  border-color: var(--blue);
+}
+.head-more {
+  display: contents;
+}
+
 .task-view,
 .calendar-view,
 .focus-view,
@@ -1085,8 +1107,9 @@ h2 {
 
 .billing-strip {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
+  gap: 8px 16px;
   padding: 8px 20px;
   border-bottom: 1px solid var(--line);
   color: var(--muted);
@@ -1831,7 +1854,39 @@ h2 {
   }
 
   .head-actions {
-    flex-wrap: wrap;
+    position: relative;
+  }
+  .overflow-btn {
+    display: inline-grid;
+  }
+  .head-more {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 30;
+    flex-direction: column;
+    min-width: 190px;
+    padding: 6px;
+    gap: 2px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    box-shadow: 0 14px 34px rgba(20, 30, 50, 0.2);
+  }
+  body.more-open .head-more {
+    display: flex;
+  }
+  .head-more .soft-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    border: 0;
+    background: transparent;
+  }
+  .head-more .soft-btn:hover {
+    background: var(--surface-soft);
   }
 
   /* Compact month grid: date + dots only, no event labels. */

@@ -35,6 +35,7 @@
       <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
       <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
       <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></symbol>
+      <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></symbol>
       <symbol id="i-backup" viewBox="0 0 24 24"><path d="M12 2v8"/><path d="m16 6-4 4-4-4"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 18h.01"/><path d="M10 18h.01"/></symbol>
     </svg>
 
@@ -112,11 +113,14 @@
             <h2 id="viewTitle"></h2>
           </div>
           <div class="head-actions">
-            <button class="soft-btn" id="importData" type="button" data-i18n="action.import">Import</button>
-            <input id="importFile" type="file" accept=".json,application/json" hidden />
-            <button class="soft-btn" id="exportData" type="button" data-i18n="action.export">Export</button>
-            <button class="soft-btn" id="copyData" type="button" data-i18n="action.copy">Copy</button>
-            <button class="soft-btn" id="clearDone" type="button" data-i18n="action.clearDone">Clear completed</button>
+            <button class="overflow-btn" id="moreActions" type="button" aria-haspopup="true" aria-expanded="false" aria-label="More actions"><svg class="ic" aria-hidden="true"><use href="#i-more"></use></svg></button>
+            <div class="head-more" id="headMore">
+              <button class="soft-btn" id="importData" type="button" data-i18n="action.import">Import</button>
+              <input id="importFile" type="file" accept=".json,application/json" hidden />
+              <button class="soft-btn" id="exportData" type="button" data-i18n="action.export">Export</button>
+              <button class="soft-btn" id="copyData" type="button" data-i18n="action.copy">Copy</button>
+              <button class="soft-btn" id="clearDone" type="button" data-i18n="action.clearDone">Clear completed</button>
+            </div>
             <button class="primary-btn" id="quickAdd" type="button" data-i18n="action.addTask">Add task</button>
           </div>
         </header>
