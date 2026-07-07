@@ -63,32 +63,65 @@
       <!-- 1. Hero -->
       <section class="lp-section lp-hero">
         <div class="lp-wrap-wide">
+          <span class="lp-blob lp-blob-a" aria-hidden="true"></span>
+          <span class="lp-blob lp-blob-b" aria-hidden="true"></span>
+
           <div class="lp-hero-copy">
-            <h1>Bill every hour you track.</h1>
+            <span class="lp-eyebrow">Local-first · For freelancers</span>
+            <h1>Turn every hour<br />into <span class="lp-hl">money.</span></h1>
             <p class="lp-lead">
-              Your focus timer writes the invoice line. Tasks carry their client and rate; the weekly timesheet totals
-              itself.
+              The focus timer <em class="lp-em">is</em> the invoice. No account, no cloud, no leaks — watch it happen
+              live.
             </p>
-            <div class="lp-cta-row">
-              <a class="btn-primary btn-lg" href="./app.html">Open DockTodo — free, no signup</a>
-            </div>
             <ul class="lp-badges" aria-label="Trust signals">
               <li>No account</li>
               <li>No upload</li>
               <li>Works offline</li>
             </ul>
-            <p class="lp-microline">Your hours, invoices, and clients never leave your device.</p>
+            <div class="lp-cta-row">
+              <a class="btn-primary btn-lg" href="./app.html">Open DockTodo — free</a>
+              <span class="lp-cta-aside">No signup</span>
+            </div>
           </div>
-          <figure class="lp-shot lp-hero-shot">
-            <img
-              src="./assets/shots/hero.png"
-              width="1440"
-              height="900"
-              loading="eager"
-              decoding="async"
-              alt="DockTodo focus timer running with this week's billable total"
-            />
-          </figure>
+
+          <!-- Live time→money demo (vanilla requestAnimationFrame + SVG, zero deps) -->
+          <aside class="lp-demo" aria-label="Live demo: a focus session turning into billable money">
+            <div class="lp-demo-head">
+              <span class="lp-demo-task"><span class="lp-demo-dot"></span>Onboarding flow · Acme</span>
+              <span class="lp-demo-rate" id="demoRate">$110/hr</span>
+            </div>
+            <div class="lp-demo-main">
+              <div class="lp-ring-wrap">
+                <svg class="lp-ring" width="112" height="112" viewBox="0 0 112 112" aria-hidden="true">
+                  <circle class="lp-ring-track" cx="56" cy="56" r="49" />
+                  <circle
+                    class="lp-ring-fill"
+                    id="demoRing"
+                    cx="56"
+                    cy="56"
+                    r="49"
+                    stroke-dasharray="308"
+                    stroke-dashoffset="308"
+                  />
+                </svg>
+                <div class="lp-ring-center">
+                  <span class="lp-num lp-timer" id="demoTimer">00:00</span>
+                  <span class="lp-ring-label">billable</span>
+                </div>
+              </div>
+              <div class="lp-demo-earned">
+                <div class="lp-num lp-money" id="demoMoney">$0.00</div>
+                <div class="lp-demo-sub">earned this session</div>
+              </div>
+            </div>
+            <div class="lp-demo-week">
+              <div class="lp-demo-week-head">
+                <span class="lp-demo-week-label">This week's invoice</span>
+                <span class="lp-num lp-demo-week-total" id="demoWeek">$0.00</span>
+              </div>
+              <div class="lp-demo-lines" id="demoLines"></div>
+            </div>
+          </aside>
         </div>
       </section>
 

@@ -701,20 +701,100 @@ body.landing {
   text-align: left;
 }
 
+/* ── S5-1 Hero (bold, two columns: copy + live time→money demo) ──────── */
 .landing:not(.switch-page) .lp-hero .lp-wrap-wide {
+  position: relative;
   padding-top: var(--lp-pad-y);
-  padding-bottom: 48px;
+  padding-bottom: 56px;
   display: grid;
-  gap: 40px;
+  grid-template-columns: 1.05fr 0.95fr;
+  align-items: center;
+  gap: 48px;
+}
+
+/* Ambient accent blobs sit behind the hero content */
+.lp-blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+.lp-blob-a {
+  top: -110px;
+  right: -60px;
+  width: 360px;
+  height: 360px;
+  background: var(--blob1);
+}
+.lp-blob-b {
+  bottom: -140px;
+  left: -80px;
+  width: 320px;
+  height: 320px;
+  background: var(--blob2);
+}
+.landing:not(.switch-page) .lp-hero-copy,
+.lp-demo {
+  position: relative;
+  z-index: 1;
 }
 
 .landing:not(.switch-page) .lp-hero-copy {
-  text-align: center;
+  text-align: left;
 }
 
-.landing:not(.switch-page) .lp-lead {
-  margin: 0 auto 26px;
-  max-width: 640px;
+.lp-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 18px;
+  padding: 5px 13px;
+  border: 1px solid var(--eb-bd);
+  border-radius: 999px;
+  background: var(--eb-bg);
+  color: var(--eb-fg);
+  font-size: var(--text-micro);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.landing:not(.switch-page) .lp-hero h1 {
+  margin: 0 0 16px;
+  font-size: clamp(38px, 6.4vw, 58px);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  font-weight: 600;
+}
+
+.lp-hl {
+  color: var(--accent);
+  text-shadow: var(--glow);
+}
+.lp-em {
+  color: var(--accent);
+  font-weight: 500;
+  font-style: normal;
+}
+
+.landing:not(.switch-page) .lp-hero .lp-lead {
+  margin: 0 0 22px;
+  max-width: 384px;
+}
+
+.landing:not(.switch-page) .lp-hero .lp-badges {
+  justify-content: flex-start;
+}
+
+.landing:not(.switch-page) .lp-hero .lp-cta-row {
+  justify-content: flex-start;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+.lp-cta-aside {
+  font-size: var(--text-small);
+  color: var(--text-3);
 }
 
 .lp-badges {
@@ -735,6 +815,152 @@ body.landing {
   font-size: var(--text-small);
   font-weight: var(--w-medium);
   color: var(--muted);
+}
+
+/* ── Live demo card: the focus timer IS the invoice ──────────────────── */
+.lp-num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+.lp-demo {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: var(--shadow);
+}
+.lp-demo-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.lp-demo-task {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: var(--text-small);
+  color: var(--muted);
+}
+.lp-demo-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.lp-demo-rate {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--eb-bg);
+  color: var(--eb-fg);
+  font-size: var(--text-micro);
+  font-weight: 500;
+}
+.lp-demo-main {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.lp-ring-wrap {
+  position: relative;
+  width: 112px;
+  height: 112px;
+  flex: none;
+}
+.lp-ring {
+  transform: rotate(-90deg);
+}
+.lp-ring-track {
+  fill: none;
+  stroke: var(--track);
+  stroke-width: 6;
+}
+.lp-ring-fill {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.2s linear;
+}
+.lp-ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.lp-timer {
+  font-size: 21px;
+  font-weight: 500;
+  color: var(--text);
+}
+.lp-ring-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+}
+.lp-money {
+  font-size: 38px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--accent);
+  text-shadow: var(--glow);
+}
+.lp-demo-sub {
+  margin-top: 4px;
+  font-size: var(--text-small);
+  color: var(--text-3);
+}
+.lp-demo-week {
+  margin-top: 16px;
+}
+.lp-demo-week-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.lp-demo-week-label {
+  font-size: var(--text-small);
+  color: var(--text-3);
+}
+.lp-demo-week-total {
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--text);
+  transition: color 0.4s;
+}
+.lp-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+  font-size: var(--text-small);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.lp-line.in {
+  opacity: 1;
+  transform: none;
+}
+.lp-line-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+}
+.lp-line-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.lp-line-amt {
+  font-weight: 500;
+  color: var(--text);
 }
 
 .lp-hero-shot {
@@ -819,10 +1045,47 @@ body.landing {
   .landing:not(.switch-page) .lp-split--reverse .lp-shot {
     order: 2;
   }
+
+  /* Hero collapses to a single centred column; the demo card drops below. */
+  .landing:not(.switch-page) .lp-hero .lp-wrap-wide {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .landing:not(.switch-page) .lp-hero-copy {
+    text-align: center;
+  }
+  .landing:not(.switch-page) .lp-hero .lp-eyebrow,
+  .landing:not(.switch-page) .lp-hero .lp-badges,
+  .landing:not(.switch-page) .lp-hero .lp-cta-row {
+    justify-content: center;
+  }
+  .landing:not(.switch-page) .lp-hero .lp-lead {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .lp-demo {
+    max-width: 420px;
+    margin: 0 auto;
+    width: 100%;
+  }
 }
 
 @media (max-width: 720px) {
   :root {
     --lp-pad-y: 40px;
+  }
+}
+
+/* Reduced-motion users get the static finished snapshot the JS paints — with
+   no fade transitions on the invoice lines or the week total. */
+@media (prefers-reduced-motion: reduce) {
+  .lp-line {
+    transition: none;
+  }
+  .lp-ring-fill {
+    transition: none;
+  }
+  body.landing {
+    transition: none;
   }
 }
