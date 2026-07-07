@@ -48,6 +48,10 @@
   --eb-bd: rgba(34, 198, 127, 0.3);
   --blob1: radial-gradient(circle, rgba(34, 198, 127, 0.28), rgba(34, 198, 127, 0) 70%);
   --blob2: radial-gradient(circle, rgba(29, 158, 117, 0.16), rgba(29, 158, 117, 0) 70%);
+  /* S6-3 green band (local-first section) + contrasting chip on it */
+  --band-bg: linear-gradient(165deg, rgba(34, 198, 127, 0.16), rgba(34, 198, 127, 0.045));
+  --band-bd: rgba(34, 198, 127, 0.26);
+  --band-chip: rgba(255, 255, 255, 0.09);
 }
 
 /* Light values, shared by an explicit data-theme="light" and the system pref. */
@@ -73,6 +77,9 @@
   --eb-bd: rgba(11, 148, 99, 0.22);
   --blob1: radial-gradient(circle, rgba(11, 148, 99, 0.14), rgba(11, 148, 99, 0) 70%);
   --blob2: radial-gradient(circle, rgba(47, 180, 120, 0.1), rgba(47, 180, 120, 0) 70%);
+  --band-bg: linear-gradient(165deg, #d3f1e2, #eaf7f0);
+  --band-bd: rgba(11, 148, 99, 0.22);
+  --band-chip: #ffffff;
 }
 
 @media (prefers-color-scheme: light) {
@@ -98,6 +105,9 @@
     --eb-bd: rgba(11, 148, 99, 0.22);
     --blob1: radial-gradient(circle, rgba(11, 148, 99, 0.14), rgba(11, 148, 99, 0) 70%);
     --blob2: radial-gradient(circle, rgba(47, 180, 120, 0.1), rgba(47, 180, 120, 0) 70%);
+    --band-bg: linear-gradient(165deg, #d3f1e2, #eaf7f0);
+    --band-bd: rgba(11, 148, 99, 0.22);
+    --band-chip: #ffffff;
   }
 }
 
@@ -1026,7 +1036,10 @@ body.landing {
 }
 
 .landing:not(.switch-page) .lp-trust {
-  background: var(--surface-soft);
+  /* S6-3: the local-first section is the page's saturated green band. */
+  background: var(--band-bg);
+  border-top: 1px solid var(--band-bd);
+  border-bottom: 1px solid var(--band-bd);
 }
 
 /* switching compare table gets a horizontal-scroll guard on the landing page */
@@ -1122,4 +1135,86 @@ body.landing {
     transform: none;
     transition: none;
   }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   S6-3: icons + colour rhythm (去枯燥). Lucide-style inline SVGs
+   (currentColor, 1.75 stroke); accent-soft chips mark every block. All
+   scoped to `.landing:not(.switch-page)` so the four /switch pages — which
+   share .lp-steps / .lp-bullets / .lp-trust — are never touched.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Accent-soft rounded-square badge on section / feature / plan headings */
+.landing:not(.switch-page) .lp-ico-chip {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-card);
+  background: var(--accent-soft);
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.landing:not(.switch-page) .lp-ico-chip svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* How it works — an icon marker replaces the number badge (landing only;
+   switch pages keep their numbered .lp-steps via the untouched base rule). */
+.landing:not(.switch-page) .lp-steps-ico li {
+  padding-left: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+.landing:not(.switch-page) .lp-steps-ico li::before {
+  display: none;
+}
+.landing:not(.switch-page) .lp-mk {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-card);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.landing:not(.switch-page) .lp-mk svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Trust bullets — a Lucide icon replaces the dot (landing only) */
+.landing:not(.switch-page) .lp-bullets-ico {
+  gap: 16px;
+}
+.landing:not(.switch-page) .lp-bullets-ico li {
+  padding-left: 34px;
+}
+.landing:not(.switch-page) .lp-bullets-ico li::before {
+  display: none;
+}
+.landing:not(.switch-page) .lp-bi {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 22px;
+  height: 22px;
+  color: var(--accent);
+}
+
+/* On the green band, the chip needs a contrasting fill so it doesn't melt in */
+.landing:not(.switch-page) .lp-trust .lp-ico-chip {
+  background: var(--band-chip);
+}
+
+/* Pricing — the plan icon carries the colour; accent the price figure */
+.landing:not(.switch-page) .lp-plan .lp-ico-chip {
+  margin-bottom: 12px;
+}
+.lp-plan-price {
+  color: var(--accent);
+  font-weight: var(--w-semibold);
 }
